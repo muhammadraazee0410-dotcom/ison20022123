@@ -11,7 +11,6 @@ import {
   Download,
   Loader2,
   AlertTriangle,
-  Hexagon,
   Check,
 } from "lucide-react";
 
