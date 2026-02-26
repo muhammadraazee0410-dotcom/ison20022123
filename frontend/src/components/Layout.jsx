@@ -6,7 +6,6 @@ import {
   FileText, 
   Settings,
   LogOut,
-  Hexagon,
   Shield
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,9 +37,7 @@ export default function Layout() {
       <aside className="sidebar" data-testid="sidebar">
         {/* Brand */}
         <div className="sidebar-brand">
-          <div className="flex items-center justify-center w-10 h-10 bg-[#DB0011] rounded">
-            <Hexagon className="w-6 h-6 text-white" strokeWidth={1.5} />
-          </div>
+          <img src="/hsbc-logo.png" alt="HSBC" className="w-10 h-10 object-contain" />
           <div>
             <span className="font-semibold text-lg text-gray-900">HSBC</span>
             <p className="text-xs text-gray-500">MX Transaction Platform</p>
