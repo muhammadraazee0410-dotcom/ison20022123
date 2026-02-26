@@ -223,10 +223,11 @@ export default function TransactionDetail() {
 
       {/* Document Tabs */}
       <Tabs defaultValue="settlement" className="w-full">
-        <TabsList className="grid w-full grid-cols-6 no-print">
-          <TabsTrigger value="settlement">Settlement Letter</TabsTrigger>
-          <TabsTrigger value="confirmation">Confirmation Copy</TabsTrigger>
-          <TabsTrigger value="status">Status Statement</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-7 no-print">
+          <TabsTrigger value="settlement">Settlement</TabsTrigger>
+          <TabsTrigger value="confirmation">Confirmation</TabsTrigger>
+          <TabsTrigger value="status">Status</TabsTrigger>
+          <TabsTrigger value="alliance">Alliance Msg</TabsTrigger>
           <TabsTrigger value="mt202">MT202 COV</TabsTrigger>
           <TabsTrigger value="pacs008">PACS.008</TabsTrigger>
           <TabsTrigger value="debitnote">Debit Note</TabsTrigger>
