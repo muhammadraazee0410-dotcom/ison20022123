@@ -47,9 +47,11 @@ HSBC GERMANY MX TRANSACTION PLATFORM - A banking platform for viewing and managi
 - [x] Print functionality for receipts
 
 ### Transaction Receipt Documents (Feb 2026 Update)
+- [x] **Settlement Letter** - Formal payment settlement confirmation letter with checkmarks
+- [x] **Confirmation Copy** - SWIFT Payment Confirmation with Nostro/Vostro status, green checkmarks, IP tracking table, PAYMENT APPROVED stamp
+- [x] **Status Statement** - Dark theme SWIFT Alliance format with red section headers
 - [x] **MT202 COV** - Cover Payment with SWIFT message fields (20, 21, 32A, 52A, 56A, 57A, 58A, 72), Sequence A/B, Output Message Report, AFT Validation
 - [x] **PACS.008** - ISO 20022 Customer Credit Transfer with XML message structure
-- [x] **MT103 ACK** - TARGET2 Clearing Acknowledgment with Processing Timestamps, Network Confirmation, Settlement Confirmation
 - [x] **Official Debit Note** - Bank/Customer/Transaction details with authorization
 - [x] HSBC Germany branding (replaced Deutsche Bank)
 - [x] Barcode and QR code components
