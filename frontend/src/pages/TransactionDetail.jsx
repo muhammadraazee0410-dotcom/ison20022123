@@ -640,6 +640,209 @@ export default function TransactionDetail() {
           </div>
         </TabsContent>
 
+        {/* Alliance Message Management Tab */}
+        <TabsContent value="alliance" className="mt-4">
+          <div className="bg-gray-900 border border-gray-700 shadow-lg font-mono text-xs text-gray-300 p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-700">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-[#DB0011] flex items-center justify-center">
+                    <Hexagon className="w-5 h-5 text-white" strokeWidth={2} />
+                  </div>
+                  <span className="text-xl font-bold text-[#DB0011]">HSBC</span>
+                </div>
+                <span className="text-gray-500">|</span>
+                <span className="text-gray-400">Germany</span>
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-gray-500">Alliance Message Management</div>
+                <div className="text-sm text-gray-300">Instance Search - Detailed Report</div>
+              </div>
+            </div>
+
+            {/* System Banner */}
+            <div className="bg-gray-800 border border-gray-600 p-4 mb-6 text-center">
+              <div className="text-lg font-bold text-white">SWIFT ALLIANCE MESSAGE MANAGEMENT</div>
+              <div className="text-sm text-gray-400">SAAPROD - Production Instance</div>
+            </div>
+
+            {/* Report Info */}
+            <div className="grid grid-cols-2 gap-8 mb-6">
+              <div>
+                <div className="text-gray-500 mb-2">SYSTEM INFORMATION</div>
+                <FieldRow label="System Source" value="SWIFT ALLIANCE MESSAGE MANAGEMENT (SAAPROD)" dark />
+                <FieldRow label="Application" value="Alliance Message Management" dark />
+                <FieldRow label="Report Type" value="Instance Search - Detailed Report" dark />
+                <FieldRow label="Report Status" value="VERIFIED" dark />
+                <FieldRow label="Network Status" value="NETWORK ACK (SUCCESSFUL)" dark />
+              </div>
+              <div className="flex justify-end">
+                <QRCode value={`AMM-${transaction.uetr}`} size={100} />
+              </div>
+            </div>
+
+            {/* Message Details Table */}
+            <SectionHeader title="MESSAGE IDENTIFICATION" dark />
+            <div className="bg-gray-800 border border-gray-600 mb-6">
+              <table className="w-full text-xs">
+                <tbody>
+                  <tr className="border-b border-gray-700">
+                    <td className="p-2 text-gray-500 w-48">Message Type</td>
+                    <td className="p-2 text-gray-200">{transaction.message_type}</td>
+                  </tr>
+                  <tr className="border-b border-gray-700">
+                    <td className="p-2 text-gray-500">Business Service</td>
+                    <td className="p-2 text-gray-200">{transaction.business_service}</td>
+                  </tr>
+                  <tr className="border-b border-gray-700">
+                    <td className="p-2 text-gray-500">Message Input Reference</td>
+                    <td className="p-2 text-gray-200 font-mono">{`REF${trn.slice(-10)}`}</td>
+                  </tr>
+                  <tr className="border-b border-gray-700">
+                    <td className="p-2 text-gray-500">Message Identification</td>
+                    <td className="p-2 text-gray-200 font-mono">{messageId}</td>
+                  </tr>
+                  <tr className="border-b border-gray-700">
+                    <td className="p-2 text-gray-500">Instruction Identification</td>
+                    <td className="p-2 text-gray-200 font-mono">{`INST${trn}`}</td>
+                  </tr>
+                  <tr className="border-b border-gray-700">
+                    <td className="p-2 text-gray-500">End-To-End Identification</td>
+                    <td className="p-2 text-gray-200 font-mono">{transaction.uetr.toUpperCase().replace(/-/g, '').slice(0, 20)}</td>
+                  </tr>
+                  <tr className="border-b border-gray-700">
+                    <td className="p-2 text-gray-500">UETR</td>
+                    <td className="p-2 text-green-400 font-mono">{transaction.uetr}</td>
+                  </tr>
+                  <tr className="border-b border-gray-700">
+                    <td className="p-2 text-gray-500">MUR</td>
+                    <td className="p-2 text-gray-200 font-mono">{`MUR${Date.now().toString().slice(-8)}`}</td>
+                  </tr>
+                  <tr className="border-b border-gray-700">
+                    <td className="p-2 text-gray-500">SWIFT Reference</td>
+                    <td className="p-2 text-gray-200 font-mono">{`SWIFT${trn.slice(-10)}`}</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2 text-gray-500">Creation Date/Time</td>
+                    <td className="p-2 text-gray-200 font-mono">{transaction.created_at}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Financial Institution Details */}
+            <SectionHeader title="PARTICIPATING FINANCIAL INSTITUTIONS" dark />
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-gray-800 border border-gray-600 p-4">
+                <div className="text-red-400 font-bold mb-2">INSTRUCTING AGENT (SENDER)</div>
+                <FieldRow label="BIC" value={transaction.instructing_agent.bic} mono dark />
+                <FieldRow label="Name" value={transaction.instructing_agent.name} dark />
+                <FieldRow label="Country" value={transaction.instructing_agent.country} dark />
+              </div>
+              <div className="bg-gray-800 border border-gray-600 p-4">
+                <div className="text-red-400 font-bold mb-2">INSTRUCTED AGENT (RECEIVER)</div>
+                <FieldRow label="BIC" value={transaction.instructed_agent.bic} mono dark />
+                <FieldRow label="Name" value={transaction.instructed_agent.name} dark />
+                <FieldRow label="Country" value={transaction.instructed_agent.country} dark />
+              </div>
+            </div>
+
+            {/* Settlement Info */}
+            <SectionHeader title="SETTLEMENT INFORMATION" dark />
+            <div className="bg-gray-800 border border-gray-600 p-4 mb-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <FieldRow label="Settlement Method" value={transaction.settlement_info.method} dark />
+                  <FieldRow label="Settlement Priority" value={transaction.settlement_info.priority} dark />
+                  <FieldRow label="Settlement Date" value={transaction.settlement_info.settlement_date} dark />
+                </div>
+                <div>
+                  <FieldRow label="Currency" value={transaction.settlement_info.currency} dark />
+                  <FieldRow label="Amount" value={formatAmount(transaction.settlement_info.interbank_settlement_amount)} mono dark />
+                </div>
+              </div>
+              <div className="mt-4 pt-4 border-t border-gray-700">
+                <div className="text-2xl font-bold text-green-400">
+                  {transaction.settlement_info.currency} {formatAmount(transaction.settlement_info.interbank_settlement_amount)}
+                </div>
+              </div>
+            </div>
+
+            {/* Account Movement */}
+            <SectionHeader title="NOSTRO / VOSTRO ACCOUNT MOVEMENT" dark />
+            <div className="mb-6">
+              <div className="flex items-center gap-2 py-1">
+                <Check className="w-4 h-4 text-green-500" />
+                <span className="text-green-400">DEBITED from Sender's VOSTRO account</span>
+              </div>
+              <div className="flex items-center gap-2 py-1">
+                <Check className="w-4 h-4 text-green-500" />
+                <span className="text-green-400">CREDITED into Receiver's NOSTRO account</span>
+              </div>
+              <div className="flex items-center gap-2 py-1">
+                <Check className="w-4 h-4 text-green-500" />
+                <span className="text-green-400">Network Acknowledgement (ACK) RECEIVED</span>
+              </div>
+              <div className="flex items-center gap-2 py-1">
+                <Check className="w-4 h-4 text-green-500" />
+                <span className="text-green-400">Settlement COMPLETED at correspondent level</span>
+              </div>
+            </div>
+
+            {/* Underlying Transaction */}
+            <SectionHeader title="UNDERLYING TRANSACTION DETAILS" dark />
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-gray-800 border border-gray-600 p-4">
+                <div className="text-red-400 font-bold mb-2">DEBTOR</div>
+                <FieldRow label="Name" value={transaction.debtor.name} dark />
+                <FieldRow label="IBAN" value={transaction.debtor.iban} mono dark />
+                <FieldRow label="Country" value={transaction.debtor.country} dark />
+              </div>
+              <div className="bg-gray-800 border border-gray-600 p-4">
+                <div className="text-red-400 font-bold mb-2">CREDITOR</div>
+                <FieldRow label="Name" value={transaction.creditor.name} dark />
+                <FieldRow label="IBAN" value={transaction.creditor.iban || 'N/A'} mono dark />
+                <FieldRow label="Country" value={transaction.creditor.country} dark />
+              </div>
+            </div>
+
+            {/* Remittance */}
+            <div className="bg-gray-800 border border-gray-600 p-4 mb-6">
+              <div className="text-gray-500 mb-1">REMITTANCE INFORMATION</div>
+              <div className="text-gray-200">{transaction.remittance_info}</div>
+            </div>
+
+            {/* System Confirmation */}
+            <SectionHeader title="SYSTEM CONFIRMATION" dark />
+            <div className="bg-gray-800 border border-green-600 p-4 mb-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <FieldRow label="System Status" value="FINALIZED" dark />
+                  <FieldRow label="Tracking Result" value={transaction.tracking_result} dark />
+                  <FieldRow label="CBPR+ Compliant" value={transaction.cbpr_compliant ? "YES" : "NO"} dark />
+                </div>
+                <div>
+                  <FieldRow label="Reversal Possibility" value={transaction.reversal_possibility} dark />
+                  <FieldRow label="Manual Intervention" value={transaction.manual_intervention} dark />
+                  <FieldRow label="Network ACK" value={transaction.network_ack ? "RECEIVED" : "PENDING"} dark />
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="text-center text-gray-500 pt-4 border-t border-gray-700">
+              <div>Alliance Server Instance: SAAPROD | Operator: SYSTEM</div>
+              <div>Report Generated: {formatDate(new Date().toISOString())} - {new Date().toLocaleTimeString()}</div>
+              <div className="mt-2 text-xs">CONFIDENTIAL - © SWIFT Alliance Access System v2.5.4</div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t-2 border-red-600 text-center font-bold text-red-500">
+              END OF ALLIANCE MESSAGE REPORT
+            </div>
+          </div>
+        </TabsContent>
+
         {/* MT202 COV Tab */}
         <TabsContent value="mt202" className="mt-4">
           <div ref={printRef} className="bg-white border border-gray-200 shadow-lg font-mono text-xs leading-relaxed" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
