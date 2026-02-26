@@ -117,10 +117,10 @@ const DocumentHeader = ({ title, subtitle }) => (
 );
 
 // Field Row Component
-const FieldRow = ({ label, value, mono = false, labelWidth = "w-56" }) => (
+const FieldRow = ({ label, value, mono = false, labelWidth = "w-56", dark = false }) => (
   <div className="flex py-0.5">
-    <span className={`text-gray-600 ${labelWidth} flex-shrink-0`}>{label}:</span>
-    <span className={`text-gray-900 ${mono ? 'font-mono' : ''}`}>{value || '-'}</span>
+    <span className={`${dark ? 'text-gray-500' : 'text-gray-600'} ${labelWidth} flex-shrink-0`}>{label}:</span>
+    <span className={`${dark ? 'text-gray-200' : 'text-gray-900'} ${mono ? 'font-mono' : ''}`}>{value || '-'}</span>
   </div>
 );
 
