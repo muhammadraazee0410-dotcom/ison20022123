@@ -74,9 +74,7 @@ const DocumentHeader = ({ title, subtitle }) => (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#DB0011] flex items-center justify-center">
-            <Hexagon className="w-5 h-5 text-white" strokeWidth={2} />
-          </div>
+          <img src="/hsbc-logo.png" alt="HSBC" className="w-10 h-10 object-contain" />
           <span className="text-2xl font-bold text-[#DB0011]">HSBC</span>
         </div>
         <div className="h-8 w-px bg-gray-300" />
