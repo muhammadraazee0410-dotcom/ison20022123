@@ -35,7 +35,7 @@ HSBC GERMANY MX TRANSACTION PLATFORM - A banking platform for viewing and managi
 - [x] Login page with HSBC branding
 - [x] Dashboard with stats cards, charts, recent transactions
 - [x] Transactions list with search/filter/sort
-- [x] Transaction Detail/Receipt page (SWIFT format)
+- [x] Transaction Detail/Receipt page (SWIFT format) - **UPDATED Feb 2026**
 
 ### Key Features
 - [x] UETR tracking display
@@ -45,6 +45,15 @@ HSBC GERMANY MX TRANSACTION PLATFORM - A banking platform for viewing and managi
 - [x] Status & Compliance section
 - [x] Nostro/Vostro movement indicators
 - [x] Print functionality for receipts
+
+### Transaction Receipt Documents (Feb 2026 Update)
+- [x] **MT202 COV** - Cover Payment with SWIFT message fields (20, 21, 32A, 52A, 56A, 57A, 58A, 72), Sequence A/B, Output Message Report, AFT Validation
+- [x] **PACS.008** - ISO 20022 Customer Credit Transfer with XML message structure
+- [x] **MT103 ACK** - TARGET2 Clearing Acknowledgment with Processing Timestamps, Network Confirmation, Settlement Confirmation
+- [x] **Official Debit Note** - Bank/Customer/Transaction details with authorization
+- [x] HSBC Germany branding (replaced Deutsche Bank)
+- [x] Barcode and QR code components
+- [x] Monospace font for SWIFT document authenticity
 
 ## P0/P1/P2 Features Remaining
 
