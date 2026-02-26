@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -48,40 +49,21 @@ const Barcode = ({ value }) => {
   );
 };
 
-// QR Code Component
+// Real Scannable QR Code Component using qrcode.react
 const QRCode = ({ value, size = 100 }) => {
-  const generateQR = () => {
-    const cells = [];
-    const gridSize = 21;
-    const hash = value.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-    
-    for (let row = 0; row < gridSize; row++) {
-      for (let col = 0; col < gridSize; col++) {
-        const isCorner = (row < 7 && col < 7) || (row < 7 && col >= gridSize - 7) || (row >= gridSize - 7 && col < 7);
-        const isBorder = isCorner && ((row === 0 || row === 6 || col === 0 || col === 6) || 
-                         (row >= gridSize - 7 && (row === gridSize - 7 || row === gridSize - 1 || col === 0 || col === 6)) ||
-                         (col >= gridSize - 7 && (col === gridSize - 7 || col === gridSize - 1 || row === 0 || row === 6)));
-        const isCenter = isCorner && row >= 2 && row <= 4 && col >= 2 && col <= 4;
-        const dataPattern = ((hash + row * col + row + col) % 3) === 0;
-        const isFilled = isCorner ? (isBorder || isCenter) : dataPattern;
-        
-        cells.push(
-          <div
-            key={`${row}-${col}`}
-            className={isFilled ? 'bg-black' : 'bg-white'}
-            style={{ width: `${size / gridSize}px`, height: `${size / gridSize}px` }}
-          />
-        );
-      }
-    }
-    return cells;
-  };
-
+  // Create a URL or data string that can be scanned
+  const qrData = `SWIFT-TXN:${value}`;
+  
   return (
-    <div className="border border-gray-300 bg-white p-1" style={{ width: `${size + 8}px`, height: `${size + 8}px` }}>
-      <div className="grid" style={{ gridTemplateColumns: `repeat(21, 1fr)`, width: `${size}px`, height: `${size}px` }}>
-        {generateQR()}
-      </div>
+    <div className="bg-white p-2 border border-gray-300" style={{ width: size + 16, height: size + 16 }}>
+      <QRCodeSVG
+        value={qrData}
+        size={size}
+        level="H"
+        includeMargin={false}
+        bgColor="#FFFFFF"
+        fgColor="#000000"
+      />
     </div>
   );
 };
