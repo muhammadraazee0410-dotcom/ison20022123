@@ -6,7 +6,7 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Hexagon, Loader2, Lock, Mail } from "lucide-react";
+import { Loader2, Lock, Mail } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -48,9 +48,7 @@ export default function Login() {
       <div className="login-card animate-fade-in">
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="flex items-center justify-center w-12 h-12 bg-[#DB0011] rounded-lg">
-            <Hexagon className="w-8 h-8 text-white" strokeWidth={1.5} />
-          </div>
+          <img src="/hsbc-logo.png" alt="HSBC" className="w-14 h-14 object-contain" />
           <div>
             <h1 className="text-2xl font-semibold text-gray-900">HSBC</h1>
             <p className="text-xs text-gray-500">MX Transaction Platform</p>
