@@ -11,11 +11,12 @@ import {
   Loader2,
   AlertTriangle,
   Hexagon,
+  Check,
 } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
-// Barcode Component - generates Code128-style barcode
+// Barcode Component
 const Barcode = ({ value }) => {
   const generateBars = () => {
     const bars = [];
@@ -47,7 +48,7 @@ const Barcode = ({ value }) => {
   );
 };
 
-// QR Code Component - simplified visual representation
+// QR Code Component
 const QRCode = ({ value, size = 100 }) => {
   const generateQR = () => {
     const cells = [];
@@ -56,26 +57,19 @@ const QRCode = ({ value, size = 100 }) => {
     
     for (let row = 0; row < gridSize; row++) {
       for (let col = 0; col < gridSize; col++) {
-        // Corner patterns
         const isCorner = (row < 7 && col < 7) || (row < 7 && col >= gridSize - 7) || (row >= gridSize - 7 && col < 7);
         const isBorder = isCorner && ((row === 0 || row === 6 || col === 0 || col === 6) || 
                          (row >= gridSize - 7 && (row === gridSize - 7 || row === gridSize - 1 || col === 0 || col === 6)) ||
                          (col >= gridSize - 7 && (col === gridSize - 7 || col === gridSize - 1 || row === 0 || row === 6)));
         const isCenter = isCorner && row >= 2 && row <= 4 && col >= 2 && col <= 4;
-        
-        // Data pattern based on hash
         const dataPattern = ((hash + row * col + row + col) % 3) === 0;
-        
         const isFilled = isCorner ? (isBorder || isCenter) : dataPattern;
         
         cells.push(
           <div
             key={`${row}-${col}`}
             className={isFilled ? 'bg-black' : 'bg-white'}
-            style={{
-              width: `${size / gridSize}px`,
-              height: `${size / gridSize}px`,
-            }}
+            style={{ width: `${size / gridSize}px`, height: `${size / gridSize}px` }}
           />
         );
       }
@@ -84,18 +78,8 @@ const QRCode = ({ value, size = 100 }) => {
   };
 
   return (
-    <div 
-      className="border border-gray-300 bg-white p-1"
-      style={{ width: `${size + 8}px`, height: `${size + 8}px` }}
-    >
-      <div 
-        className="grid"
-        style={{ 
-          gridTemplateColumns: `repeat(21, 1fr)`,
-          width: `${size}px`,
-          height: `${size}px`
-        }}
-      >
+    <div className="border border-gray-300 bg-white p-1" style={{ width: `${size + 8}px`, height: `${size + 8}px` }}>
+      <div className="grid" style={{ gridTemplateColumns: `repeat(21, 1fr)`, width: `${size}px`, height: `${size}px` }}>
         {generateQR()}
       </div>
     </div>
@@ -133,17 +117,25 @@ const DocumentHeader = ({ title, subtitle }) => (
 );
 
 // Field Row Component
-const FieldRow = ({ label, value, mono = false }) => (
+const FieldRow = ({ label, value, mono = false, labelWidth = "w-56" }) => (
   <div className="flex py-0.5">
-    <span className="text-gray-600 w-48 flex-shrink-0">{label}:</span>
+    <span className={`text-gray-600 ${labelWidth} flex-shrink-0`}>{label}:</span>
     <span className={`text-gray-900 ${mono ? 'font-mono' : ''}`}>{value || '-'}</span>
   </div>
 );
 
 // Section Header
-const SectionHeader = ({ title }) => (
-  <div className="border-t border-b border-gray-300 bg-gray-100 py-1 px-2 my-4 text-center">
-    <span className="text-xs font-semibold tracking-wider text-gray-700">{title}</span>
+const SectionHeader = ({ title, dark = false }) => (
+  <div className={`border-t border-b py-1 px-2 my-4 text-center ${dark ? 'border-red-600 bg-transparent' : 'border-gray-300 bg-gray-100'}`}>
+    <span className={`text-xs font-semibold tracking-wider ${dark ? 'text-red-500' : 'text-gray-700'}`}>{title}</span>
+  </div>
+);
+
+// Checkmark Item
+const CheckItem = ({ children, color = "black" }) => (
+  <div className="flex items-start gap-2 py-0.5">
+    <Check className={`w-4 h-4 flex-shrink-0 mt-0.5 ${color === "green" ? "text-green-600" : "text-gray-700"}`} strokeWidth={2} />
+    <span className={color === "green" ? "text-green-600" : "text-gray-900"}>{children}</span>
   </div>
 );
 
@@ -193,28 +185,17 @@ export default function TransactionDetail() {
     fetchTransaction();
   }, [id]);
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const handlePrint = () => window.print();
 
-  const formatAmount = (amount) => {
-    return new Intl.NumberFormat('de-DE', { 
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2 
-    }).format(amount);
-  };
-
-  const formatDate = (dateStr) => {
+  const formatAmount = (amount) => new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
+  const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('de-DE') : '-';
+  const formatDateLong = (dateStr) => {
     if (!dateStr) return '-';
     const date = new Date(dateStr);
-    return date.toLocaleDateString('de-DE');
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    return `${date.getDate().toString().padStart(2, '0')} ${months[date.getMonth()]} ${date.getFullYear()}`;
   };
-
-  const formatDateTime = (dateStr) => {
-    if (!dateStr) return '-';
-    const date = new Date(dateStr);
-    return `${date.toISOString().replace('T', ' ').slice(0, -5)}Z`;
-  };
+  const formatDateTime = (dateStr) => dateStr ? `${new Date(dateStr).toISOString().replace('T', ' ').slice(0, -5)}Z` : '-';
 
   if (loading) {
     return (
@@ -229,82 +210,467 @@ export default function TransactionDetail() {
       <div className="p-6">
         <div className="bg-white border border-gray-200 p-12 text-center">
           <AlertTriangle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Transaction Not Found
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Transaction Not Found</h2>
           <Button onClick={() => navigate("/transactions")} className="bg-[#DB0011] hover:bg-[#B3000E]">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Transactions
+            <ArrowLeft className="w-4 h-4 mr-2" />Back to Transactions
           </Button>
         </div>
       </div>
     );
   }
 
-  // Generate reference numbers
   const trn = `HSBC${transaction.uetr.replace(/-/g, '').slice(0, 12).toUpperCase()}`;
-  const relatedRef = trn;
   const messageId = `HSBC${Date.now().toString().slice(-10)}`;
 
   return (
     <div className="p-6 space-y-4" data-testid="transaction-detail">
       {/* Header Actions */}
       <div className="flex items-center justify-between no-print">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/transactions")}
-            className="text-gray-600 hover:text-gray-900"
-            data-testid="back-button"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-        </div>
+        <Button variant="ghost" onClick={() => navigate("/transactions")} className="text-gray-600 hover:text-gray-900" data-testid="back-button">
+          <ArrowLeft className="w-4 h-4 mr-2" />Back
+        </Button>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handlePrint} className="border-gray-300" data-testid="print-button">
-            <Printer className="w-4 h-4 mr-2" />
-            Print
+            <Printer className="w-4 h-4 mr-2" />Print
           </Button>
           <Button variant="outline" className="border-gray-300">
-            <Download className="w-4 h-4 mr-2" />
-            Export PDF
+            <Download className="w-4 h-4 mr-2" />Export PDF
           </Button>
         </div>
       </div>
 
       {/* Document Tabs */}
-      <Tabs defaultValue="mt202" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 no-print">
+      <Tabs defaultValue="settlement" className="w-full">
+        <TabsList className="grid w-full grid-cols-6 no-print">
+          <TabsTrigger value="settlement">Settlement Letter</TabsTrigger>
+          <TabsTrigger value="confirmation">Confirmation Copy</TabsTrigger>
+          <TabsTrigger value="status">Status Statement</TabsTrigger>
           <TabsTrigger value="mt202">MT202 COV</TabsTrigger>
           <TabsTrigger value="pacs008">PACS.008</TabsTrigger>
-          <TabsTrigger value="mt103ack">MT103 ACK</TabsTrigger>
           <TabsTrigger value="debitnote">Debit Note</TabsTrigger>
         </TabsList>
 
-        {/* MT202 COV - Cover Payment */}
-        <TabsContent value="mt202" className="mt-4">
-          <div ref={printRef} className="bg-white border border-gray-200 shadow-lg font-mono text-xs leading-relaxed" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
-            {/* Barcode */}
-            <Barcode value={transaction.uetr} />
-            
-            {/* Header */}
-            <div className="px-8 pt-4">
-              <DocumentHeader 
-                title="MT202 COV - COVER PAYMENT" 
-                subtitle="SWIFT FINANCIAL INSTITUTION TRANSFER"
-              />
+        {/* Payment Settlement Confirmation Letter */}
+        <TabsContent value="settlement" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            {/* Header Box */}
+            <div className="border-2 border-gray-800 p-4 mb-6 text-center">
+              <div className="border border-gray-400 inline-block px-8 py-2">
+                <div className="font-bold text-sm">PAYMENT SETTLEMENT CONFIRMATION LETTER</div>
+                <div className="text-gray-600">(FOR CORRESPONDENT / BENEFICIARY BANK USE)</div>
+              </div>
             </div>
 
-            {/* Main Content */}
+            {/* Letter Header */}
+            <div className="mb-6">
+              <FieldRow label="To" value="Correspondent / Beneficiary Bank" labelWidth="w-24" />
+              <FieldRow label="Attention" value="Operations / Payments Department" labelWidth="w-24" />
+              <div className="mt-4" />
+              <FieldRow label="From" value="Operations & Settlement Desk" labelWidth="w-24" />
+              <FieldRow label="Via" value="SWIFT Network (CBPR+)" labelWidth="w-24" />
+              <FieldRow label="Date" value={formatDateLong(transaction.settlement_info.settlement_date)} labelWidth="w-24" />
+            </div>
+
+            {/* Subject */}
+            <div className="mb-6">
+              <div className="font-bold">SUBJECT: CONFIRMATION OF SUCCESSFUL SETTLEMENT</div>
+              <div className="ml-16">SWIFT MX {transaction.message_type} - NOSTRO / VOSTRO MOVEMENT</div>
+            </div>
+
+            {/* Body */}
+            <div className="mb-6 leading-relaxed">
+              <p className="mb-4">
+                We hereby confirm that the below-referenced financial institution credit
+                transfer has been successfully processed, acknowledged, and settled through
+                the SWIFT Global Network in accordance with CBPR+ standards.
+              </p>
+              <p>
+                The transaction was active on the SWIFT Global Server and has now been
+                successfully moved into the respective Nostro/Vostro accounts without any
+                exception, rejection, or compliance hold.
+              </p>
+            </div>
+
+            {/* Transaction References */}
+            <div className="mb-6">
+              <div className="font-bold border-b border-gray-400 pb-1 mb-2">TRANSACTION REFERENCES</div>
+              <FieldRow label="Message Type" value={transaction.message_type} />
+              <FieldRow label="Business Service" value={transaction.business_service} />
+              <FieldRow label="Message Identification" value={messageId} mono />
+              <FieldRow label="Instruction Identification" value={`INST${trn}`} mono />
+              <FieldRow label="End-To-End Identification" value={transaction.uetr.toUpperCase().replace(/-/g, '')} mono />
+              <FieldRow label="MUR" value={`MUR${Date.now().toString().slice(-8)}`} mono />
+              <FieldRow label="UETR" value={transaction.uetr} mono />
+              <div className="mt-2" />
+              <FieldRow label="SWIFT Reference" value={`SWIFT${trn.slice(-10)}`} mono />
+              <FieldRow label="SWIFT Request Reference" value={`REQ${trn.slice(-12)}`} mono />
+            </div>
+
+            {/* Participating Institutions */}
+            <div className="mb-6">
+              <div className="font-bold border-b border-gray-400 pb-1 mb-2">PARTICIPATING INSTITUTIONS</div>
+              <FieldRow label="Instructing Agent (Sender)" value={transaction.instructing_agent.bic} mono />
+              <FieldRow label="Instructed Agent (Receiver)" value={transaction.instructed_agent.bic} mono />
+            </div>
+
+            {/* Settlement Confirmation */}
+            <div className="mb-6">
+              <div className="font-bold border-b border-gray-400 pb-1 mb-2">SETTLEMENT CONFIRMATION</div>
+              <FieldRow label="Settlement Method" value={transaction.settlement_info.method} />
+              <FieldRow label="Settlement Priority" value={transaction.settlement_info.priority} />
+              <FieldRow label="Interbank Settlement Date" value={formatDateLong(transaction.settlement_info.settlement_date)} />
+              <FieldRow label="Settlement Amount" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
+            </div>
+
+            {/* Checkmarks */}
+            <div className="mb-6">
+              <CheckItem>Amount debited from sender Vostro account</CheckItem>
+              <CheckItem>Amount credited to receiver Nostro account</CheckItem>
+              <CheckItem>Network Acknowledgement received (ACK)</CheckItem>
+              <CheckItem>Settlement completed at correspondent level</CheckItem>
+            </div>
+
+            {/* Underlying Customer Details */}
+            <div className="mb-6">
+              <div className="font-bold border-b border-gray-400 pb-1 mb-2">UNDERLYING CUSTOMER DETAILS</div>
+              <FieldRow label="Debtor" value={transaction.debtor.name} />
+              <FieldRow label="Debtor Account (IBAN)" value={transaction.debtor.iban} mono />
+              <FieldRow label="Creditor" value={transaction.creditor.name} />
+              <FieldRow label="Creditor Account (IBAN)" value={transaction.creditor.iban || 'N/A'} mono />
+              <FieldRow label="Remittance Information" value={transaction.remittance_info} />
+            </div>
+
+            {/* Final Confirmation */}
+            <div className="mb-6">
+              <div className="font-bold border-b border-gray-400 pb-1 mb-2">FINAL CONFIRMATION</div>
+              <p className="leading-relaxed">
+                We confirm that this transaction is FINAL and SETTLED. No further action is
+                required from your side. The payment is fully reflected in the Nostro/Vostro
+                ledger positions of the respective correspondent banks.
+              </p>
+            </div>
+
+            {/* Signature */}
+            <div className="mt-8">
+              <div className="font-bold">AUTHORIZED SIGN-OFF</div>
+              <div>Operations & Settlement Desk</div>
+              <div>SWIFT Alliance Environment</div>
+              <div className="text-gray-600">(Computer Generated - No Manual Signature Required)</div>
+            </div>
+
+            <div className="mt-8 pt-4 border-t-2 border-gray-800 text-center font-bold">
+              END OF CONFIRMATION LETTER
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* SWIFT Payment Confirmation Copy */}
+        <TabsContent value="confirmation" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            {/* Header Box */}
+            <div className="border-2 border-gray-800 p-4 mb-6 text-center">
+              <div className="font-bold text-sm">SWIFT PAYMENT CONFIRMATION COPY</div>
+              <div className="text-gray-600">(CORRESPONDENT / NOSTRO SETTLEMENT CONFIRMATION)</div>
+            </div>
+
+            {/* Message Type */}
+            <div className="text-gray-600 mb-4 border-b border-gray-300 pb-2">
+              [ MESSAGE TYPE ] {formatDateLong(transaction.created_at)} {formatDateTime(transaction.created_at).split(' ')[1]} CET
+            </div>
+
+            {/* Basic Info */}
+            <div className="mb-6 border-b border-gray-300 pb-4">
+              <FieldRow label="SWIFT MX" value={transaction.message_type} />
+              <FieldRow label="Business Service" value={transaction.business_service} />
+              <FieldRow label="CBPR+ Compliance" value="CONFIRMED" />
+            </div>
+
+            {/* Transaction References */}
+            <div className="mb-6">
+              <div className="text-gray-500 mb-2">[ TRANSACTION REFERENCES ]</div>
+              <div className="border-t border-b border-gray-300 py-2">
+                <FieldRow label="Message Identification" value={messageId} mono />
+                <FieldRow label="Instruction ID" value={`INST${trn}`} mono />
+                <FieldRow label="End-To-End ID" value={transaction.uetr.toUpperCase().replace(/-/g, '')} mono />
+                <FieldRow label="MUR" value={`MUR${Date.now().toString().slice(-8)}`} mono />
+                <FieldRow label="UETR" value={transaction.uetr} mono />
+                <FieldRow label="SWIFT Reference" value={`SWIFT${trn.slice(-10)}`} mono />
+                <FieldRow label="SWIFT Request Reference" value={`REQ${trn.slice(-12)}`} mono />
+              </div>
+            </div>
+
+            {/* Participating Banks */}
+            <div className="mb-6">
+              <div className="text-gray-500 mb-2">[ PARTICIPATING BANKS ]</div>
+              <div className="border-t border-b border-gray-300 py-2">
+                <FieldRow label="Sender Bank" value={transaction.instructing_agent.name} />
+                <FieldRow label="Sender BIC" value={transaction.instructing_agent.bic} mono />
+                <div className="mt-2" />
+                <FieldRow label="Receiver / Beneficiary" value={transaction.instructed_agent.name} />
+                <FieldRow label="Beneficiary Bank BIC" value={transaction.instructed_agent.bic} mono />
+                <div className="mt-2" />
+                <FieldRow label="Correspondent Network" value="SWIFT GLOBAL SERVER" />
+              </div>
+            </div>
+
+            {/* Settlement Details */}
+            <div className="mb-6">
+              <div className="text-gray-500 mb-2">[ SETTLEMENT DETAILS ]</div>
+              <div className="border-t border-b border-gray-300 py-2">
+                <FieldRow label="Settlement Method" value={transaction.settlement_info.method} />
+                <FieldRow label="Settlement Priority" value={transaction.settlement_info.priority} />
+                <FieldRow label="Interbank Settle Date" value={formatDateLong(transaction.settlement_info.settlement_date).toUpperCase().replace(/ /g, '-')} />
+                <FieldRow label="Settlement Amount" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
+              </div>
+            </div>
+
+            {/* Nostro/Vostro Status */}
+            <div className="mb-6">
+              <div className="text-gray-500 mb-2">[ NOSTRO / VOSTRO STATUS ]</div>
+              <div className="border-t border-b border-gray-300 py-2">
+                <FieldRow label="CURRENT STATUS" value="CREDITED TO RECEIVER NOSTRO ACCOUNT" />
+              </div>
+            </div>
+
+            {/* Green Checkmarks */}
+            <div className="mb-6">
+              <CheckItem color="green">Funds are CONFIRMED in the NOSTRO account of the BENEFICIARY BANK</CheckItem>
+              <CheckItem color="green">Payment is READY FOR FINAL SETTLEMENT</CheckItem>
+              <CheckItem color="green">Funds AVAILABLE FOR CREDIT to BENEFICIARY CUSTOMER ACCOUNT</CheckItem>
+              <CheckItem color="green">No HOLD / NO RETURN / NO RECALL FLAGGED</CheckItem>
+            </div>
+
+            {/* Multi-Level Confirmations */}
+            <div className="mb-6">
+              <div className="text-gray-500 mb-2">[ MULTI-LEVEL CONFIRMATIONS ]</div>
+              <div className="border-t border-b border-gray-300 py-2">
+                <div className="flex items-center gap-2 py-0.5">
+                  <Check className="w-4 h-4 text-gray-700" />
+                  <span className="w-56">Sender Bank Confirmation</span>
+                  <span>: HSBC - CONFIRMED</span>
+                </div>
+                <div className="flex items-center gap-2 py-0.5">
+                  <Check className="w-4 h-4 text-gray-700" />
+                  <span className="w-56">SWIFT Network ACK</span>
+                  <span>: CONFIRMED</span>
+                </div>
+                <div className="flex items-center gap-2 py-0.5">
+                  <Check className="w-4 h-4 text-gray-700" />
+                  <span className="w-56">Correspondent Bank Confirmation</span>
+                  <span>: CONFIRMED</span>
+                </div>
+                <div className="flex items-center gap-2 py-0.5">
+                  <Check className="w-4 h-4 text-gray-700" />
+                  <span className="w-56">Global SWIFT Server Status</span>
+                  <span>: ACTIVE & CONFIRMED</span>
+                </div>
+              </div>
+              <p className="mt-2 text-gray-700">
+                The SWIFT Global Server confirms that the transaction is currently positioned
+                in the NOSTRO account of the beneficiary bank and is fully cleared at the
+                correspondent level.
+              </p>
+            </div>
+
+            {/* Global Tracking */}
+            <div className="mb-6">
+              <div className="text-gray-500 mb-2">[ GLOBAL TRACKING & IP VERIFICATION ]</div>
+              <div className="border-t border-gray-300 pt-2">
+                <FieldRow label="Tracking Purpose" value="Settlement & Ledger Confirmation" />
+                <FieldRow label="Tracking Result" value="SUCCESSFUL" />
+                <FieldRow label="Country Used" value={transaction.debtor.country} />
+              </div>
+              
+              {/* IP Table */}
+              <table className="w-full border border-gray-400 mt-4 text-center">
+                <thead>
+                  <tr className="border-b border-gray-400">
+                    <th className="border-r border-gray-400 p-2">#</th>
+                    <th className="border-r border-gray-400 p-2">IP ADDRESS</th>
+                    <th className="border-r border-gray-400 p-2">LOCATION</th>
+                    <th className="p-2">STATUS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-gray-400">
+                    <td className="border-r border-gray-400 p-2">01</td>
+                    <td className="border-r border-gray-400 p-2">192.168.xxx.xxx</td>
+                    <td className="border-r border-gray-400 p-2">Frankfurt, DE</td>
+                    <td className="p-2">SUCCESS</td>
+                  </tr>
+                  <tr className="border-b border-gray-400">
+                    <td className="border-r border-gray-400 p-2">02</td>
+                    <td className="border-r border-gray-400 p-2">10.0.xxx.xxx</td>
+                    <td className="border-r border-gray-400 p-2">SWIFT Server</td>
+                    <td className="p-2">SUCCESS</td>
+                  </tr>
+                  <tr>
+                    <td className="border-r border-gray-400 p-2">03</td>
+                    <td className="border-r border-gray-400 p-2">172.16.xxx.xxx</td>
+                    <td className="border-r border-gray-400 p-2">{transaction.creditor.country}</td>
+                    <td className="p-2">SUCCESS</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Final Confirmation */}
+            <div className="mb-6">
+              <div className="text-gray-500 mb-2">[ FINAL SWIFT CONFIRMATION ]</div>
+              <div className="border-t border-gray-300 pt-2">
+                <p className="leading-relaxed mb-4">
+                  This SWIFT payment has been fully PROCESSED, ACKNOWLEDGED, and SETTLED at the
+                  correspondent banking level. Funds are CONFIRMED in the NOSTRO account of the
+                  beneficiary bank and are READY FOR IMMEDIATE CREDIT to the beneficiary customer
+                  account without restriction.
+                </p>
+                <FieldRow label="SYSTEM STATUS" value="FINALIZED" />
+                <FieldRow label="REVERSAL POSSIBILITY" value="NONE" />
+                <FieldRow label="MANUAL INTERVENTION" value="NOT REQUIRED" />
+              </div>
+            </div>
+
+            {/* Stamp */}
+            <div className="flex justify-end mt-8">
+              <div className="border-2 border-green-600 text-green-600 px-6 py-3 transform rotate-[-5deg]">
+                <div className="font-bold text-center">PAYMENT APPROVED</div>
+                <div className="text-xs text-center mt-1">{formatDate(new Date().toISOString())}</div>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-4 border-t-2 border-gray-800 text-center font-bold">
+              END OF SWIFT CONFIRMATION COPY
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Global Payment Status Statement - Dark Theme */}
+        <TabsContent value="status" className="mt-4">
+          <div className="bg-gray-900 border border-gray-700 shadow-lg font-mono text-xs text-gray-300 p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            {/* Header Box */}
+            <div className="border-2 border-red-600 p-4 mb-6 text-center">
+              <div className="font-bold text-sm text-red-500">GLOBAL PAYMENT STATUS STATEMENT</div>
+              <div className="text-red-400">(SWIFT MX - {transaction.message_type} CONFIRMATION)</div>
+            </div>
+
+            {/* System Info */}
+            <div className="mb-6">
+              <FieldRow label="SYSTEM SOURCE" value="SWIFT ALLIANCE MESSAGE MANAGEMENT (SAAPROD)" />
+              <FieldRow label="APPLICATION" value="Alliance Message Management" />
+              <FieldRow label="REPORT TYPE" value="Instance Search - Detailed Report" />
+              <FieldRow label="REPORT STATUS" value="VERIFIED" />
+              <FieldRow label="NETWORK STATUS" value="NETWORK ACK (SUCCESSFUL)" />
+            </div>
+
+            {/* Global Server Status */}
+            <SectionHeader title="GLOBAL SERVER STATUS" dark />
+            <div className="mb-6">
+              <p className="mb-4 leading-relaxed">
+                The referenced transaction was successfully processed on the SWIFT Global
+                Server. The message was acknowledged by SWIFTNet and cleared under standard
+                CBPR+ settlement routing.
+              </p>
+              <div className="mb-2">Current Status:</div>
+              <CheckItem color="green">ACTIVE ON GLOBAL SWIFT SERVER</CheckItem>
+              <CheckItem color="green">SUCCESSFULLY MOVED INTO NOSTRO / VOSTRO ACCOUNT</CheckItem>
+              <CheckItem color="green">SETTLEMENT FLOW COMPLETED AT CORRESPONDENT LEVEL</CheckItem>
+            </div>
+
+            {/* Message Identification Details */}
+            <SectionHeader title="MESSAGE IDENTIFICATION DETAILS" dark />
+            <div className="mb-6">
+              <FieldRow label="Message Type" value={transaction.message_type} />
+              <FieldRow label="Business Service" value={transaction.business_service} />
+              <FieldRow label="Message Input Reference" value={`REF${trn.slice(-10)}`} mono />
+              <FieldRow label="Message Identification" value={messageId} mono />
+              <FieldRow label="Instruction Identification" value={`INST${trn}`} mono />
+              <FieldRow label="End-To-End Identification" value={transaction.uetr.toUpperCase().replace(/-/g, '').slice(0, 20)} mono />
+              <div className="mt-2" />
+              <FieldRow label="SWIFT Reference" value={`SWIFT${trn.slice(-10)}`} mono />
+              <FieldRow label="SWIFT Request Reference" value={`REQ${trn.slice(-12)}`} mono />
+              <FieldRow label="MUR" value={`MUR${Date.now().toString().slice(-8)}`} mono />
+              <FieldRow label="UETR" value={transaction.uetr} mono />
+              <div className="mt-2" />
+              <FieldRow label="Store & Forward Input Time" value={formatDateTime(transaction.created_at).replace('Z', '')} mono />
+              <FieldRow label="Creation Date & Time" value={`${transaction.created_at}`} mono />
+            </div>
+
+            {/* Participating Financial Institutions */}
+            <SectionHeader title="PARTICIPATING FINANCIAL INSTITUTIONS" dark />
+            <div className="mb-6">
+              <div className="mb-2">Instructing Agent (Sender)</div>
+              <FieldRow label="Bank BIC" value={transaction.instructing_agent.bic} mono />
+              <div className="mt-4 mb-2">Instructed Agent (Receiver)</div>
+              <FieldRow label="Bank BIC" value={transaction.instructed_agent.bic} mono />
+            </div>
+
+            {/* Nostro/Vostro Movement Confirmation */}
+            <SectionHeader title="NOSTRO / VOSTRO MOVEMENT CONFIRMATION" dark />
+            <div className="mb-6">
+              <FieldRow label="Settlement Method" value={transaction.settlement_info.method} />
+              <FieldRow label="Settlement Priority" value={transaction.settlement_info.priority} />
+              <FieldRow label="Interbank Settlement Date" value={transaction.settlement_info.settlement_date} />
+              <FieldRow label="Interbank Settlement Amount" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
+              <div className="mt-4 mb-2">The above amount has been:</div>
+              <CheckItem color="green">DEBITED from the Sender's VOSTRO account</CheckItem>
+              <CheckItem color="green">CREDITED into the Receiver's NOSTRO account</CheckItem>
+              <CheckItem color="green">CONFIRMED under SWIFT Network Acknowledgement</CheckItem>
+            </div>
+
+            {/* Underlying Transaction Details */}
+            <SectionHeader title="UNDERLYING TRANSACTION DETAILS" dark />
+            <div className="mb-6">
+              <FieldRow label="Debtor Name" value={transaction.debtor.name} />
+              <FieldRow label="Debtor Account (IBAN)" value={transaction.debtor.iban} mono />
+              <div className="mt-2" />
+              <FieldRow label="Creditor Name" value={transaction.creditor.name} />
+              <FieldRow label="Creditor Account (IBAN)" value={transaction.creditor.iban || 'N/A'} mono />
+              <div className="mt-2" />
+              <FieldRow label="Remittance Information" value={transaction.remittance_info} />
+            </div>
+
+            {/* Final System Confirmation */}
+            <SectionHeader title="FINAL SYSTEM CONFIRMATION" dark />
+            <div className="mb-6">
+              <p className="mb-4 leading-relaxed">
+                This payment is CURRENT on the SWIFT Global Server and has been successfully
+                routed, acknowledged, and settled. The transaction is fully reflected within
+                the Nostro/Vostro ledger positions of the respective correspondent banks.
+              </p>
+              <p className="mb-4">
+                No rejection, repair, or compliance hold is recorded against this message.
+              </p>
+            </div>
+
+            {/* System Footer */}
+            <SectionHeader title="SYSTEM FOOTER" dark />
+            <div className="mb-6">
+              <FieldRow label="Alliance Server Instance" value="SAAPROD" />
+              <FieldRow label="Operator" value="SYSTEM" />
+              <FieldRow label="Report Generated" value={`${formatDate(new Date().toISOString())} - ${new Date().toLocaleTimeString()}`} />
+              <FieldRow label="CONFIDENTIAL" value="© SWIFT - Alliance Access System v2.5.4" />
+            </div>
+
+            <div className="mt-8 pt-4 border-t-2 border-red-600 text-center font-bold text-red-500">
+              END OF STATEMENT
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* MT202 COV Tab */}
+        <TabsContent value="mt202" className="mt-4">
+          <div ref={printRef} className="bg-white border border-gray-200 shadow-lg font-mono text-xs leading-relaxed" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            <Barcode value={transaction.uetr} />
+            <div className="px-8 pt-4">
+              <DocumentHeader title="MT202 COV - COVER PAYMENT" subtitle="SWIFT FINANCIAL INSTITUTION TRANSFER" />
+            </div>
             <div className="px-8 pb-8 text-xs" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
-              {/* Summary Section */}
               <div className="flex justify-between items-start mb-6">
                 <div className="flex-1">
                   <FieldRow label="TRN" value={trn} mono />
                   <FieldRow label="UETR" value={transaction.uetr} mono />
                   <FieldRow label="MESSAGE TYPE" value="MT202 COV - COVER PAYMENT" />
-                  <FieldRow label="RELATED MT103" value={relatedRef} mono />
+                  <FieldRow label="RELATED MT103" value={trn} mono />
                   <FieldRow label="SENDER'S SENDING TIME" value={formatDateTime(transaction.created_at)} mono />
                   <FieldRow label="VALUE DATE" value={formatDate(transaction.settlement_info.settlement_date)} />
                   <FieldRow label="SETTLEMENT AMOUNT" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
@@ -313,195 +679,41 @@ export default function TransactionDetail() {
                   <FieldRow label="CLEARING MECHANISM" value="CORRESPONDENT BANKING - NOSTRO/VOSTRO" />
                   <FieldRow label="SERVICE TYPE" value="SWIFT GPI COV" />
                 </div>
-                <div className="ml-8">
-                  <QRCode value={transaction.uetr} size={90} />
-                </div>
+                <div className="ml-8"><QRCode value={transaction.uetr} size={90} /></div>
               </div>
 
-              {/* Institution Details */}
-              <div className="grid grid-cols-2 gap-8 mb-4">
-                <div>
-                  <div className="text-gray-500 mb-1">ORDERING INSTITUTION:</div>
-                  <div className="font-semibold">{transaction.instructing_agent.name}</div>
-                  <FieldRow label="BIC CODE" value={transaction.instructing_agent.bic} mono />
-                  <FieldRow label="ADDRESS" value={`TAUNUSANLAGE 12, 60254 FRANKFURT AM MAIN, GERMANY`} />
-                </div>
-                <div>
-                  <div className="text-gray-500 mb-1">INTERMEDIARY INSTITUTION:</div>
-                  <div className="font-semibold">COMMERZBANK AG</div>
-                  <FieldRow label="BIC CODE" value="COBADEFF" mono />
-                  <FieldRow label="ADDRESS" value="COBADEFF" />
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <div className="text-gray-500 mb-1">BENEFICIARY BANK:</div>
-                <div className="font-semibold">{transaction.instructed_agent.name}</div>
-                <FieldRow label="BIC CODE" value={transaction.instructed_agent.bic} mono />
-                <FieldRow label="BANK ADDRESS" value={`${transaction.creditor.country}`} />
-              </div>
-
-              {/* Message Text - Sequence A */}
               <SectionHeader title="MESSAGE TEXT - SEQUENCE A: GENERAL INFORMATION" />
-              
-              <SwiftField tag="20" label="TRANSACTION REFERENCE NUMBER">
-                {trn}
-              </SwiftField>
-              <SwiftField tag="21" label="RELATED REFERENCE">
-                {relatedRef}
-              </SwiftField>
-              <SwiftField tag="32A" label="VALUE DATE, CURRENCY, AMOUNT">
-{`DATE:     ${formatDate(transaction.settlement_info.settlement_date)}
-CURRENCY: ${transaction.settlement_info.currency}
-AMOUNT:   ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`}
-              </SwiftField>
-              <SwiftField tag="52A" label="ORDERING INSTITUTION">
-                {transaction.instructing_agent.bic}
-              </SwiftField>
-              <SwiftField tag="56A" label="INTERMEDIARY INSTITUTION">
-{`COBADEFF
-COMMERZBANK AG`}
-              </SwiftField>
-              <SwiftField tag="57A" label="BENEFICIARY BANK">
-{`${transaction.instructed_agent.bic}
-${transaction.instructed_agent.name}
-${transaction.creditor.country}`}
-              </SwiftField>
-              <SwiftField tag="58A" label="BENEFICIARY INSTITUTION">
-{`${transaction.instructed_agent.bic}
-${transaction.instructed_agent.name}
-${transaction.creditor.country}`}
-              </SwiftField>
-              <SwiftField tag="72" label="SENDER TO RECEIVER INFORMATION">
-{`//INS/${transaction.instructing_agent.bic}
-//COVER PAYMENT FOR MT103
-//REF: ${trn}`}
-              </SwiftField>
+              <SwiftField tag="20" label="TRANSACTION REFERENCE NUMBER">{trn}</SwiftField>
+              <SwiftField tag="21" label="RELATED REFERENCE">{trn}</SwiftField>
+              <SwiftField tag="32A" label="VALUE DATE, CURRENCY, AMOUNT">{`DATE:     ${formatDate(transaction.settlement_info.settlement_date)}\nCURRENCY: ${transaction.settlement_info.currency}\nAMOUNT:   ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`}</SwiftField>
+              <SwiftField tag="52A" label="ORDERING INSTITUTION">{transaction.instructing_agent.bic}</SwiftField>
+              <SwiftField tag="56A" label="INTERMEDIARY INSTITUTION">{`COBADEFF\nCOMMERZBANK AG`}</SwiftField>
+              <SwiftField tag="57A" label="BENEFICIARY BANK">{`${transaction.instructed_agent.bic}\n${transaction.instructed_agent.name}`}</SwiftField>
+              <SwiftField tag="72" label="SENDER TO RECEIVER INFORMATION">{`//INS/${transaction.instructing_agent.bic}\n//COVER PAYMENT FOR MT103\n//REF: ${trn}`}</SwiftField>
 
-              {/* Message Text - Sequence B */}
               <SectionHeader title="MESSAGE TEXT - SEQUENCE B: UNDERLYING CUSTOMER CREDIT TRANSFER DETAILS" />
+              <SwiftField tag="50K" label="ORDERING CUSTOMER">{`${transaction.debtor.iban}\n${transaction.debtor.name}`}</SwiftField>
+              <SwiftField tag="59" label="BENEFICIARY CUSTOMER">{`${transaction.creditor.iban || '//ACCOUNT'}\n${transaction.creditor.name}`}</SwiftField>
+              <SwiftField tag="70" label="REMITTANCE INFORMATION">{transaction.remittance_info}</SwiftField>
+              <SwiftField tag="72" label="SENDER TO RECEIVER INFORMATION">{`//UETR/${transaction.uetr}\n//MT103 SENT DIRECTLY TO BENEFICIARY BANK`}</SwiftField>
 
-              <SwiftField tag="50K" label="ORDERING CUSTOMER">
-{`${transaction.debtor.iban}
-${transaction.debtor.name}
-${transaction.debtor.country}`}
-              </SwiftField>
-              <SwiftField tag="52A" label="ORDERING INSTITUTION">
-{`${transaction.instructing_agent.bic}
-${transaction.instructing_agent.name}`}
-              </SwiftField>
-              <SwiftField tag="56A" label="INTERMEDIARY INSTITUTION">
-{`COBADEFF
-COMMERZBANK AG`}
-              </SwiftField>
-              <SwiftField tag="57A" label="BENEFICIARY BANK">
-                {transaction.instructed_agent.bic}
-              </SwiftField>
-              <SwiftField tag="59" label="BENEFICIARY CUSTOMER">
-{`${transaction.creditor.iban || '//ACCOUNT'}
-${transaction.creditor.name}
-${transaction.creditor.country}`}
-              </SwiftField>
-              <SwiftField tag="70" label="REMITTANCE INFORMATION">
-                {transaction.remittance_info}
-              </SwiftField>
-              <SwiftField tag="71A" label="DETAILS OF CHARGES">
-                SHA
-              </SwiftField>
-              <SwiftField tag="72" label="SENDER TO RECEIVER INFORMATION">
-{`//UETR/${transaction.uetr}
-//MT103 SENT DIRECTLY TO BENEFICIARY BANK
-//THIS IS THE COVER PAYMENT
-//PLEASE APPLY FUNDS AS PER MT103 INSTRUCTIONS`}
-              </SwiftField>
-
-              {/* Output SWIFT Message Report */}
-              <SectionHeader title="OUTPUT SWIFT MESSAGE REPORT" />
-              
-              <div className="bg-gray-50 p-4 font-mono text-xs overflow-x-auto border border-gray-200">
-                <pre className="whitespace-pre-wrap">
-{`:1:F01${transaction.instructing_agent.bic} 1 1 }2:O202${transaction.instructed_agent.bic} M)}3:{103:COV}{108:${trn}}{119:COV}}{121:${transaction.uetr}}-
-:20:${trn}
-:21:${relatedRef}
-:32A:${transaction.settlement_info.settlement_date.replace(/-/g, '')}${transaction.settlement_info.currency}${formatAmount(transaction.settlement_info.interbank_settlement_amount).replace(/\./g, ',')}
-:52A:${transaction.instructing_agent.bic}
-:56A:COBADEFF
-COMMERZBANK AG
-:57A:${transaction.instructed_agent.bic}
-${transaction.instructed_agent.name}
-:58A:${transaction.instructed_agent.bic}
-${transaction.instructed_agent.name}
-:72://INS/${transaction.instructing_agent.bic}
-//COVER PAYMENT FOR MT103
-//REF: ${trn}
-
-:50K:${transaction.debtor.iban}
-${transaction.debtor.name}
-:52A:DEUTDEFFXXX
-:56A:COBADEFF
-:57A:${transaction.instructed_agent.bic}
-${transaction.instructed_agent.name}
-:59://${transaction.creditor.iban || 'ACCOUNT'}
-${transaction.creditor.name}
-:70:${transaction.remittance_info}
-:71A:SHA
-:72://UETR/${transaction.uetr}
-//MT103 SENT DIRECTLY TO BENEFICIARY BANK`}
-                </pre>
-              </div>
-
-              {/* AFT Validation */}
-              <SectionHeader title="AUTOMATED FILE TRANSFER (AFT) VALIDATION" />
-              
-              <div className="mb-2 text-gray-600">
-                <div>ALLIANCE ACCESS 7.5 - AFT GATEWAY ACKNOWLEDGMENT PROTOCOL</div>
-                <div>REAL-TIME STRAIGHT-THROUGH PROCESSING VALIDATION ENGINE</div>
-                <div>LAU/FMA AUTHENTICATED MESSAGE DELIVERY - COPY SERVICE CONFIRMATION</div>
-                <div className="mt-2 font-semibold">UN/EDIFACT SEGMENT VALIDATION - ISO 9735 COMPLIANCE STATUS</div>
-              </div>
-
-              <div className="border-t border-b border-gray-200 py-2 mt-4">
-                <ValidationRow code="0050" description="CMT, CONTROL TOTAL/CHECKSUM" status="VALID" detail="CHK: 8B5D" />
-                <ValidationRow code="0060" description="RFF-DTM, REFERENCE/DATETIME" status="VALID" detail="SYNC" />
-                <ValidationRow code="0070" description="RFF, REFERENCE NUMBER" status="VALID" detail="UETR: OK" />
-                <ValidationRow code="0080" description="DTM, DATE/TIME FORMAT" status="VALID" detail="ISO: 8601" />
-                <ValidationRow code="0090" description="NAD-CTA-COM, PARTY DETAILS" status="VALID" detail="BIC: AUTH" />
-                <ValidationRow code="0100" description="NAD, NAME AND ADDRESS" status="VALID" detail="DIR: FOUND" />
-                <ValidationRow code="0110" description="CTA, CONTACT INFORMATION" status="VALID" detail="PIN: VALID" />
-                <ValidationRow code="0120" description="COM, COMMUNICATION DETAILS" status="VALID" detail="EMC: AES256" />
-                <ValidationRow code="0125" description="CUX, CURRENCY DETAILS" status="VALID" detail="FX: N/A" />
-                <ValidationRow code="0130" description="ENC-FTX-SGA, EXTENDED VALIDATION" status="VALID" detail="SIG: RSA" />
-                <ValidationRow code="0140" description="EBC, APPLICATION ERROR CODE" status="VALID" detail="ERR: NONE" />
-                <ValidationRow code="0150" description="FTX, FREE TEXT NARRATIVE" status="VALID" detail="LEN: 1024" />
-                <ValidationRow code="0160" description="RFF-FTX, REFERENCE TEXT" status="VALID" detail="PMT: SWIFT" />
-                <ValidationRow code="0170" description="RFF, REFERENCE IDENTIFIER" status="VALID" detail="DOF: NONE" />
-                <ValidationRow code="0180" description="FTX, ADDITIONAL INFORMATION" status="VALID" detail="CHNL: UTF8" />
-                <ValidationRow code="0190" description="UNT, MESSAGE TRAILER/COUNT" status="VALID" detail="SEG: 20/20" />
-              </div>
-
-              {/* Footer */}
               <div className="mt-6 pt-4 border-t border-gray-300 text-gray-500">
-                <div>MT202 COV GENERAL FINANCIAL INSTITUTION TRANSFER | GENERATED: {formatDateTime(new Date().toISOString())}</div>
+                <div>MT202 COV | GENERATED: {formatDateTime(new Date().toISOString())}</div>
                 <div>REFERENCE: {trn} | UETR: {transaction.uetr}</div>
               </div>
             </div>
           </div>
         </TabsContent>
 
-        {/* PACS.008 Customer Credit Transfer */}
+        {/* PACS.008 Tab */}
         <TabsContent value="pacs008" className="mt-4">
           <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
             <Barcode value={`PACS008${transaction.uetr}`} />
-            
             <div className="px-8 pt-4">
-              <DocumentHeader 
-                title="ISO 20022 PACS.008 CUSTOMER CREDIT TRANSFER" 
-              />
+              <DocumentHeader title="ISO 20022 PACS.008 CUSTOMER CREDIT TRANSFER" />
             </div>
-
             <div className="px-8 pb-8">
               <SectionHeader title="MESSAGE HEADER" />
-
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <FieldRow label="MESSAGE TYPE" value="PACS.008.001.10" />
@@ -510,320 +722,81 @@ ${transaction.creditor.name}
                   <FieldRow label="UETR" value={transaction.uetr} mono />
                   <FieldRow label="SETTLEMENT METHOD" value={transaction.settlement_info.method} />
                   <FieldRow label="CLEARING SYSTEM" value="TARGET2 CLEARING / SWIFT CROSS-BORDER" />
-                  <FieldRow label="INSTRUCTION ID" value={`INST${trn}`} mono />
-                  <FieldRow label="END-TO-END ID" value={transaction.uetr.toUpperCase().replace(/-/g, '')} mono />
-                  <FieldRow label="CLEARING SYSTEM DETAILS" value="TARGET2" />
-                  <FieldRow label="SETTLEMENT METHOD" value="TARGET2" />
-                  <FieldRow label="PURPOSE CODE" value="OTHR" />
-                  <FieldRow label="CATEGORY PURPOSE" value="COMM" />
                 </div>
-                <div className="ml-8">
-                  <QRCode value={`PACS008${transaction.uetr}`} size={90} />
-                </div>
+                <div className="ml-8"><QRCode value={`PACS008${transaction.uetr}`} size={90} /></div>
               </div>
 
               <SectionHeader title="PACS.008 MESSAGE STRUCTURE" />
-
               <div className="bg-gray-900 text-green-400 p-4 rounded font-mono text-xs overflow-x-auto">
-                <pre className="whitespace-pre-wrap">
-{`<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.10">
+                <pre className="whitespace-pre-wrap">{`<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.10">
   <FIToFICstmrCdtTrf>
     <GrpHdr>
-      <MsgId>
-        ${messageId}
-      </MsgId>
-      <CreDtTm>
-        ${transaction.created_at}
-      </CreDtTm>
-      <NbOfTxs>
-        1
-      </NbOfTxs>
-      <TtlIntrBkSttlmAmt Ccy="${transaction.settlement_info.currency}">
-        ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}
-      </TtlIntrBkSttlmAmt>
-      <IntrBkSttlmDt>
-        ${transaction.settlement_info.settlement_date}
-      </IntrBkSttlmDt>
-      <SttlmInf>
-        <SttlmMtd>
-          ${transaction.settlement_info.method}
-        </SttlmMtd>
-        <ClrSys>
-          <Cd>
-            CBA
-          </Cd>
-        </ClrSys>
-      </SttlmInf>
-      <InstgAgt>
-        <FinInstnId>
-          <BICFI>
-            ${transaction.instructing_agent.bic}
-          </BICFI>
-          <Nm>
-            ${transaction.instructing_agent.name}
-          </Nm>
-          <PstlAdr>
-            <Ctry>
-              ${transaction.instructing_agent.country}
-            </Ctry>
-            <TwnNm>
-              FRANKFURT AM MAIN
-            </TwnNm>
-          </PstlAdr>
-        </FinInstnId>
-      </InstgAgt>
-      <InstdAgt>
-        <FinInstnId>
-          <BICFI>
-            ${transaction.instructed_agent.bic}
-          </BICFI>
-          <Nm>
-            ${transaction.instructed_agent.name}
-          </Nm>
-          <PstlAdr>
-            <Ctry>
-              ${transaction.instructed_agent.country}
-            </Ctry>
-          </PstlAdr>
-        </FinInstnId>
-      </InstdAgt>
+      <MsgId>${messageId}</MsgId>
+      <CreDtTm>${transaction.created_at}</CreDtTm>
+      <NbOfTxs>1</NbOfTxs>
+      <TtlIntrBkSttlmAmt Ccy="${transaction.settlement_info.currency}">${formatAmount(transaction.settlement_info.interbank_settlement_amount)}</TtlIntrBkSttlmAmt>
+      <IntrBkSttlmDt>${transaction.settlement_info.settlement_date}</IntrBkSttlmDt>
     </GrpHdr>
     <CdtTrfTxInf>
       <PmtId>
-        <InstrId>
-          INST${trn}
-        </InstrId>
-        <EndToEndId>
-          ${transaction.uetr.toUpperCase().replace(/-/g, '')}
-        </EndToEndId>
-        <TxId>
-          ${trn}
-        </TxId>
-        <UETR>
-          ${transaction.uetr}
-        </UETR>
+        <UETR>${transaction.uetr}</UETR>
       </PmtId>
-      <IntrBkSttlmAmt Ccy="${transaction.settlement_info.currency}">
-        ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}
-      </IntrBkSttlmAmt>
-      <Dbtr>
-        <Nm>
-          ${transaction.debtor.name}
-        </Nm>
-        <PstlAdr>
-          <Ctry>
-            ${transaction.debtor.country}
-          </Ctry>
-        </PstlAdr>
-      </Dbtr>
-      <DbtrAcct>
-        <Id>
-          <IBAN>
-            ${transaction.debtor.iban}
-          </IBAN>
-        </Id>
-      </DbtrAcct>
-      <Cdtr>
-        <Nm>
-          ${transaction.creditor.name}
-        </Nm>
-        <PstlAdr>
-          <Ctry>
-            ${transaction.creditor.country}
-          </Ctry>
-        </PstlAdr>
-      </Cdtr>
-      <CdtrAcct>
-        <Id>
-          <IBAN>
-            ${transaction.creditor.iban || 'N/A'}
-          </IBAN>
-        </Id>
-      </CdtrAcct>
-      <RmtInf>
-        <Ustrd>
-          ${transaction.remittance_info}
-        </Ustrd>
-      </RmtInf>
+      <Dbtr><Nm>${transaction.debtor.name}</Nm></Dbtr>
+      <DbtrAcct><Id><IBAN>${transaction.debtor.iban}</IBAN></Id></DbtrAcct>
+      <Cdtr><Nm>${transaction.creditor.name}</Nm></Cdtr>
+      <RmtInf><Ustrd>${transaction.remittance_info}</Ustrd></RmtInf>
     </CdtTrfTxInf>
   </FIToFICstmrCdtTrf>
-</Document>`}
-                </pre>
+</Document>`}</pre>
               </div>
-
-              {/* Footer */}
               <div className="mt-6 pt-4 border-t border-gray-300 text-gray-500">
-                <div>ISO 20022 PACS.008 CROSS-BORDER | GENERATED: {formatDateTime(new Date().toISOString())}</div>
-                <div>REFERENCE: {messageId} | UETR: {transaction.uetr}</div>
+                <div>ISO 20022 PACS.008 | GENERATED: {formatDateTime(new Date().toISOString())}</div>
               </div>
             </div>
           </div>
         </TabsContent>
 
-        {/* MT103 ACK */}
-        <TabsContent value="mt103ack" className="mt-4">
-          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
-            <Barcode value={`MT103ACK${transaction.uetr}`} />
-            
-            <div className="px-8 pt-4">
-              <DocumentHeader 
-                title="MT103 ANSWER BACK - TARGET2 CLEARING ACKNOWLEDGMENT" 
-              />
-            </div>
-
-            <div className="px-8 pb-8">
-              <div className="text-center text-lg font-bold mb-6 tracking-wider">
-                ACKNOWLEDGED BY TARGET2 [{transaction.instructed_agent.bic}] (ACK)
-              </div>
-
-              <SectionHeader title="TRANSACTION REFERENCE" />
-
-              <div className="flex justify-between items-start mb-6">
-                <div className="flex-1">
-                  <FieldRow label="TRANSACTION REFERENCE NUMBER (TRN)" value={trn} mono />
-                  <FieldRow label="UETR" value={transaction.uetr} mono />
-                  <FieldRow label="MUR" value={`079658933986447N`} mono />
-                  <FieldRow label="TRANSACTION AMOUNT" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)} (PENDING TARGET2 [${transaction.instructed_agent.bic}] CLEARING)`} />
-                  <FieldRow label="VALUE DATE" value={`${formatDate(transaction.settlement_info.settlement_date)} (SETTLEMENT: ${formatDate(transaction.settlement_info.settlement_date)})`} />
-                </div>
-                <div className="ml-8">
-                  <QRCode value={`ACK${transaction.uetr}`} size={90} />
-                </div>
-              </div>
-
-              <SectionHeader title="PROCESSING TIMESTAMPS" />
-
-              <div className="bg-gray-50 p-4 border border-gray-200 mb-4">
-                <FieldRow label="DATE" value={formatDate(transaction.settlement_info.settlement_date)} />
-                <FieldRow label="CREATION TIME" value={`${formatDate(transaction.settlement_info.settlement_date)} - ${formatDateTime(transaction.created_at)}`} mono />
-                <FieldRow label="TRANSMISSION TIME" value={`${formatDate(transaction.settlement_info.settlement_date)} - 40.000 SECONDS`} />
-                <FieldRow label="TARGET2 ACKNOWLEDGMENT TIME" value={formatDateTime(transaction.updated_at)} mono />
-                <FieldRow label="END TIME" value={formatDateTime(transaction.updated_at)} mono />
-                <FieldRow label="PROCESSING DURATION" value="40.000 SECONDS (TO TARGET2)" />
-              </div>
-
-              <SectionHeader title="NETWORK CONFIRMATION" />
-
-              <div className="bg-gray-50 p-4 border border-gray-200 mb-4">
-                <FieldRow label="SWIFT NETWORK STATUS" value="MESSAGE ACKNOWLEDGED: SUBMITTED TO TARGET2" />
-                <FieldRow label="DELIVERY STATUS" value="DELIVERED TO TARGET2 FOR CLEARING" />
-                <FieldRow label="SETTLEMENT PIPELINE" value={`TARGET2 [CONFIRMED] -> ${transaction.instructed_agent.bic} [PENDING]`} />
-                <FieldRow label="RECEIVER NOTIFICATION" value={transaction.instructed_agent.bic} mono />
-                <FieldRow label="ACK REFERENCE" value={`TARGET2-ACK-${Date.now().toString().slice(-10)} 1`} mono />
-                <FieldRow label="ACK PROCESSING STATUS" value={`ACCEPTED (READY FOR DELIVERY)`} />
-                <FieldRow label="TECHNICAL VALIDATION" value="PASSED" />
-                <FieldRow label="BUSINESS VALIDATION" value="PASSED" />
-                <FieldRow label="SETTLEMENT STATUS" value="SUBMITTED TO SWIFT FOR CROSS-BORDER SETTLEMENT" />
-                <FieldRow label="TRACKER STATUS" value="ACTIVE" />
-                <FieldRow label="NEXT AGENT" value={transaction.instructed_agent.bic} mono />
-              </div>
-
-              <SectionHeader title="SETTLEMENT CONFIRMATION" />
-
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="bg-gray-50 p-4 border border-gray-200">
-                  <div className="font-semibold mb-2 text-gray-700">SENDER CONFIRMATION</div>
-                  <FieldRow label="DEBIT STATUS" value="COMPLETED - SENT TO TARGET2" />
-                  <FieldRow label="DEBIT ACCOUNT" value={transaction.debtor.iban} mono />
-                  <FieldRow label="DEBIT TIME" value={formatDateTime(transaction.created_at)} mono />
-                  <FieldRow label="BALANCE AFTER DEBIT" value={`EUR ${formatAmount(Math.random() * 10000000)}`} />
-                  <FieldRow label="TARGET2 POSITION" value="SUBMITTED FOR CLEARING" />
-                </div>
-                <div className="bg-gray-50 p-4 border border-gray-200">
-                  <div className="font-semibold mb-2 text-gray-700">RECEIVER CONFIRMATION</div>
-                  <FieldRow label="CREDIT STATUS" value={`PENDING TARGET2 [${transaction.instructed_agent.bic}]`} />
-                  <FieldRow label="CREDITOR ACCOUNT" value={transaction.creditor.iban || 'N/A'} mono />
-                  <FieldRow label="EXPECTED CREDIT TIME" value={formatDateTime(transaction.updated_at)} mono />
-                  <FieldRow label="NOTIFICATION" value="PROCESSING" />
-                </div>
-              </div>
-
-              <SectionHeader title="CONFIRMATION STATUS" />
-
-              <div className="bg-green-50 border border-green-200 p-4 text-center">
-                <div className="font-semibold text-green-800 mb-2">THIS ACKNOWLEDGMENT CONFIRMS THAT THE MT103 MESSAGE HAS BEEN</div>
-                <div className="text-green-700">SUCCESSFULLY RECEIVED AND ACCEPTED BY TARGET2 [{transaction.instructed_agent.bic}] FOR CLEARING</div>
-                <div className="text-green-700">TO THE BENEFICIARY BANK VIA SWIFT NETWORK</div>
-                <div className="mt-2 font-mono text-sm">REFERENCE: {trn} | STATUS: ACKNOWLEDGED BY TARGET2 [{transaction.instructed_agent.bic}]</div>
-              </div>
-
-              {/* Footer */}
-              <div className="mt-6 pt-4 border-t border-gray-300 text-gray-500">
-                <div>MT103 ANSWER BACK - TARGET2 [{transaction.instructed_agent.bic}] CLEARING ACKNOWLEDGMENT | GENERATED: {formatDateTime(new Date().toISOString())}</div>
-                <div>TRANSACTION REFERENCE: {trn} | UETR: {transaction.uetr}</div>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Official Debit Note */}
+        {/* Debit Note Tab */}
         <TabsContent value="debitnote" className="mt-4">
           <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
             <Barcode value={`DN${transaction.uetr}`} />
-            
             <div className="px-8 pt-4">
-              <DocumentHeader 
-                title="OFFICIAL DEBIT NOTE" 
-              />
+              <DocumentHeader title="OFFICIAL DEBIT NOTE" />
             </div>
-
             <div className="px-8 pb-8">
               <div className="text-center mb-4">
                 <div>DEBIT NOTE NO: DN-{new Date().toISOString().slice(0, 10)}-1 | DATE: {formatDate(new Date().toISOString())}</div>
               </div>
 
-              <SectionHeader title="DOCUMENT SECURITY CODE" />
-              <div className="text-center mb-4 font-mono">
-                SEC{Date.now().toString().slice(-10)}180
-              </div>
-
               <SectionHeader title="BANK DETAILS" />
-
               <div className="flex justify-between items-start mb-6">
                 <div className="flex-1">
                   <FieldRow label="BANK NAME" value="HSBC GERMANY" />
                   <FieldRow label="BRANCH" value="FRANKFURT BRANCH" />
                   <FieldRow label="ADDRESS" value="TAUNUSANLAGE 12, 60254 FRANKFURT AM MAIN, GERMANY" />
                   <FieldRow label="SWIFT/BIC" value={transaction.instructing_agent.bic} mono />
-                  <FieldRow label="TELEPHONE" value="+49 69 910-00" />
                 </div>
-                <div className="ml-8">
-                  <QRCode value={`DN${transaction.uetr}`} size={90} />
-                </div>
+                <div className="ml-8"><QRCode value={`DN${transaction.uetr}`} size={90} /></div>
               </div>
 
               <SectionHeader title="CUSTOMER DETAILS" />
-
               <FieldRow label="CUSTOMER NAME" value={transaction.debtor.name} />
-              <FieldRow label="CUSTOMER ADDRESS" value={`${transaction.debtor.country}`} />
               <FieldRow label="ACCOUNT NUMBER" value={transaction.debtor.iban} mono />
-              <FieldRow label="CUSTOMER ID" value={`CUST${transaction.debtor.iban.slice(-8)}`} mono />
 
               <SectionHeader title="TRANSACTION DETAILS" />
-
               <FieldRow label="TRANSACTION DATE" value={formatDate(transaction.settlement_info.settlement_date)} />
-              <FieldRow label="VALUE DATE" value={formatDate(transaction.settlement_info.settlement_date)} />
               <FieldRow label="TRANSACTION REFERENCE" value={trn} mono />
               <FieldRow label="UETR" value={transaction.uetr} mono />
-              <FieldRow label="DEBIT AMOUNT" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} />
-              <FieldRow label="AMOUNT IN WORDS" value={`${transaction.settlement_info.currency} ${numberToWords(transaction.settlement_info.interbank_settlement_amount)} ONLY`} />
-              <FieldRow label="DEBIT NOTE NUMBER" value={`DN${trn.slice(-8)}`} mono />
-              <FieldRow label="TRANSACTION TYPE" value="WIRE TRANSFER" />
+              <FieldRow label="DEBIT AMOUNT" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
 
               <SectionHeader title="BENEFICIARY DETAILS" />
-
               <FieldRow label="BENEFICIARY NAME" value={transaction.creditor.name} />
               <FieldRow label="BENEFICIARY BANK" value={transaction.instructed_agent.name} />
               <FieldRow label="BENEFICIARY BIC" value={transaction.instructed_agent.bic} mono />
-              <FieldRow label="BENEFICIARY ACCOUNT" value={transaction.creditor.iban || 'N/A'} mono />
 
               <SectionHeader title="REMITTANCE INFORMATION" />
+              <div className="bg-gray-50 p-4 border border-gray-200 mb-4">{transaction.remittance_info}</div>
 
-              <div className="bg-gray-50 p-4 border border-gray-200 mb-4">
-                {transaction.remittance_info}
-              </div>
-
-              {/* Authorization */}
               <div className="mt-8 grid grid-cols-2 gap-8">
                 <div className="text-center border-t border-gray-300 pt-4">
                   <div className="text-gray-500 text-xs">AUTHORIZED SIGNATURE</div>
@@ -837,11 +810,8 @@ ${transaction.creditor.name}
                 </div>
               </div>
 
-              {/* Footer */}
-              <div className="mt-6 pt-4 border-t border-gray-300 text-gray-500">
-                <div>OFFICIAL DEBIT NOTE | GENERATED: {formatDateTime(new Date().toISOString())}</div>
-                <div>REFERENCE: {trn} | UETR: {transaction.uetr}</div>
-                <div className="mt-2 text-center text-xs">This is a computer-generated document and does not require a physical signature.</div>
+              <div className="mt-6 pt-4 border-t border-gray-300 text-gray-500 text-center">
+                This is a computer-generated document and does not require a physical signature.
               </div>
             </div>
           </div>
@@ -849,50 +819,4 @@ ${transaction.creditor.name}
       </Tabs>
     </div>
   );
-}
-
-// Helper function to convert number to words
-function numberToWords(num) {
-  const ones = ['', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE'];
-  const tens = ['', '', 'TWENTY', 'THIRTY', 'FORTY', 'FIFTY', 'SIXTY', 'SEVENTY', 'EIGHTY', 'NINETY'];
-  const teens = ['TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN', 'FIFTEEN', 'SIXTEEN', 'SEVENTEEN', 'EIGHTEEN', 'NINETEEN'];
-
-  if (num === 0) return 'ZERO';
-
-  const millions = Math.floor(num / 1000000);
-  const thousands = Math.floor((num % 1000000) / 1000);
-  const remainder = Math.floor(num % 1000);
-
-  let result = '';
-
-  if (millions > 0) {
-    result += convertHundreds(millions) + ' MILLION ';
-  }
-  if (thousands > 0) {
-    result += convertHundreds(thousands) + ' THOUSAND ';
-  }
-  if (remainder > 0) {
-    result += convertHundreds(remainder);
-  }
-
-  return result.trim();
-
-  function convertHundreds(n) {
-    let str = '';
-    if (n >= 100) {
-      str += ones[Math.floor(n / 100)] + ' HUNDRED ';
-      n %= 100;
-    }
-    if (n >= 20) {
-      str += tens[Math.floor(n / 10)] + ' ';
-      n %= 10;
-    } else if (n >= 10) {
-      str += teens[n - 10] + ' ';
-      n = 0;
-    }
-    if (n > 0) {
-      str += ones[n] + ' ';
-    }
-    return str.trim();
-  }
 }
