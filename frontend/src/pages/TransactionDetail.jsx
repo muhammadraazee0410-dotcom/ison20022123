@@ -645,9 +645,7 @@ export default function TransactionDetail() {
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-700">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-[#DB0011] flex items-center justify-center">
-                    <Hexagon className="w-5 h-5 text-white" strokeWidth={2} />
-                  </div>
+                  <img src="/hsbc-logo.png" alt="HSBC" className="w-10 h-10 object-contain" />
                   <span className="text-xl font-bold text-[#DB0011]">HSBC</span>
                 </div>
                 <span className="text-gray-500">|</span>
