@@ -127,6 +127,14 @@ export default function Transactions() {
             <RefreshCw className="w-4 h-4 mr-2" />
             Refresh
           </Button>
+          <Button
+            onClick={() => navigate("/transactions/new")}
+            className="bg-[#DB0011] hover:bg-[#B3000E]"
+            data-testid="new-transaction-button"
+          >
+            <PlusCircle className="w-4 h-4 mr-2" />
+            New Transaction
+          </Button>
         </div>
       </div>
 
