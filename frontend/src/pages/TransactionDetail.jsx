@@ -332,15 +332,18 @@ export default function TransactionDetail() {
 
       {/* Document Tabs */}
       <Tabs defaultValue="settlement" className="w-full">
-        <TabsList className="grid w-full grid-cols-8 no-print">
-          <TabsTrigger value="settlement">Settlement</TabsTrigger>
-          <TabsTrigger value="confirmation">Confirmation</TabsTrigger>
-          <TabsTrigger value="status">Status</TabsTrigger>
-          <TabsTrigger value="server">Server Report</TabsTrigger>
-          <TabsTrigger value="alliance">Alliance Msg</TabsTrigger>
-          <TabsTrigger value="mt202">MT202 COV</TabsTrigger>
-          <TabsTrigger value="pacs008">PACS.008</TabsTrigger>
-          <TabsTrigger value="debitnote">Debit Note</TabsTrigger>
+        <TabsList className="flex flex-wrap gap-1 h-auto p-1 no-print">
+          <TabsTrigger value="settlement" className="text-xs">Settlement</TabsTrigger>
+          <TabsTrigger value="confirmation" className="text-xs">Confirmation</TabsTrigger>
+          <TabsTrigger value="mt910" className="text-xs">MT910 Credit</TabsTrigger>
+          <TabsTrigger value="mt900" className="text-xs">MT900 Debit</TabsTrigger>
+          <TabsTrigger value="mt945" className="text-xs">MT945 Statement</TabsTrigger>
+          <TabsTrigger value="status" className="text-xs">Status</TabsTrigger>
+          <TabsTrigger value="server" className="text-xs">Server Report</TabsTrigger>
+          <TabsTrigger value="alliance" className="text-xs">Alliance Msg</TabsTrigger>
+          <TabsTrigger value="mt202" className="text-xs">MT202 COV</TabsTrigger>
+          <TabsTrigger value="pacs008" className="text-xs">PACS.008</TabsTrigger>
+          <TabsTrigger value="debitnote" className="text-xs">Debit Note</TabsTrigger>
         </TabsList>
 
         {/* Payment Settlement Confirmation Letter */}
