@@ -17,6 +17,9 @@ import {
   ArrowRight,
   TrendingUp,
   Loader2,
+  Wallet,
+  Euro,
+  CircleDollarSign,
 } from "lucide-react";
 import {
   BarChart,
@@ -43,6 +46,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [chartData, setChartData] = useState(null);
   const [recentTransactions, setRecentTransactions] = useState([]);
+  const [totalFunds, setTotalFunds] = useState(null);
   const [loading, setLoading] = useState(true);
   const [seeding, setSeeding] = useState(false);
   const navigate = useNavigate();
@@ -50,15 +54,17 @@ export default function Dashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [statsRes, chartRes, txnRes] = await Promise.all([
+      const [statsRes, chartRes, txnRes, fundsRes] = await Promise.all([
         axios.get(`${API}/dashboard/stats`),
         axios.get(`${API}/dashboard/chart-data`),
         axios.get(`${API}/transactions?limit=5`),
+        axios.get(`${API}/dashboard/total-funds`),
       ]);
 
       setStats(statsRes.data);
       setChartData(chartRes.data);
       setRecentTransactions(txnRes.data);
+      setTotalFunds(fundsRes.data);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
