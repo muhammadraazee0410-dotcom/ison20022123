@@ -88,6 +88,72 @@ code, .font-mono {
     .print-only {
         display: block !important;
     }
+    
+    /* Reset page layout for printing */
+    body {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Hide sidebar and header */
+    .sidebar, .app-container > aside, nav, header {
+        display: none !important;
+    }
+    
+    /* Make main content full width */
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 0 !important;
+    }
+    
+    /* Document styles */
+    .receipt-container, [class*="TabsContent"] > div {
+        box-shadow: none !important;
+        border: none !important;
+        margin: 0 !important;
+        padding: 20px !important;
+        width: 100% !important;
+        max-width: none !important;
+    }
+    
+    /* Ensure text is black for printing */
+    * {
+        color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    /* Page breaks */
+    .page-break {
+        page-break-before: always;
+    }
+    
+    /* Ensure images print */
+    img {
+        max-width: 100% !important;
+    }
+    
+    /* QR Code styling for print */
+    svg {
+        print-color-adjust: exact !important;
+    }
+    
+    /* Font size adjustments for print */
+    .font-mono, code {
+        font-size: 10px !important;
+    }
+    
+    /* Table styling for print */
+    table {
+        border-collapse: collapse !important;
+    }
+    
+    table td, table th {
+        border: 1px solid #ccc !important;
+        padding: 4px 8px !important;
+    }
 }
 
 /* Animations */
