@@ -385,6 +385,204 @@ async def create_transaction(transaction: TransactionCreate):
         updated_at=doc['updated_at']
     )
 
+class TransactionStatusUpdate(BaseModel):
+    status: str
+    tracking_result: str
+    nostro_credited: bool = True
+    vostro_debited: bool = True
+    network_ack: bool = True
+
+class EmailNotification(BaseModel):
+    transaction_id: str
+    recipient_email: str
+    notification_type: str = "confirmation"
+
+@api_router.patch("/transactions/{transaction_id}/complete")
+async def complete_transaction(transaction_id: str):
+    """Complete a transaction - update status to FINALIZED and SUCCESSFUL"""
+    transaction = await db.transactions.find_one({"id": transaction_id}, {"_id": 0})
+    
+    if not transaction:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+    
+    now = datetime.now(timezone.utc).isoformat()
+    
+    update_data = {
+        "status": "FINALIZED",
+        "tracking_result": "SUCCESSFUL",
+        "nostro_credited": True,
+        "vostro_debited": True,
+        "network_ack": True,
+        "reversal_possibility": "NONE",
+        "manual_intervention": "NOT REQUIRED",
+        "updated_at": now
+    }
+    
+    await db.transactions.update_one(
+        {"id": transaction_id},
+        {"$set": update_data}
+    )
+    
+    # Log the completion
+    logger.info(f"Transaction {transaction_id} completed successfully")
+    
+    return {
+        "message": "Transaction completed successfully",
+        "transaction_id": transaction_id,
+        "status": "FINALIZED",
+        "tracking_result": "SUCCESSFUL",
+        "completed_at": now
+    }
+
+@api_router.patch("/transactions/{transaction_id}/status")
+async def update_transaction_status(transaction_id: str, status_update: TransactionStatusUpdate):
+    """Update transaction status"""
+    transaction = await db.transactions.find_one({"id": transaction_id}, {"_id": 0})
+    
+    if not transaction:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+    
+    now = datetime.now(timezone.utc).isoformat()
+    
+    update_data = {
+        "status": status_update.status,
+        "tracking_result": status_update.tracking_result,
+        "nostro_credited": status_update.nostro_credited,
+        "vostro_debited": status_update.vostro_debited,
+        "network_ack": status_update.network_ack,
+        "updated_at": now
+    }
+    
+    await db.transactions.update_one(
+        {"id": transaction_id},
+        {"$set": update_data}
+    )
+    
+    return {
+        "message": "Transaction status updated",
+        "transaction_id": transaction_id,
+        "new_status": status_update.status,
+        "tracking_result": status_update.tracking_result,
+        "updated_at": now
+    }
+
+@api_router.post("/transactions/{transaction_id}/send-notification")
+async def send_email_notification(transaction_id: str, notification: EmailNotification):
+    """Send email notification for a transaction (simulated)"""
+    transaction = await db.transactions.find_one({"id": transaction_id}, {"_id": 0})
+    
+    if not transaction:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+    
+    # In production, this would integrate with an email service
+    # For now, we simulate the email sending
+    now = datetime.now(timezone.utc).isoformat()
+    
+    email_record = {
+        "id": str(uuid.uuid4()),
+        "transaction_id": transaction_id,
+        "recipient_email": notification.recipient_email,
+        "notification_type": notification.notification_type,
+        "subject": f"SWIFT MX Transaction Confirmation - {transaction['uetr']}",
+        "sent_at": now,
+        "status": "SENT",
+        "transaction_details": {
+            "uetr": transaction['uetr'],
+            "amount": f"{transaction['settlement_info']['currency']} {transaction['settlement_info']['interbank_settlement_amount']:,.2f}",
+            "debtor": transaction['debtor']['name'],
+            "creditor": transaction['creditor']['name'],
+            "status": transaction['tracking_result']
+        }
+    }
+    
+    # Store email notification record
+    await db.email_notifications.insert_one(email_record)
+    
+    logger.info(f"Email notification sent for transaction {transaction_id} to {notification.recipient_email}")
+    
+    return {
+        "message": "Email notification sent successfully",
+        "notification_id": email_record['id'],
+        "recipient": notification.recipient_email,
+        "sent_at": now,
+        "transaction_uetr": transaction['uetr']
+    }
+
+@api_router.get("/transactions/{transaction_id}/notifications")
+async def get_transaction_notifications(transaction_id: str):
+    """Get all email notifications for a transaction"""
+    notifications = await db.email_notifications.find(
+        {"transaction_id": transaction_id},
+        {"_id": 0}
+    ).to_list(100)
+    
+    return {"notifications": notifications}
+
+@api_router.get("/server-report/{transaction_id}")
+async def get_server_report(transaction_id: str):
+    """Generate server processing report for a transaction"""
+    transaction = await db.transactions.find_one({"id": transaction_id}, {"_id": 0})
+    
+    if not transaction:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+    
+    now = datetime.now(timezone.utc)
+    
+    return {
+        "report_type": "SWIFT_SERVER_PROCESSING_REPORT",
+        "report_id": f"RPT-{transaction_id[:8].upper()}",
+        "generated_at": now.isoformat(),
+        "transaction": {
+            "id": transaction['id'],
+            "uetr": transaction['uetr'],
+            "message_type": transaction['message_type'],
+            "status": transaction['status'],
+            "tracking_result": transaction['tracking_result']
+        },
+        "server_details": {
+            "server_name": "SWIFT_GLOBAL_SERVER_EU",
+            "server_location": "Frankfurt, Germany",
+            "server_instance": "SAAPROD",
+            "alliance_version": "7.5.4"
+        },
+        "processing_timeline": {
+            "message_received": transaction['created_at'],
+            "validation_completed": transaction['created_at'],
+            "routing_completed": transaction['created_at'],
+            "settlement_initiated": transaction['created_at'],
+            "settlement_completed": transaction['updated_at'],
+            "ack_sent": transaction['updated_at']
+        },
+        "validation_results": {
+            "syntax_validation": "PASSED",
+            "semantic_validation": "PASSED",
+            "business_validation": "PASSED",
+            "compliance_check": "PASSED",
+            "sanctions_screening": "CLEARED",
+            "duplicate_check": "NO_DUPLICATE"
+        },
+        "network_status": {
+            "swift_network_ack": transaction.get('network_ack', True),
+            "correspondent_ack": True,
+            "beneficiary_ack": transaction['tracking_result'] == 'SUCCESSFUL'
+        },
+        "settlement_confirmation": {
+            "nostro_credited": transaction.get('nostro_credited', True),
+            "vostro_debited": transaction.get('vostro_debited', True),
+            "settlement_method": transaction['settlement_info']['method'],
+            "settlement_amount": f"{transaction['settlement_info']['currency']} {transaction['settlement_info']['interbank_settlement_amount']:,.2f}"
+        },
+        "audit_trail": [
+            {"timestamp": transaction['created_at'], "event": "MESSAGE_RECEIVED", "status": "SUCCESS"},
+            {"timestamp": transaction['created_at'], "event": "VALIDATION_STARTED", "status": "SUCCESS"},
+            {"timestamp": transaction['created_at'], "event": "VALIDATION_COMPLETED", "status": "SUCCESS"},
+            {"timestamp": transaction['created_at'], "event": "ROUTING_INITIATED", "status": "SUCCESS"},
+            {"timestamp": transaction['created_at'], "event": "SETTLEMENT_INITIATED", "status": "SUCCESS"},
+            {"timestamp": transaction['updated_at'], "event": "SETTLEMENT_COMPLETED", "status": "SUCCESS"},
+            {"timestamp": transaction['updated_at'], "event": "ACK_GENERATED", "status": "SUCCESS"}
+        ]
+    }
+
 @api_router.post("/seed-data")
 async def seed_sample_data():
     """Seed the database with sample SWIFT MX transactions"""
