@@ -208,6 +208,18 @@ async def get_dashboard_stats():
         avg_transaction_amount=avg_amount
     )
 
+@api_router.get("/dashboard/total-funds")
+async def get_total_funds():
+    """Get total platform funds by currency"""
+    return {
+        "funds": [
+            {"currency": "EUR", "amount": 456889621000.94, "formatted": "€456,889,621,000.94"},
+            {"currency": "USD", "amount": 445990775000.09, "formatted": "$445,990,775,000.09"}
+        ],
+        "total_eur_equivalent": 902880396001.03,
+        "last_updated": datetime.now(timezone.utc).isoformat()
+    }
+
 @api_router.get("/dashboard/chart-data")
 async def get_chart_data():
     """Get chart data for dashboard"""
