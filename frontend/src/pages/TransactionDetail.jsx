@@ -645,9 +645,12 @@ export default function TransactionDetail() {
                 <span className="text-gray-500">|</span>
                 <span className="text-gray-400">Germany</span>
               </div>
-              <div className="text-right">
-                <div className="text-xs text-gray-500">Alliance Message Management</div>
-                <div className="text-sm text-gray-300">Instance Search - Detailed Report</div>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <div className="text-xs text-gray-500">Alliance Message Management</div>
+                  <div className="text-sm text-gray-300">Instance Search - Detailed Report</div>
+                </div>
+                <img src="/swift-logo.png" alt="SWIFT" className="h-10 w-auto object-contain" />
               </div>
             </div>
 
