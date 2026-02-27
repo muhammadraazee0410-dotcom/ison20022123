@@ -222,6 +222,70 @@ class HSBCAPITester:
         )
         return success
 
+    def test_create_transaction(self):
+        """Test creating a new transaction"""
+        transaction_data = {
+            "message_type": "pacs.009.001.08",
+            "uetr": "test-uetr-12345678-90ab-cdef-1234-567890abcdef",
+            "business_service": "swift.finplus",
+            "instructing_agent": {
+                "bic": "TUBDDEDDXXX",
+                "name": "HSBC (CONTINENTAL EUROPE)", 
+                "country": "DE"
+            },
+            "instructed_agent": {
+                "bic": "BSCHESMMXXX",
+                "name": "BANCO SANTANDER S.A.",
+                "country": "ES"
+            },
+            "settlement_info": {
+                "method": "INGA",
+                "priority": "NORMAL",
+                "settlement_date": "2025-12-10",
+                "interbank_settlement_amount": 1000000.00,
+                "currency": "EUR"
+            },
+            "debtor": {
+                "name": "TEST COMPANY LIMITED",
+                "iban": "DE59300308800000499005",
+                "country": "DE"
+            },
+            "creditor": {
+                "name": "TEST RECEIVER LIMITED",
+                "iban": "ES9121000418450200051332",
+                "country": "ES"
+            },
+            "remittance_info": "TEST PAYMENT PURPOSE",
+            "status": "PENDING",
+            "tracking_result": "PENDING",
+            "cbpr_compliant": True,
+            "nostro_credited": False,
+            "vostro_debited": False,
+            "network_ack": False,
+            "reversal_possibility": "POSSIBLE",
+            "manual_intervention": "NOT REQUIRED"
+        }
+        
+        success, response = self.run_test(
+            "Create New Transaction",
+            "POST",
+            "/transactions",
+            200,
+            data=transaction_data
+        )
+        
+        if success:
+            required_fields = ['id', 'uetr', 'message_type', 'created_at']
+            for field in required_fields:
+                if field not in response:
+                    self.log_test(f"Create Transaction - {field} field", False, f"Missing field: {field}")
+                    return False
+            print(f"   Created Transaction ID: {response['id']}")
+            print(f"   UETR: {response['uetr']}")
+            # Store the ID for potential cleanup
+            self.created_transaction_id = response['id']
+        return success
+
 def main():
     """Main test function"""
     print("=" * 60)
