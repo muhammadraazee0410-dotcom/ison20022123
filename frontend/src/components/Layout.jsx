@@ -6,7 +6,8 @@ import {
   FileText, 
   Settings,
   LogOut,
-  Shield
+  Shield,
+  PlusCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +21,7 @@ import {
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard", exact: true },
   { to: "/transactions", icon: ArrowLeftRight, label: "Transactions" },
+  { to: "/transactions/new", icon: PlusCircle, label: "New Transaction" },
 ];
 
 export default function Layout() {
