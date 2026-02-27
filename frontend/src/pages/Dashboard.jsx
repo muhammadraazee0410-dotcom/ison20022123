@@ -151,6 +151,46 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Total Platform Funds */}
+      <Card className="border-2 border-[#DB0011] shadow-lg bg-gradient-to-r from-gray-900 to-gray-800" data-testid="total-funds-card">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-[#DB0011] rounded-xl flex items-center justify-center">
+                <Wallet className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400 font-medium uppercase tracking-wider">
+                  HSBC Germany MX Platform - Total Funds
+                </p>
+                <p className="text-xs text-gray-500 mt-1">Real-time Balance</p>
+              </div>
+            </div>
+            <div className="flex gap-8">
+              <div className="text-right">
+                <div className="flex items-center gap-2 justify-end">
+                  <Euro className="w-5 h-5 text-blue-400" />
+                  <span className="text-sm text-gray-400">EUR Balance</span>
+                </div>
+                <p className="text-3xl font-bold text-white mt-1 font-mono">
+                  €{totalFunds?.funds?.[0]?.amount?.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '456,889,621,000.94'}
+                </p>
+              </div>
+              <div className="w-px bg-gray-700" />
+              <div className="text-right">
+                <div className="flex items-center gap-2 justify-end">
+                  <CircleDollarSign className="w-5 h-5 text-green-400" />
+                  <span className="text-sm text-gray-400">USD Balance</span>
+                </div>
+                <p className="text-3xl font-bold text-white mt-1 font-mono">
+                  ${totalFunds?.funds?.[1]?.amount?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '445,990,775,000.09'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border border-gray-200 shadow-sm hsbc-red-line" data-testid="stat-total-transactions">
