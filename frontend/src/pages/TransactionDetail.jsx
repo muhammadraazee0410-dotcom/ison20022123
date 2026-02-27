@@ -640,6 +640,359 @@ export default function TransactionDetail() {
           </div>
         </TabsContent>
 
+        {/* MT910 Credit Confirmation */}
+        <TabsContent value="mt910" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            {/* Barcode */}
+            <Barcode value={`MT910-${transaction.uetr}`} />
+            
+            {/* Header */}
+            <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
+              <div className="flex items-center gap-4">
+                <img src="/hsbc-logo.png" alt="HSBC" className="w-10 h-10 object-contain" />
+                <div>
+                  <span className="text-2xl font-bold text-[#DB0011]">HSBC</span>
+                  <span className="text-gray-500 ml-2">Germany</span>
+                </div>
+              </div>
+              <div className="text-center flex-1">
+                <h1 className="text-lg font-bold tracking-wider">MT910 - CONFIRMATION OF CREDIT</h1>
+                <p className="text-xs text-gray-500 mt-1">Nostro Account Credit Notification</p>
+              </div>
+              <img src="/swift-logo.png" alt="SWIFT" className="h-8 w-auto object-contain" />
+            </div>
+
+            {/* Credit Summary */}
+            <div className="bg-green-50 border-2 border-green-600 p-6 mb-6 text-center">
+              <div className="text-sm text-green-700 font-medium">CREDIT CONFIRMED</div>
+              <div className="text-4xl font-bold text-green-800 mt-2">
+                {transaction.settlement_info.currency} {formatAmount(transaction.settlement_info.interbank_settlement_amount)}
+              </div>
+              <div className="text-sm text-green-600 mt-2">
+                Credited to Nostro Account on {formatDateLong(transaction.settlement_info.settlement_date)}
+              </div>
+            </div>
+
+            {/* Message Details */}
+            <div className="flex justify-between items-start mb-6">
+              <div className="flex-1">
+                <FieldRow label="Message Type" value="MT910 - CONFIRMATION OF CREDIT" />
+                <FieldRow label="Sender" value={transaction.instructed_agent.bic} mono />
+                <FieldRow label="Receiver" value={transaction.instructing_agent.bic} mono />
+                <FieldRow label="Message Reference" value={`MT910${trn.slice(-8)}`} mono />
+                <FieldRow label="Related Reference" value={trn} mono />
+                <FieldRow label="UETR" value={transaction.uetr} mono />
+              </div>
+              <div className="ml-8">
+                <QRCode value={`MT910-${transaction.uetr}`} size={90} />
+              </div>
+            </div>
+
+            <SectionHeader title="SWIFT MT910 MESSAGE FIELDS" />
+
+            {/* MT910 Fields */}
+            <div className="bg-gray-50 border border-gray-200 p-4 mb-6">
+              <SwiftField tag="20" label="TRANSACTION REFERENCE NUMBER">
+                {`MT910${trn.slice(-8)}`}
+              </SwiftField>
+              <SwiftField tag="21" label="RELATED REFERENCE">
+                {trn}
+              </SwiftField>
+              <SwiftField tag="25" label="ACCOUNT IDENTIFICATION">
+                {transaction.debtor.iban}
+              </SwiftField>
+              <SwiftField tag="32A" label="VALUE DATE, CURRENCY CODE, AMOUNT">
+{`${transaction.settlement_info.settlement_date.replace(/-/g, '')}
+${transaction.settlement_info.currency}${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`}
+              </SwiftField>
+              <SwiftField tag="52A" label="ORDERING INSTITUTION">
+{`${transaction.instructed_agent.bic}
+${transaction.instructed_agent.name}`}
+              </SwiftField>
+              <SwiftField tag="56A" label="INTERMEDIARY">
+                COBADEFFXXX
+              </SwiftField>
+              <SwiftField tag="72" label="SENDER TO RECEIVER INFORMATION">
+{`/REC/NOSTRO CREDIT CONFIRMATION
+/REF/${transaction.uetr}
+/INF/CREDIT APPLIED TO YOUR ACCOUNT`}
+              </SwiftField>
+            </div>
+
+            {/* Account Details */}
+            <SectionHeader title="ACCOUNT DETAILS" />
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-gray-50 border border-gray-200 p-4">
+                <div className="font-bold text-gray-700 mb-2">NOSTRO ACCOUNT</div>
+                <FieldRow label="Account Holder" value={transaction.instructing_agent.name} />
+                <FieldRow label="Account Number" value={transaction.debtor.iban} mono />
+                <FieldRow label="Currency" value={transaction.settlement_info.currency} />
+              </div>
+              <div className="bg-green-50 border border-green-200 p-4">
+                <div className="font-bold text-green-700 mb-2">CREDIT DETAILS</div>
+                <FieldRow label="Credit Amount" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
+                <FieldRow label="Value Date" value={formatDateLong(transaction.settlement_info.settlement_date)} />
+                <FieldRow label="Status" value="CREDITED" />
+              </div>
+            </div>
+
+            {/* Ordering Customer */}
+            <SectionHeader title="ORDERING PARTY DETAILS" />
+            <div className="mb-6">
+              <FieldRow label="Ordering Institution" value={transaction.instructed_agent.name} />
+              <FieldRow label="BIC" value={transaction.instructed_agent.bic} mono />
+              <FieldRow label="Original Debtor" value={transaction.debtor.name} />
+              <FieldRow label="Remittance Info" value={transaction.remittance_info} />
+            </div>
+
+            {/* Footer */}
+            <div className="mt-8 pt-4 border-t-2 border-gray-300 text-center">
+              <div className="font-bold">MT910 - CONFIRMATION OF CREDIT</div>
+              <div className="text-gray-500 text-xs mt-1">
+                Generated: {formatDateTime(new Date().toISOString())} | Reference: MT910{trn.slice(-8)}
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* MT900 Debit Confirmation */}
+        <TabsContent value="mt900" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            {/* Barcode */}
+            <Barcode value={`MT900-${transaction.uetr}`} />
+            
+            {/* Header */}
+            <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
+              <div className="flex items-center gap-4">
+                <img src="/hsbc-logo.png" alt="HSBC" className="w-10 h-10 object-contain" />
+                <div>
+                  <span className="text-2xl font-bold text-[#DB0011]">HSBC</span>
+                  <span className="text-gray-500 ml-2">Germany</span>
+                </div>
+              </div>
+              <div className="text-center flex-1">
+                <h1 className="text-lg font-bold tracking-wider">MT900 - CONFIRMATION OF DEBIT</h1>
+                <p className="text-xs text-gray-500 mt-1">Vostro Account Debit Notification</p>
+              </div>
+              <img src="/swift-logo.png" alt="SWIFT" className="h-8 w-auto object-contain" />
+            </div>
+
+            {/* Debit Summary */}
+            <div className="bg-red-50 border-2 border-red-600 p-6 mb-6 text-center">
+              <div className="text-sm text-red-700 font-medium">DEBIT CONFIRMED</div>
+              <div className="text-4xl font-bold text-red-800 mt-2">
+                {transaction.settlement_info.currency} {formatAmount(transaction.settlement_info.interbank_settlement_amount)}
+              </div>
+              <div className="text-sm text-red-600 mt-2">
+                Debited from Vostro Account on {formatDateLong(transaction.settlement_info.settlement_date)}
+              </div>
+            </div>
+
+            {/* Message Details */}
+            <div className="flex justify-between items-start mb-6">
+              <div className="flex-1">
+                <FieldRow label="Message Type" value="MT900 - CONFIRMATION OF DEBIT" />
+                <FieldRow label="Sender" value={transaction.instructing_agent.bic} mono />
+                <FieldRow label="Receiver" value={transaction.instructed_agent.bic} mono />
+                <FieldRow label="Message Reference" value={`MT900${trn.slice(-8)}`} mono />
+                <FieldRow label="Related Reference" value={trn} mono />
+                <FieldRow label="UETR" value={transaction.uetr} mono />
+              </div>
+              <div className="ml-8">
+                <QRCode value={`MT900-${transaction.uetr}`} size={90} />
+              </div>
+            </div>
+
+            <SectionHeader title="SWIFT MT900 MESSAGE FIELDS" />
+
+            {/* MT900 Fields */}
+            <div className="bg-gray-50 border border-gray-200 p-4 mb-6">
+              <SwiftField tag="20" label="TRANSACTION REFERENCE NUMBER">
+                {`MT900${trn.slice(-8)}`}
+              </SwiftField>
+              <SwiftField tag="21" label="RELATED REFERENCE">
+                {trn}
+              </SwiftField>
+              <SwiftField tag="25" label="ACCOUNT IDENTIFICATION">
+                {transaction.debtor.iban}
+              </SwiftField>
+              <SwiftField tag="32A" label="VALUE DATE, CURRENCY CODE, AMOUNT">
+{`${transaction.settlement_info.settlement_date.replace(/-/g, '')}
+${transaction.settlement_info.currency}${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`}
+              </SwiftField>
+              <SwiftField tag="52A" label="ORDERING INSTITUTION">
+{`${transaction.instructing_agent.bic}
+${transaction.instructing_agent.name}`}
+              </SwiftField>
+              <SwiftField tag="72" label="SENDER TO RECEIVER INFORMATION">
+{`/REC/VOSTRO DEBIT CONFIRMATION
+/REF/${transaction.uetr}
+/INF/YOUR ACCOUNT HAS BEEN DEBITED`}
+              </SwiftField>
+            </div>
+
+            {/* Account Details */}
+            <SectionHeader title="ACCOUNT DETAILS" />
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-gray-50 border border-gray-200 p-4">
+                <div className="font-bold text-gray-700 mb-2">VOSTRO ACCOUNT</div>
+                <FieldRow label="Account Holder" value={transaction.instructed_agent.name} />
+                <FieldRow label="Account Number" value={transaction.debtor.iban} mono />
+                <FieldRow label="Currency" value={transaction.settlement_info.currency} />
+              </div>
+              <div className="bg-red-50 border border-red-200 p-4">
+                <div className="font-bold text-red-700 mb-2">DEBIT DETAILS</div>
+                <FieldRow label="Debit Amount" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
+                <FieldRow label="Value Date" value={formatDateLong(transaction.settlement_info.settlement_date)} />
+                <FieldRow label="Status" value="DEBITED" />
+              </div>
+            </div>
+
+            {/* Beneficiary Details */}
+            <SectionHeader title="BENEFICIARY DETAILS" />
+            <div className="mb-6">
+              <FieldRow label="Beneficiary Bank" value={transaction.instructed_agent.name} />
+              <FieldRow label="BIC" value={transaction.instructed_agent.bic} mono />
+              <FieldRow label="Ultimate Beneficiary" value={transaction.creditor.name} />
+              <FieldRow label="Remittance Info" value={transaction.remittance_info} />
+            </div>
+
+            {/* Footer */}
+            <div className="mt-8 pt-4 border-t-2 border-gray-300 text-center">
+              <div className="font-bold">MT900 - CONFIRMATION OF DEBIT</div>
+              <div className="text-gray-500 text-xs mt-1">
+                Generated: {formatDateTime(new Date().toISOString())} | Reference: MT900{trn.slice(-8)}
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* MT945 Customer Statement Message */}
+        <TabsContent value="mt945" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            {/* Barcode */}
+            <Barcode value={`MT945-${transaction.uetr}`} />
+            
+            {/* Header */}
+            <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
+              <div className="flex items-center gap-4">
+                <img src="/hsbc-logo.png" alt="HSBC" className="w-10 h-10 object-contain" />
+                <div>
+                  <span className="text-2xl font-bold text-[#DB0011]">HSBC</span>
+                  <span className="text-gray-500 ml-2">Germany</span>
+                </div>
+              </div>
+              <div className="text-center flex-1">
+                <h1 className="text-lg font-bold tracking-wider">MT945 - CUSTOMER STATEMENT MESSAGE</h1>
+                <p className="text-xs text-gray-500 mt-1">Statement for Customer Advice</p>
+              </div>
+              <img src="/swift-logo.png" alt="SWIFT" className="h-8 w-auto object-contain" />
+            </div>
+
+            {/* Statement Header */}
+            <div className="bg-gray-100 border border-gray-300 p-4 mb-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <FieldRow label="Statement Number" value={`STM${Date.now().toString().slice(-8)}/1`} mono />
+                  <FieldRow label="Statement Date" value={formatDateLong(new Date().toISOString())} />
+                  <FieldRow label="Account" value={transaction.debtor.iban} mono />
+                </div>
+                <div className="flex justify-end">
+                  <QRCode value={`MT945-${transaction.uetr}`} size={80} />
+                </div>
+              </div>
+            </div>
+
+            <SectionHeader title="ACCOUNT IDENTIFICATION" />
+            <div className="mb-6">
+              <FieldRow label="Account Owner" value={transaction.debtor.name} />
+              <FieldRow label="Account Number" value={transaction.debtor.iban} mono />
+              <FieldRow label="Currency" value={transaction.settlement_info.currency} />
+              <FieldRow label="Account Type" value="CURRENT ACCOUNT" />
+            </div>
+
+            <SectionHeader title="STATEMENT LINES" />
+            {/* Transaction Entry */}
+            <div className="border border-gray-300 mb-6">
+              <table className="w-full">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="p-2 text-left border-b border-gray-300">Value Date</th>
+                    <th className="p-2 text-left border-b border-gray-300">Entry Date</th>
+                    <th className="p-2 text-left border-b border-gray-300">D/C</th>
+                    <th className="p-2 text-right border-b border-gray-300">Amount</th>
+                    <th className="p-2 text-left border-b border-gray-300">Reference</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="p-2 border-b border-gray-200">{formatDate(transaction.settlement_info.settlement_date)}</td>
+                    <td className="p-2 border-b border-gray-200">{formatDate(transaction.created_at)}</td>
+                    <td className="p-2 border-b border-gray-200">
+                      <span className="text-red-600 font-bold">D</span>
+                    </td>
+                    <td className="p-2 border-b border-gray-200 text-right font-mono">
+                      {transaction.settlement_info.currency} {formatAmount(transaction.settlement_info.interbank_settlement_amount)}
+                    </td>
+                    <td className="p-2 border-b border-gray-200 font-mono text-xs">{trn}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Transaction Details */}
+            <SectionHeader title="TRANSACTION INFORMATION" />
+            <div className="bg-gray-50 border border-gray-200 p-4 mb-6">
+              <SwiftField tag="61" label="STATEMENT LINE">
+{`${transaction.settlement_info.settlement_date.replace(/-/g, '').slice(2)}${transaction.settlement_info.settlement_date.replace(/-/g, '').slice(2)}D${transaction.settlement_info.currency}${formatAmount(transaction.settlement_info.interbank_settlement_amount)}NTRF${trn}
+//${transaction.uetr}`}
+              </SwiftField>
+              <SwiftField tag="86" label="INFORMATION TO ACCOUNT OWNER">
+{`TRANSFER TO ${transaction.creditor.name}
+IBAN: ${transaction.creditor.iban || 'N/A'}
+REF: ${transaction.remittance_info}
+UETR: ${transaction.uetr}`}
+              </SwiftField>
+            </div>
+
+            {/* Balance Information */}
+            <SectionHeader title="BALANCE INFORMATION" />
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-gray-50 border border-gray-200 p-4">
+                <div className="font-bold text-gray-700 mb-2">OPENING BALANCE</div>
+                <SwiftField tag="60F" label="FIRST OPENING BALANCE">
+{`C${transaction.settlement_info.settlement_date.replace(/-/g, '').slice(2)}${transaction.settlement_info.currency}${formatAmount(456889621000.94 + transaction.settlement_info.interbank_settlement_amount)}`}
+                </SwiftField>
+              </div>
+              <div className="bg-blue-50 border border-blue-200 p-4">
+                <div className="font-bold text-blue-700 mb-2">CLOSING BALANCE</div>
+                <SwiftField tag="62F" label="FINAL CLOSING BALANCE">
+{`C${transaction.settlement_info.settlement_date.replace(/-/g, '').slice(2)}${transaction.settlement_info.currency}${formatAmount(456889621000.94)}`}
+                </SwiftField>
+              </div>
+            </div>
+
+            {/* Available Balance */}
+            <div className="bg-green-50 border border-green-300 p-4 mb-6">
+              <div className="font-bold text-green-700 mb-2">AVAILABLE BALANCE</div>
+              <SwiftField tag="64" label="CLOSING AVAILABLE BALANCE">
+{`C${transaction.settlement_info.settlement_date.replace(/-/g, '').slice(2)}${transaction.settlement_info.currency}${formatAmount(456889621000.94)}`}
+              </SwiftField>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-8 pt-4 border-t-2 border-gray-300 text-center">
+              <div className="font-bold">MT945 - CUSTOMER STATEMENT MESSAGE</div>
+              <div className="text-gray-500 text-xs mt-1">
+                Generated: {formatDateTime(new Date().toISOString())} | Statement: STM{Date.now().toString().slice(-8)}/1
+              </div>
+              <div className="text-gray-400 text-xs mt-2">
+                This statement is for customer advice only.
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
         {/* Global Payment Status Statement - Dark Theme */}
         <TabsContent value="status" className="mt-4">
           <div className="bg-gray-900 border border-gray-700 shadow-lg font-mono text-xs text-gray-300 p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
