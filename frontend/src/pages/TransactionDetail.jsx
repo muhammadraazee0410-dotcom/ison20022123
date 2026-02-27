@@ -633,6 +633,190 @@ export default function TransactionDetail() {
           </div>
         </TabsContent>
 
+        {/* Server Report Tab */}
+        <TabsContent value="server" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            {/* Header */}
+            <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
+              <div className="flex items-center gap-4">
+                <img src="/hsbc-logo.png" alt="HSBC" className="w-10 h-10 object-contain" />
+                <div>
+                  <span className="text-2xl font-bold text-[#DB0011]">HSBC</span>
+                  <span className="text-gray-500 ml-2">Germany</span>
+                </div>
+              </div>
+              <div className="text-center flex-1">
+                <h1 className="text-lg font-bold tracking-wider">SWIFT SERVER PROCESSING REPORT</h1>
+                <p className="text-xs text-gray-500 mt-1">Transaction Audit & Validation Report</p>
+              </div>
+              <img src="/swift-logo.png" alt="SWIFT" className="h-8 w-auto object-contain" />
+            </div>
+
+            {/* Report Header */}
+            <div className="bg-gray-100 border border-gray-300 p-4 mb-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <FieldRow label="Report ID" value={`RPT-${transaction.id.slice(0, 8).toUpperCase()}`} mono />
+                  <FieldRow label="Report Type" value="SWIFT_SERVER_PROCESSING_REPORT" />
+                  <FieldRow label="Generated" value={formatDateTime(new Date().toISOString())} mono />
+                </div>
+                <div className="flex justify-end">
+                  <QRCode value={`RPT-${transaction.uetr}`} size={80} />
+                </div>
+              </div>
+            </div>
+
+            {/* Transaction Summary */}
+            <SectionHeader title="TRANSACTION SUMMARY" />
+            <div className="mb-6">
+              <FieldRow label="Transaction ID" value={transaction.id} mono />
+              <FieldRow label="UETR" value={transaction.uetr} mono />
+              <FieldRow label="Message Type" value={transaction.message_type} />
+              <FieldRow label="Status" value={transaction.status} />
+              <FieldRow label="Tracking Result" value={transaction.tracking_result} />
+            </div>
+
+            {/* Server Details */}
+            <SectionHeader title="SERVER DETAILS" />
+            <div className="grid grid-cols-2 gap-8 mb-6">
+              <div>
+                <FieldRow label="Server Name" value="SWIFT_GLOBAL_SERVER_EU" />
+                <FieldRow label="Server Location" value="Frankfurt, Germany" />
+              </div>
+              <div>
+                <FieldRow label="Server Instance" value="SAAPROD" />
+                <FieldRow label="Alliance Version" value="7.5.4" />
+              </div>
+            </div>
+
+            {/* Processing Timeline */}
+            <SectionHeader title="PROCESSING TIMELINE" />
+            <div className="bg-gray-50 border border-gray-200 p-4 mb-6">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-gray-300">
+                    <th className="text-left py-2 w-1/3">Event</th>
+                    <th className="text-left py-2">Timestamp</th>
+                    <th className="text-center py-2 w-24">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2">MESSAGE_RECEIVED</td>
+                    <td className="py-2 font-mono">{transaction.created_at}</td>
+                    <td className="py-2 text-center"><span className="text-green-600 font-bold">✓ SUCCESS</span></td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2">VALIDATION_STARTED</td>
+                    <td className="py-2 font-mono">{transaction.created_at}</td>
+                    <td className="py-2 text-center"><span className="text-green-600 font-bold">✓ SUCCESS</span></td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2">VALIDATION_COMPLETED</td>
+                    <td className="py-2 font-mono">{transaction.created_at}</td>
+                    <td className="py-2 text-center"><span className="text-green-600 font-bold">✓ SUCCESS</span></td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2">ROUTING_INITIATED</td>
+                    <td className="py-2 font-mono">{transaction.created_at}</td>
+                    <td className="py-2 text-center"><span className="text-green-600 font-bold">✓ SUCCESS</span></td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2">SETTLEMENT_INITIATED</td>
+                    <td className="py-2 font-mono">{transaction.created_at}</td>
+                    <td className="py-2 text-center"><span className="text-green-600 font-bold">✓ SUCCESS</span></td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2">SETTLEMENT_COMPLETED</td>
+                    <td className="py-2 font-mono">{transaction.updated_at}</td>
+                    <td className="py-2 text-center"><span className="text-green-600 font-bold">✓ SUCCESS</span></td>
+                  </tr>
+                  <tr>
+                    <td className="py-2">ACK_GENERATED</td>
+                    <td className="py-2 font-mono">{transaction.updated_at}</td>
+                    <td className="py-2 text-center"><span className="text-green-600 font-bold">✓ SUCCESS</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Validation Results */}
+            <SectionHeader title="VALIDATION RESULTS" />
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-green-50 border border-green-200 p-3">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  <span className="font-semibold">Syntax Validation</span>
+                </div>
+                <span className="text-green-600 ml-6">PASSED</span>
+              </div>
+              <div className="bg-green-50 border border-green-200 p-3">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  <span className="font-semibold">Semantic Validation</span>
+                </div>
+                <span className="text-green-600 ml-6">PASSED</span>
+              </div>
+              <div className="bg-green-50 border border-green-200 p-3">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  <span className="font-semibold">Business Validation</span>
+                </div>
+                <span className="text-green-600 ml-6">PASSED</span>
+              </div>
+              <div className="bg-green-50 border border-green-200 p-3">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  <span className="font-semibold">Compliance Check</span>
+                </div>
+                <span className="text-green-600 ml-6">PASSED</span>
+              </div>
+              <div className="bg-green-50 border border-green-200 p-3">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  <span className="font-semibold">Sanctions Screening</span>
+                </div>
+                <span className="text-green-600 ml-6">CLEARED</span>
+              </div>
+              <div className="bg-green-50 border border-green-200 p-3">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  <span className="font-semibold">Duplicate Check</span>
+                </div>
+                <span className="text-green-600 ml-6">NO_DUPLICATE</span>
+              </div>
+            </div>
+
+            {/* Network Status */}
+            <SectionHeader title="NETWORK STATUS" />
+            <div className="mb-6">
+              <FieldRow label="SWIFT Network ACK" value={transaction.network_ack ? "RECEIVED" : "PENDING"} />
+              <FieldRow label="Correspondent ACK" value="RECEIVED" />
+              <FieldRow label="Beneficiary ACK" value={transaction.tracking_result === 'SUCCESSFUL' ? "RECEIVED" : "PENDING"} />
+            </div>
+
+            {/* Settlement Confirmation */}
+            <SectionHeader title="SETTLEMENT CONFIRMATION" />
+            <div className="bg-gray-100 border border-gray-300 p-4 mb-6">
+              <FieldRow label="Nostro Credited" value={transaction.nostro_credited ? "YES" : "NO"} />
+              <FieldRow label="Vostro Debited" value={transaction.vostro_debited ? "YES" : "NO"} />
+              <FieldRow label="Settlement Method" value={transaction.settlement_info.method} />
+              <FieldRow label="Settlement Amount" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
+            </div>
+
+            {/* Footer */}
+            <div className="mt-8 pt-4 border-t-2 border-gray-300 text-center">
+              <div className="font-bold">SWIFT SERVER PROCESSING REPORT</div>
+              <div className="text-gray-500 text-xs mt-1">
+                Report ID: RPT-{transaction.id.slice(0, 8).toUpperCase()} | Generated: {formatDateTime(new Date().toISOString())}
+              </div>
+              <div className="text-gray-400 text-xs mt-2">
+                © HSBC Germany - SWIFT Alliance Access System v7.5.4
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
         {/* Alliance Message Management Tab */}
         <TabsContent value="alliance" className="mt-4">
           <div className="bg-gray-900 border border-gray-700 shadow-lg font-mono text-xs text-gray-300 p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
