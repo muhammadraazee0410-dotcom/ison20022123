@@ -84,12 +84,7 @@ const DocumentHeader = ({ title, subtitle }) => (
         {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
       </div>
       <div className="flex items-center gap-2">
-        <div className="w-6 h-6 border border-gray-400 rounded-full flex items-center justify-center">
-          <div className="w-4 h-4 border border-gray-400 rounded-full flex items-center justify-center">
-            <div className="w-1.5 h-1.5 bg-gray-400 rounded-full" />
-          </div>
-        </div>
-        <span className="text-sm font-semibold text-gray-700">Swift</span>
+        <img src="/swift-logo.png" alt="SWIFT" className="h-8 w-auto object-contain" />
       </div>
     </div>
   </div>
