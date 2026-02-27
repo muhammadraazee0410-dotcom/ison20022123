@@ -258,6 +258,69 @@ export default function TransactionDetail() {
           <ArrowLeft className="w-4 h-4 mr-2" />Back
         </Button>
         <div className="flex gap-2">
+          {transaction.status !== 'FINALIZED' && (
+            <Button 
+              onClick={handleCompleteTransaction}
+              disabled={completing}
+              className="bg-green-600 hover:bg-green-700"
+              data-testid="complete-transaction-button"
+            >
+              {completing ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <CheckCircle className="w-4 h-4 mr-2" />
+              )}
+              Complete Transaction
+            </Button>
+          )}
+          <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-gray-300" data-testid="send-email-button">
+                <Mail className="w-4 h-4 mr-2" />Send Email
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Send Email Notification</DialogTitle>
+                <DialogDescription>
+                  Send transaction confirmation to recipient email address.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="space-y-2">
+                  <label htmlFor="email" className="text-sm font-medium">Recipient Email</label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="recipient@bank.com"
+                    value={recipientEmail}
+                    onChange={(e) => setRecipientEmail(e.target.value)}
+                    data-testid="recipient-email-input"
+                  />
+                </div>
+                <div className="bg-gray-50 p-3 rounded text-xs space-y-1">
+                  <div><strong>Transaction:</strong> {transaction.uetr}</div>
+                  <div><strong>Amount:</strong> {transaction.settlement_info.currency} {formatAmount(transaction.settlement_info.interbank_settlement_amount)}</div>
+                  <div><strong>Status:</strong> {transaction.tracking_result}</div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setEmailDialogOpen(false)}>Cancel</Button>
+                <Button 
+                  onClick={handleSendEmail}
+                  disabled={sendingEmail}
+                  className="bg-[#DB0011] hover:bg-[#B3000E]"
+                >
+                  {sendingEmail ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4 mr-2" />
+                  )}
+                  Send Notification
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <Button variant="outline" onClick={handlePrint} className="border-gray-300" data-testid="print-button">
             <Printer className="w-4 h-4 mr-2" />Print
           </Button>
