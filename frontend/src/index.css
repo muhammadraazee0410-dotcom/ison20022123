@@ -89,6 +89,20 @@ code, .font-mono {
         display: block !important;
     }
     
+    /* Hide Emergent badge and any external overlays */
+    [class*="emergent"],
+    [class*="Emergent"],
+    [id*="emergent"],
+    [id*="Emergent"],
+    [data-testid*="emergent"],
+    iframe,
+    .fixed,
+    [style*="position: fixed"],
+    [style*="position:fixed"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
     /* Reset page layout for printing */
     body {
         background: white !important;
@@ -153,6 +167,13 @@ code, .font-mono {
     table td, table th {
         border: 1px solid #ccc !important;
         padding: 4px 8px !important;
+    }
+    
+    /* Hide any floating buttons or badges */
+    button[class*="fixed"],
+    div[class*="fixed"],
+    a[class*="fixed"] {
+        display: none !important;
     }
 }
 
