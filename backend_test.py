@@ -305,7 +305,8 @@ def main():
         ("Transactions List", tester.test_transactions_list),
         ("Transactions Filtering", tester.test_transactions_filtering),
         ("Transaction Detail", tester.test_transaction_detail),
-        ("Transaction Not Found", tester.test_transaction_not_found)
+        ("Transaction Not Found", tester.test_transaction_not_found),
+        ("Create Transaction", tester.test_create_transaction)
     ]
     
     print(f"\nStarting {len(tests)} API tests...\n")
