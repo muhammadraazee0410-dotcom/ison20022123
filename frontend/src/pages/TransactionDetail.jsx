@@ -157,23 +157,63 @@ export default function TransactionDetail() {
   const navigate = useNavigate();
   const [transaction, setTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [completing, setCompleting] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const [recipientEmail, setRecipientEmail] = useState("");
   const printRef = useRef();
 
+  const fetchTransaction = async () => {
+    try {
+      const response = await axios.get(`${API}/transactions/${id}`);
+      setTransaction(response.data);
+    } catch (error) {
+      console.error("Error fetching transaction:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchTransaction = async () => {
-      try {
-        const response = await axios.get(`${API}/transactions/${id}`);
-        setTransaction(response.data);
-      } catch (error) {
-        console.error("Error fetching transaction:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchTransaction();
   }, [id]);
 
   const handlePrint = () => window.print();
+
+  const handleCompleteTransaction = async () => {
+    setCompleting(true);
+    try {
+      await axios.patch(`${API}/transactions/${id}/complete`);
+      toast.success("Transaction completed successfully");
+      await fetchTransaction();
+    } catch (error) {
+      toast.error("Failed to complete transaction");
+    } finally {
+      setCompleting(false);
+    }
+  };
+
+  const handleSendEmail = async () => {
+    if (!recipientEmail) {
+      toast.error("Please enter recipient email");
+      return;
+    }
+    setSendingEmail(true);
+    try {
+      await axios.post(`${API}/transactions/${id}/send-notification`, {
+        transaction_id: id,
+        recipient_email: recipientEmail,
+        notification_type: "confirmation"
+      });
+      toast.success(`Email notification sent to ${recipientEmail}`);
+      setEmailDialogOpen(false);
+      setRecipientEmail("");
+    } catch (error) {
+      toast.error("Failed to send email notification");
+    } finally {
+      setSendingEmail(false);
+    }
+  };
 
   const formatAmount = (amount) => new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
   const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('de-DE') : '-';
