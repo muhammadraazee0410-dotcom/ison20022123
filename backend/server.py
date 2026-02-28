@@ -213,10 +213,10 @@ async def get_total_funds():
     """Get total platform funds by currency"""
     return {
         "funds": [
-            {"currency": "EUR", "amount": 456889621000.94, "formatted": "€456,889,621,000.94"},
-            {"currency": "USD", "amount": 445990775000.09, "formatted": "$445,990,775,000.09"}
+            {"currency": "EUR", "amount": 2478455779009.90, "formatted": "€2,478,455,779,009.90"},
+            {"currency": "USD", "amount": 567773667221.04, "formatted": "$567,773,667,221.04"}
         ],
-        "total_eur_equivalent": 902880396001.03,
+        "total_eur_equivalent": 3046229446230.94,
         "last_updated": datetime.now(timezone.utc).isoformat()
     }
 
