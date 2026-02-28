@@ -1097,8 +1097,8 @@ async def seed_sample_data():
             "swift_code": "TUBDDEDD",
             "further_credit": "ONE WORLD BANCORP INC",
             "reference": "ONE WORLD BANCORP INC/ NADELLA GLOBAL LLC: ACCOUNT NO.: 24502135",
-            "balance_eur": 645230150320.50,
-            "balance_usd": 156230100425.25,
+            "balance_eur": 345120450200.50,
+            "balance_usd": 78450230125.25,
             "status": "ACTIVE",
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
@@ -1121,8 +1121,8 @@ async def seed_sample_data():
             "account_name": "PLINVEST TRUST",
             "iban": "DE28300308802486412944",
             "swift_code": "TUBDDEDD",
-            "balance_eur": 578890445200.00,
-            "balance_usd": 132340500175.00,
+            "balance_eur": 298450330150.00,
+            "balance_usd": 65340110080.00,
             "status": "ACTIVE",
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
@@ -1151,8 +1151,8 @@ async def seed_sample_data():
                 "tel": "0049-2119100",
                 "email": "Maria.k_s@hubc.com.de"
             },
-            "balance_eur": 423450890130.30,
-            "balance_usd": 88970200330.50,
+            "balance_eur": 213780560080.30,
+            "balance_usd": 48970440230.50,
             "status": "ACTIVE",
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
@@ -1179,8 +1179,8 @@ async def seed_sample_data():
             "iban": "DE60300308800600078006",
             "swift_code": "TUBDDEDD",
             "bank_officer": {"name": "TBA"},
-            "balance_eur": 498670120480.80,
-            "balance_usd": 109450330160.60,
+            "balance_eur": 278340210300.80,
+            "balance_usd": 62350220160.60,
             "status": "ACTIVE",
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
@@ -1205,8 +1205,8 @@ async def seed_sample_data():
             "account_name": "Bona Verwaltungs GmbH",
             "iban": "DE64300308800601052008",
             "swift_code": "TUBDDEDD",
-            "balance_eur": 332214172878.30,
-            "balance_usd": 80782536129.69,
+            "balance_eur": 192110090440.30,
+            "balance_usd": 43780130080.69,
             "status": "ACTIVE",
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
