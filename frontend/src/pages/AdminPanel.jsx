@@ -663,8 +663,10 @@ export default function AdminPanel() {
               <AccountRow
                 key={acc.id}
                 account={acc}
-                expanded={expandedId === acc.id}
-                onToggle={() => setExpandedId(expandedId === acc.id ? null : acc.id)}
+                showDash={dashIds.has(acc.id)}
+                onToggleDash={() => toggleDash(acc.id)}
+                showDetails={detailIds.has(acc.id)}
+                onToggleDetails={() => toggleDetails(acc.id)}
                 onDelete={handleDelete}
               />
             ))
