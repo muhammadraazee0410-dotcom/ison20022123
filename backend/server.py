@@ -622,6 +622,91 @@ async def get_server_report(transaction_id: str):
         ]
     }
 
+# ============== ACCOUNT ROUTES ==============
+
+@api_router.get("/accounts")
+async def get_accounts():
+    accounts = await db.accounts.find({}, {"_id": 0}).to_list(1000)
+    return accounts
+
+@api_router.get("/accounts/{account_id}")
+async def get_account(account_id: str):
+    account = await db.accounts.find_one({"id": account_id}, {"_id": 0})
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found")
+    return account
+
+@api_router.post("/accounts")
+async def create_account(account: AccountCreate):
+    now = datetime.now(timezone.utc).isoformat()
+    doc = account.model_dump()
+    doc["id"] = str(uuid.uuid4())
+    doc["created_at"] = now
+    doc["updated_at"] = now
+    await db.accounts.insert_one(doc)
+    created = await db.accounts.find_one({"id": doc["id"]}, {"_id": 0})
+    return created
+
+@api_router.delete("/accounts/{account_id}")
+async def delete_account(account_id: str):
+    result = await db.accounts.delete_one({"id": account_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Account not found")
+    return {"message": "Account deleted", "id": account_id}
+
+@api_router.get("/accounts-balance")
+async def get_accounts_balance():
+    accounts = await db.accounts.find({}, {"_id": 0, "balance_eur": 1, "balance_usd": 1}).to_list(1000)
+    total_eur = sum(a.get("balance_eur", 0) for a in accounts)
+    total_usd = sum(a.get("balance_usd", 0) for a in accounts)
+    eur_to_usd = total_eur * 1.08
+    total_combined_usd = total_usd + eur_to_usd
+    return {
+        "available_eur": total_eur,
+        "available_usd": total_usd,
+        "total_combined_usd": total_combined_usd,
+        "total_combined_eur": total_eur + (total_usd / 1.08),
+        "account_count": len(accounts),
+        "last_updated": datetime.now(timezone.utc).isoformat()
+    }
+
+@api_router.get("/server-terminal")
+async def get_server_terminal_logs():
+    """Get simulated SWIFT server terminal logs"""
+    transactions = await db.transactions.find({}, {"_id": 0}).sort("created_at", -1).to_list(20)
+    accounts = await db.accounts.find({}, {"_id": 0}).to_list(100)
+    now = datetime.now(timezone.utc)
+
+    logs = []
+    logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": f"SWIFT Alliance Gateway v7.5.4 | Server: SAAPROD_EU_FRANKFURT | Uptime: 99.97%"})
+    logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": f"HSBC Continental Europe SA, Germany | BIC: TUBDDEDDXXX | Node: PRIMARY"})
+    logs.append({"ts": now.isoformat(), "level": "INFO", "msg": f"Connected accounts: {len(accounts)} | Active sessions: {len(accounts) + 3}"})
+    logs.append({"ts": now.isoformat(), "level": "INFO", "msg": f"Total transactions processed today: {len(transactions)}"})
+    logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": "CBPR+ Compliance Module: ACTIVE | Sanctions Screening: ENABLED"})
+    logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": "SWIFTNet FIN / MX Gateway: OPERATIONAL | gpi Tracker: CONNECTED"})
+
+    for t in transactions[:10]:
+        uetr_short = t.get("uetr", "")[:18]
+        amount = t.get("settlement_info", {}).get("interbank_settlement_amount", 0)
+        currency = t.get("settlement_info", {}).get("currency", "EUR")
+        status = t.get("tracking_result", "UNKNOWN")
+        sender = t.get("instructing_agent", {}).get("bic", "N/A")
+        receiver = t.get("instructed_agent", {}).get("bic", "N/A")
+        msg_type = t.get("message_type", "pacs.009")
+
+        level = "OK" if status == "SUCCESSFUL" else ("WARN" if status == "PENDING" else "ERROR")
+        logs.append({"ts": t.get("created_at", now.isoformat()), "level": "INFO", "msg": f"[{msg_type}] UETR:{uetr_short}... | {sender} -> {receiver}"})
+        logs.append({"ts": t.get("created_at", now.isoformat()), "level": level, "msg": f"  Settlement: {currency} {amount:,.2f} | Status: {status}"})
+        if status == "SUCCESSFUL":
+            logs.append({"ts": t.get("updated_at", now.isoformat()), "level": "OK", "msg": f"  Nostro/Vostro: CONFIRMED | Network ACK: RECEIVED | gpi: TRACKED"})
+        elif status == "PENDING":
+            logs.append({"ts": t.get("created_at", now.isoformat()), "level": "WARN", "msg": f"  Awaiting settlement confirmation | Nostro: PENDING"})
+        else:
+            logs.append({"ts": t.get("created_at", now.isoformat()), "level": "ERROR", "msg": f"  SETTLEMENT FAILED | Manual intervention: REQUIRED"})
+
+    logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": "--- END OF LOG BUFFER --- Next refresh in 30s ---"})
+    return {"logs": logs}
+
 @api_router.post("/seed-data")
 async def seed_sample_data():
     """Seed the database with sample SWIFT MX transactions"""
