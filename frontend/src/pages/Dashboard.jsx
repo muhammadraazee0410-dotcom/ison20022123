@@ -173,7 +173,7 @@ export default function Dashboard() {
                   <span className="text-sm text-gray-400">EUR Balance</span>
                 </div>
                 <p className="text-3xl font-bold text-white mt-1 font-mono">
-                  €{totalFunds?.funds?.[0]?.amount?.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '456,889,621,000.94'}
+                  €{totalFunds?.funds?.[0]?.amount?.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '2,478,455,779,009.90'}
                 </p>
               </div>
               <div className="w-px bg-gray-700" />
@@ -183,7 +183,7 @@ export default function Dashboard() {
                   <span className="text-sm text-gray-400">USD Balance</span>
                 </div>
                 <p className="text-3xl font-bold text-white mt-1 font-mono">
-                  ${totalFunds?.funds?.[1]?.amount?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '445,990,775,000.09'}
+                  ${totalFunds?.funds?.[1]?.amount?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '567,773,667,221.04'}
                 </p>
               </div>
             </div>
