@@ -343,6 +343,77 @@ const AddAccountForm = ({ onCreated, onClose }) => {
   );
 };
 
+// ============ ACCOUNT BALANCE DASHBOARD ============
+const AccountBalanceDashboard = ({ account }) => {
+  const eurBal = account.balance_eur || 0;
+  const usdBal = account.balance_usd || 0;
+  const totalEur = eurBal + (usdBal / 1.08);
+  const eurPct = totalEur > 0 ? (eurBal / totalEur) * 100 : 0;
+  const usdPct = totalEur > 0 ? ((usdBal / 1.08) / totalEur) * 100 : 0;
+
+  const fmt = (val, cur) =>
+    new Intl.NumberFormat(cur === "EUR" ? "de-DE" : "en-US", {
+      style: "currency", currency: cur, minimumFractionDigits: 2,
+    }).format(val);
+
+  return (
+    <div className="mb-4" data-testid={`account-balance-dashboard-${account.id}`}>
+      {/* Balance Cards */}
+      <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="bg-gradient-to-br from-blue-900 to-blue-800 rounded-lg p-4 border border-blue-700/40">
+          <div className="flex items-center gap-2 mb-2">
+            <Euro className="w-4 h-4 text-blue-300" />
+            <span className="text-[10px] text-blue-300 uppercase tracking-widest font-semibold">EUR Balance</span>
+          </div>
+          <p className="text-lg font-bold text-white font-mono leading-tight">{fmt(eurBal, "EUR")}</p>
+          <div className="mt-2 h-1.5 bg-blue-950 rounded-full overflow-hidden">
+            <div className="h-full bg-blue-400 rounded-full transition-all" style={{ width: `${eurPct}%` }} />
+          </div>
+          <p className="text-[10px] text-blue-400 mt-1">{eurPct.toFixed(1)}% of total</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-emerald-900 to-emerald-800 rounded-lg p-4 border border-emerald-700/40">
+          <div className="flex items-center gap-2 mb-2">
+            <CircleDollarSign className="w-4 h-4 text-emerald-300" />
+            <span className="text-[10px] text-emerald-300 uppercase tracking-widest font-semibold">USD Balance</span>
+          </div>
+          <p className="text-lg font-bold text-white font-mono leading-tight">{fmt(usdBal, "USD")}</p>
+          <div className="mt-2 h-1.5 bg-emerald-950 rounded-full overflow-hidden">
+            <div className="h-full bg-emerald-400 rounded-full transition-all" style={{ width: `${usdPct}%` }} />
+          </div>
+          <p className="text-[10px] text-emerald-400 mt-1">{usdPct.toFixed(1)}% of total</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-slate-800 to-slate-700 rounded-lg p-4 border border-[#DB0011]/30">
+          <div className="flex items-center gap-2 mb-2">
+            <Wallet className="w-4 h-4 text-[#DB0011]" />
+            <span className="text-[10px] text-slate-300 uppercase tracking-widest font-semibold">Total (EUR equiv.)</span>
+          </div>
+          <p className="text-lg font-bold text-white font-mono leading-tight">{fmt(totalEur, "EUR")}</p>
+          <div className="mt-2 flex gap-1 h-1.5">
+            <div className="bg-blue-400 rounded-full" style={{ width: `${eurPct}%` }} />
+            <div className="bg-emerald-400 rounded-full" style={{ width: `${usdPct}%` }} />
+          </div>
+          <div className="flex gap-3 mt-1">
+            <span className="text-[10px] text-blue-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block" />EUR</span>
+            <span className="text-[10px] text-emerald-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />USD</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Account Quick Info Bar */}
+      <div className="flex items-center gap-4 text-[10px] text-gray-500 bg-gray-100 rounded px-3 py-2">
+        <span><strong className="text-gray-700">IBAN:</strong> <span className="font-mono">{account.iban}</span></span>
+        <span className="text-gray-300">|</span>
+        <span><strong className="text-gray-700">SWIFT:</strong> <span className="font-mono">{account.swift_code}</span></span>
+        {account.account_no && <><span className="text-gray-300">|</span><span><strong className="text-gray-700">Acct#:</strong> <span className="font-mono">{account.account_no}</span></span></>}
+        <span className="text-gray-300">|</span>
+        <span><strong className="text-gray-700">Bank:</strong> {account.bank_name}</span>
+      </div>
+    </div>
+  );
+};
+
 // ============ ACCOUNT ROW ============
 const AccountRow = ({ account, onDelete, expanded, onToggle }) => {
   const rep = account.representative || {};
