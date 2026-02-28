@@ -415,17 +415,15 @@ const AccountBalanceDashboard = ({ account }) => {
 };
 
 // ============ ACCOUNT ROW ============
-const AccountRow = ({ account, onDelete, expanded, onToggle }) => {
+const AccountRow = ({ account, onDelete, showDash, onToggleDash, showDetails, onToggleDetails }) => {
   const rep = account.representative || {};
   const officer = account.bank_officer || {};
 
   return (
     <div className="border border-gray-200 rounded-lg bg-white overflow-hidden" data-testid={`account-row-${account.id}`}>
-      <div
-        className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 transition-colors"
-        onClick={onToggle}
-      >
-        <div className="flex items-center gap-4">
+      {/* Header Row */}
+      <div className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
+        <div className="flex items-center gap-4 cursor-pointer flex-1" onClick={onToggleDetails}>
           <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${account.account_type === "individual" ? "bg-purple-50" : "bg-blue-50"}`}>
             {account.account_type === "individual" ? (
               <UserCircle className="w-5 h-5 text-purple-600" />
@@ -438,8 +436,8 @@ const AccountRow = ({ account, onDelete, expanded, onToggle }) => {
             <p className="text-xs text-gray-500">{account.iban}</p>
           </div>
         </div>
-        <div className="flex items-center gap-6">
-          <div className="text-right">
+        <div className="flex items-center gap-3">
+          <div className="text-right mr-2">
             <p className="text-sm font-mono font-medium text-gray-900">
               {new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(account.balance_eur || 0)}
             </p>
@@ -450,15 +448,36 @@ const AccountRow = ({ account, onDelete, expanded, onToggle }) => {
           <Badge variant="outline" className={account.status === "ACTIVE" ? "bg-green-50 text-green-700 border-green-200" : "bg-gray-50 text-gray-600 border-gray-200"}>
             {account.status || "ACTIVE"}
           </Badge>
-          {expanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+          <Button
+            variant={showDash ? "default" : "outline"}
+            size="sm"
+            className={showDash ? "bg-[#DB0011] hover:bg-[#B3000E] text-white h-8 px-3" : "border-gray-300 h-8 px-3"}
+            onClick={(e) => { e.stopPropagation(); onToggleDash(); }}
+            data-testid={`toggle-dashboard-${account.id}`}
+          >
+            <BarChart3 className="w-3.5 h-3.5 mr-1.5" />
+            <span className="text-xs">Dashboard</span>
+          </Button>
+          <button
+            className="p-1 rounded hover:bg-gray-100 transition-colors"
+            onClick={onToggleDetails}
+            data-testid={`toggle-details-${account.id}`}
+          >
+            {showDetails ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+          </button>
         </div>
       </div>
 
-      {expanded && (
-        <div className="border-t border-gray-100 bg-gray-50/50 p-5 animate-fade-in">
-          {/* Account Balance Dashboard */}
+      {/* Dashboard Panel */}
+      {showDash && (
+        <div className="border-t border-gray-100 bg-slate-50 p-5 animate-fade-in">
           <AccountBalanceDashboard account={account} />
+        </div>
+      )}
 
+      {/* Details Panel */}
+      {showDetails && (
+        <div className={`border-t border-gray-100 bg-gray-50/50 p-5 ${!showDash ? 'animate-fade-in' : ''}`}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
             {/* Company Info */}
             <div className="space-y-2">
