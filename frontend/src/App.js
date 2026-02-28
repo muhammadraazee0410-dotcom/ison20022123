@@ -35,6 +35,29 @@ function App() {
     return saved ? JSON.parse(saved) : null;
   });
 
+  // Hide Emergent badge and fixed overlays during printing
+  useEffect(() => {
+    let hiddenEls = [];
+    const onBeforePrint = () => {
+      document.querySelectorAll('[style*="position: fixed"], [style*="position:fixed"]').forEach(el => {
+        if (el.style.display !== 'none') {
+          hiddenEls.push({ el, prev: el.style.display });
+          el.style.display = 'none';
+        }
+      });
+    };
+    const onAfterPrint = () => {
+      hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
+      hiddenEls = [];
+    };
+    window.addEventListener('beforeprint', onBeforePrint);
+    window.addEventListener('afterprint', onAfterPrint);
+    return () => {
+      window.removeEventListener('beforeprint', onBeforePrint);
+      window.removeEventListener('afterprint', onAfterPrint);
+    };
+  }, []);
+
   const login = (userData) => {
     setUser(userData);
     localStorage.setItem("hsbc_user", JSON.stringify(userData));
