@@ -678,8 +678,8 @@ async def get_server_terminal_logs():
     now = datetime.now(timezone.utc)
 
     logs = []
-    logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": f"SWIFT Alliance Gateway v7.5.4 | Server: SAAPROD_EU_FRANKFURT | Uptime: 99.97%"})
-    logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": f"HSBC Continental Europe SA, Germany | BIC: TUBDDEDDXXX | Node: PRIMARY"})
+    logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": "SWIFT Alliance Gateway v7.5.4 | Server: SAAPROD_EU_FRANKFURT | Uptime: 99.97%"})
+    logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": "HSBC Continental Europe SA, Germany | BIC: TUBDDEDDXXX | Node: PRIMARY"})
     logs.append({"ts": now.isoformat(), "level": "INFO", "msg": f"Connected accounts: {len(accounts)} | Active sessions: {len(accounts) + 3}"})
     logs.append({"ts": now.isoformat(), "level": "INFO", "msg": f"Total transactions processed today: {len(transactions)}"})
     logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": "CBPR+ Compliance Module: ACTIVE | Sanctions Screening: ENABLED"})
@@ -698,11 +698,11 @@ async def get_server_terminal_logs():
         logs.append({"ts": t.get("created_at", now.isoformat()), "level": "INFO", "msg": f"[{msg_type}] UETR:{uetr_short}... | {sender} -> {receiver}"})
         logs.append({"ts": t.get("created_at", now.isoformat()), "level": level, "msg": f"  Settlement: {currency} {amount:,.2f} | Status: {status}"})
         if status == "SUCCESSFUL":
-            logs.append({"ts": t.get("updated_at", now.isoformat()), "level": "OK", "msg": f"  Nostro/Vostro: CONFIRMED | Network ACK: RECEIVED | gpi: TRACKED"})
+            logs.append({"ts": t.get("updated_at", now.isoformat()), "level": "OK", "msg": "  Nostro/Vostro: CONFIRMED | Network ACK: RECEIVED | gpi: TRACKED"})
         elif status == "PENDING":
-            logs.append({"ts": t.get("created_at", now.isoformat()), "level": "WARN", "msg": f"  Awaiting settlement confirmation | Nostro: PENDING"})
+            logs.append({"ts": t.get("created_at", now.isoformat()), "level": "WARN", "msg": "  Awaiting settlement confirmation | Nostro: PENDING"})
         else:
-            logs.append({"ts": t.get("created_at", now.isoformat()), "level": "ERROR", "msg": f"  SETTLEMENT FAILED | Manual intervention: REQUIRED"})
+            logs.append({"ts": t.get("created_at", now.isoformat()), "level": "ERROR", "msg": "  SETTLEMENT FAILED | Manual intervention: REQUIRED"})
 
     logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": "--- END OF LOG BUFFER --- Next refresh in 30s ---"})
     return {"logs": logs}
