@@ -178,7 +178,20 @@ export default function TransactionDetail() {
     fetchTransaction();
   }, [id]);
 
-  const handlePrint = () => window.print();
+  const handlePrint = () => {
+    // Hide any fixed-position badges/overlays before printing
+    const fixedElements = document.querySelectorAll('[style*="position: fixed"], [style*="position:fixed"]');
+    const hidden = [];
+    fixedElements.forEach(el => {
+      if (el.style.display !== 'none') {
+        hidden.push({ el, prev: el.style.display });
+        el.style.display = 'none';
+      }
+    });
+    window.print();
+    // Restore after print dialog closes
+    hidden.forEach(({ el, prev }) => { el.style.display = prev; });
+  };
 
   const handleCompleteTransaction = async () => {
     setCompleting(true);
