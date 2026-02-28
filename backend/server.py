@@ -1210,6 +1210,110 @@ async def seed_sample_data():
             "status": "ACTIVE",
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "account_type": "company",
+            "company_name": "ECHO ARYS GMBH",
+            "company_address": "KREUZSTR. 60, 40210 DUSSELDORF",
+            "registration_nr": "HRB 81206",
+            "representative": {
+                "name": "JAMES PATRICK NORMOYLE",
+                "passport_no": "PB1463840",
+                "passport_issue_country": "AUSTRALIA"
+            },
+            "bank_name": "DEUTSCHE BANK AG",
+            "bank_address": "TAUNUSANLAGE 12, 60254, FRANKFURT AM MAIN, GERMANY",
+            "account_name": "ECHO ARYS GMBH",
+            "account_no": "6621021211",
+            "iban": "DE27500700100920009870",
+            "swift_code": "DEUTDEFFXXX",
+            "balance_eur": 310560230120.00,
+            "balance_usd": 72560340120.00,
+            "status": "ACTIVE",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "account_type": "company",
+            "company_name": "RBS BERATUNGS- UND SOFTWARE GMBH",
+            "company_address": "Georg-Schumann-Str. 273, 04159 Leipzig, Germany",
+            "registration_nr": "HRB 13299",
+            "representative": {
+                "name": "Oliver Josef Karl",
+                "passport_no": "L757XFRCM"
+            },
+            "bank_name": "DEUTSCHE BANK LEIPZIG, GERMANY",
+            "bank_address": "Martin Luther Ring 2, 04109 Leipzig, Germany",
+            "account_name": "RBS BERATUNGS- UND SOFTWARE GMBH",
+            "account_no": "0426458600",
+            "iban": "DE45860700240426458600",
+            "swift_code": "DEUTDEDBLEG",
+            "bank_officer": {
+                "name": "Nicolas Mapleton",
+                "email": "nicmapleton@protonmail.com"
+            },
+            "balance_eur": 245230440350.00,
+            "balance_usd": 51230110050.00,
+            "status": "ACTIVE",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "account_type": "company",
+            "company_name": "IMMOBILIEN PARTNER GMBH",
+            "company_address": "AN DER KRONENEIKE 14, BELM 49191 GERMANY",
+            "registration_nr": "0541/315-2240",
+            "representative": {
+                "name": "MR. BRAUN ALEXANDER",
+                "title_position": "DIRECTOR",
+                "passport_no": "L2JNTTT46",
+                "passport_issue_country": "GERMANY",
+                "passport_issue_date": "22.04.2017",
+                "passport_expiry_date": "26.04.2027"
+            },
+            "bank_name": "DEUTSCHE BANK PRIVAT UND GESCHAFTSKUNDEN",
+            "bank_address": "DB Privat- und Firmenkundenbank (Deutsche Bank PGK), 49006 Osnabruck, GERMANY",
+            "account_name": "IMMOBILIEN PARTNER GMBH",
+            "iban": "DE20265700240038813200",
+            "swift_code": "DEUTDEDB265",
+            "bank_officer": {
+                "name": "FRANK KUHNKE",
+                "tel": "DB02673"
+            },
+            "balance_eur": 286340460090.00,
+            "balance_usd": 68340550230.00,
+            "status": "ACTIVE",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "account_type": "company",
+            "company_name": "FOUROSIX TRADING LLC",
+            "company_address": "320 NORTH LAST CHANCE GULCH HELENA, MT 59601",
+            "registration_nr": "15318993",
+            "representative": {
+                "name": "SUGAM KUMAR BHUSAL",
+                "passport_no": "B21443685",
+                "passport_issue_country": "USA",
+                "passport_issue_date": "03/27/2019",
+                "passport_expiry_date": "03/28/2029"
+            },
+            "bank_name": "HSBC TRINKAUS & BURKHARDT",
+            "bank_address": "HANSAALEE 3, 40549 DUSSELDORF, GERMANY",
+            "account_name": "FOUROSIX TRADING LLC",
+            "account_no": "3654986546",
+            "iban": "DE79300308803654986546",
+            "swift_code": "TUBDDEDDXXX",
+            "bank_officer": {"name": "TBA"},
+            "balance_eur": 308523007278.00,
+            "balance_usd": 76751536144.00,
+            "status": "ACTIVE",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
         }
     ]
     await db.accounts.insert_many(sample_accounts)
