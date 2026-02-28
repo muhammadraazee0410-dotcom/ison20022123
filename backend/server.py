@@ -397,6 +397,45 @@ class EmailNotification(BaseModel):
     recipient_email: str
     notification_type: str = "confirmation"
 
+# ============== ACCOUNT MODELS ==============
+
+class RepresentativeInfo(BaseModel):
+    name: str
+    title_position: Optional[str] = None
+    passport_no: str
+    passport_issue_place: Optional[str] = None
+    passport_issue_country: Optional[str] = None
+    passport_issue_date: Optional[str] = None
+    passport_expiry_date: Optional[str] = None
+    place_of_birth: Optional[str] = None
+
+class BankOfficerInfo(BaseModel):
+    name: str
+    tel: Optional[str] = None
+    email: Optional[str] = None
+
+class AccountCreate(BaseModel):
+    account_type: str = "company"
+    company_name: str
+    company_address: Optional[str] = None
+    place_of_incorporation: Optional[str] = None
+    registration_nr: Optional[str] = None
+    date_established: Optional[str] = None
+    representative: RepresentativeInfo
+    bank_name: str = "HSBC Continental Europe, Germany"
+    bank_address: str = "Hansaallee 3, 40549 Dusseldorf, Germany"
+    account_name: str
+    account_no: Optional[str] = None
+    iban: str
+    swift_code: str = "TUBDDEDD"
+    gpi_code: Optional[str] = None
+    further_credit: Optional[str] = None
+    reference: Optional[str] = None
+    balance_eur: float = 0.0
+    balance_usd: float = 0.0
+    bank_officer: Optional[BankOfficerInfo] = None
+    status: str = "ACTIVE"
+
 @api_router.patch("/transactions/{transaction_id}/complete")
 async def complete_transaction(transaction_id: str):
     """Complete a transaction - update status to FINALIZED and SUCCESSFUL"""
