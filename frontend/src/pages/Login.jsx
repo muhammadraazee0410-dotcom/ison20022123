@@ -118,13 +118,6 @@ export default function Login() {
           </Button>
         </form>
 
-        {/* Demo credentials */}
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <p className="text-xs text-gray-500 text-center">
-            <span className="font-medium text-gray-700">Demo Access:</span> Use any email with password <code className="bg-gray-200 px-1.5 py-0.5 rounded text-[#DB0011]">hsbc2025</code>
-          </p>
-        </div>
-
         {/* Footer */}
         <p className="mt-6 text-xs text-center text-gray-400">
           HSBC Germany MX Operations Platform v1.0
