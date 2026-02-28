@@ -7,7 +7,8 @@ import {
   Settings,
   LogOut,
   Shield,
-  PlusCircle
+  PlusCircle,
+  ShieldCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +23,7 @@ const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard", exact: true },
   { to: "/transactions", icon: ArrowLeftRight, label: "Transactions" },
   { to: "/transactions/new", icon: PlusCircle, label: "New Transaction" },
+  { to: "/admin", icon: ShieldCheck, label: "Admin Panel" },
 ];
 
 export default function Layout() {
