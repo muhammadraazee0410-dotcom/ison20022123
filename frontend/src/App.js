@@ -7,6 +7,7 @@ import Dashboard from "@/pages/Dashboard";
 import Transactions from "@/pages/Transactions";
 import TransactionDetail from "@/pages/TransactionDetail";
 import NewTransaction from "@/pages/NewTransaction";
+import AdminPanel from "@/pages/AdminPanel";
 import Layout from "@/components/Layout";
 
 // Auth Context
@@ -85,6 +86,7 @@ function App() {
             <Route path="transactions" element={<Transactions />} />
             <Route path="transactions/new" element={<NewTransaction />} />
             <Route path="transactions/:id" element={<TransactionDetail />} />
+            <Route path="admin" element={<AdminPanel />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
