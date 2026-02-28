@@ -456,6 +456,9 @@ const AccountRow = ({ account, onDelete, expanded, onToggle }) => {
 
       {expanded && (
         <div className="border-t border-gray-100 bg-gray-50/50 p-5 animate-fade-in">
+          {/* Account Balance Dashboard */}
+          <AccountBalanceDashboard account={account} />
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
             {/* Company Info */}
             <div className="space-y-2">
