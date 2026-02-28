@@ -95,12 +95,22 @@ code, .font-mono {
     [id*="emergent"],
     [id*="Emergent"],
     [data-testid*="emergent"],
+    a[href*="emergent"],
+    a[href*="Emergent"],
     iframe,
     .fixed,
     [style*="position: fixed"],
-    [style*="position:fixed"] {
+    [style*="position:fixed"],
+    [style*="z-index: 9999"],
+    [style*="z-index:9999"],
+    [style*="z-index: 10000"],
+    [style*="z-index:10000"] {
         display: none !important;
         visibility: hidden !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
     }
     
     /* Reset page layout for printing */
