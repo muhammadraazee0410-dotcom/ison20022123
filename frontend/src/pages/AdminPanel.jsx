@@ -550,8 +550,12 @@ export default function AdminPanel() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [logsLoading, setLogsLoading] = useState(true);
-  const [expandedId, setExpandedId] = useState(null);
+  const [dashIds, setDashIds] = useState(new Set());
+  const [detailIds, setDetailIds] = useState(new Set());
   const [showAdd, setShowAdd] = useState(false);
+
+  const toggleDash = (id) => setDashIds(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
+  const toggleDetails = (id) => setDetailIds(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
 
   const fetchData = async () => {
     setLoading(true);
