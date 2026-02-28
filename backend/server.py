@@ -1073,7 +1073,148 @@ async def seed_sample_data():
     
     await db.transactions.insert_many(sample_transactions)
     
-    return {"message": f"Successfully seeded {len(sample_transactions)} transactions"}
+    # Seed accounts
+    await db.accounts.delete_many({})
+    sample_accounts = [
+        {
+            "id": str(uuid.uuid4()),
+            "account_type": "company",
+            "company_name": "NADELLA GLOBAL LLC",
+            "company_address": "3285 THORNERIDGE TRL, DOUGLASVILLE, GA 30135 USA",
+            "registration_nr": "22034274",
+            "representative": {
+                "name": "MR. BALAJI NADELLA",
+                "passport_no": "V 4941458",
+                "passport_issue_place": "INDIA",
+                "passport_issue_date": "05/03/2022",
+                "passport_expiry_date": "04/03/2027"
+            },
+            "bank_name": "HSBC CONTINENTAL EUROPE, GERMANY",
+            "bank_address": "HANSAALLEE 3, DUESSELDORF, 40549- GERMANY",
+            "account_name": "BANK OF SCOTIA",
+            "account_no": "10600293688071",
+            "iban": "DE93300308800293688071",
+            "swift_code": "TUBDDEDD",
+            "further_credit": "ONE WORLD BANCORP INC",
+            "reference": "ONE WORLD BANCORP INC/ NADELLA GLOBAL LLC: ACCOUNT NO.: 24502135",
+            "balance_eur": 84750320.50,
+            "balance_usd": 67230100.25,
+            "status": "ACTIVE",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "account_type": "company",
+            "company_name": "PLINVEST TRUST",
+            "company_address": "MOZARTWEG 14, APOLDA, GERMANY",
+            "registration_nr": "100056",
+            "representative": {
+                "name": "LIU BENJUN",
+                "passport_no": "EJ3904842",
+                "passport_issue_country": "P. R. CHINA",
+                "passport_issue_date": "14 APR, 2020",
+                "passport_expiry_date": "13 APR, 2030"
+            },
+            "bank_name": "HSBC TRINKAUS & BURKHARDT",
+            "bank_address": "KOENIGSALLEE 21/23, 40002 DUSSELDORF, GERMANY",
+            "account_name": "PLINVEST TRUST",
+            "iban": "DE28300308802486412944",
+            "swift_code": "TUBDDEDD",
+            "balance_eur": 156890445.00,
+            "balance_usd": 112340500.75,
+            "status": "ACTIVE",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "account_type": "individual",
+            "company_name": "ZHANG YINGFAN",
+            "company_address": "40212 DUSSELDORF, GERMANY",
+            "representative": {
+                "name": "ZHANG YINGFAN",
+                "passport_no": "EH9969130",
+                "passport_issue_country": "CHINA",
+                "passport_issue_date": "10 JULY 2020",
+                "passport_expiry_date": "07 JULY 2030"
+            },
+            "bank_name": "HSBC GERMANY",
+            "bank_address": "KONIGSALLEE 21/23, 40212 DUSSELDORF, GERMANY",
+            "account_name": "ZHANG YINGFAN",
+            "account_no": "0440334608",
+            "iban": "DE78300308800440334608",
+            "swift_code": "TUBDDEDDXXX",
+            "gpi_code": "TUBDDEDDXXX",
+            "bank_officer": {
+                "name": "MARIA KENZIE",
+                "tel": "0049-2119100",
+                "email": "Maria.k_s@hubc.com.de"
+            },
+            "balance_eur": 23450890.30,
+            "balance_usd": 18970200.00,
+            "status": "ACTIVE",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "account_type": "company",
+            "company_name": "QIRAT EP GMBH",
+            "place_of_incorporation": "REPUBLIC OF SINGAPORE",
+            "company_address": "60 PAYA LEBAR ROAD, #12-31 PAYA LEBAR SQUARE, SINGAPORE 409051",
+            "registration_nr": "201230687K",
+            "representative": {
+                "name": "MR. CRAIG L. HUBNER",
+                "title_position": "BUSINESS DEVELOPMENT DIRECTOR",
+                "passport_no": "PE0385066",
+                "passport_issue_country": "AUSTRALIA",
+                "passport_issue_date": "15 MAY 2015",
+                "passport_expiry_date": "15 MAY 2025"
+            },
+            "bank_name": "HSBC TRINKAUS & BURKHARDT AG",
+            "bank_address": "KOENINGSALLEE 21/23, DUSSELDORF 40002, GERMANY",
+            "account_name": "QIRAT EP GMBH",
+            "account_no": "0600078006",
+            "iban": "DE60300308800600078006",
+            "swift_code": "TUBDDEDD",
+            "bank_officer": {"name": "TBA"},
+            "balance_eur": 45670120.80,
+            "balance_usd": 39450330.60,
+            "status": "ACTIVE",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "account_type": "company",
+            "company_name": "BONA Verwaltungs GmbH",
+            "company_address": "Robert-Bosch-Strasse 7, 36093 Kunzell, Germany / Hessen",
+            "registration_nr": "HRB 8743",
+            "date_established": "13 February 2024",
+            "representative": {
+                "name": "Stefan Juli",
+                "title_position": "CEO",
+                "passport_no": "L5ZN44WF4",
+                "passport_issue_country": "Germany",
+                "passport_expiry_date": "02/12/2029",
+                "place_of_birth": "Fulda"
+            },
+            "bank_name": "HSBC Continental Europe SA, Germany",
+            "bank_address": "Hansaallee 3, 40002 Dusseldorf, Germany",
+            "account_name": "Bona Verwaltungs GmbH",
+            "iban": "DE64300308800601052008",
+            "swift_code": "TUBDDEDD",
+            "balance_eur": 31280750.40,
+            "balance_usd": 25680440.15,
+            "status": "ACTIVE",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+    ]
+    await db.accounts.insert_many(sample_accounts)
+    
+    return {"message": f"Successfully seeded {len(sample_transactions)} transactions and {len(sample_accounts)} accounts"}
 
 # Include the router in the main app
 app.include_router(api_router)
