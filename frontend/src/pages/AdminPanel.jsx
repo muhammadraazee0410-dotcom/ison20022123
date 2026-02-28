@@ -27,6 +27,7 @@ import {
   Shield,
   Globe,
   CreditCard,
+  BarChart3,
 } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
