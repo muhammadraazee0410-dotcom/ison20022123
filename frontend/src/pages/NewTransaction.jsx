@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
@@ -66,6 +66,12 @@ export default function NewTransaction() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
+  const [accounts, setAccounts] = useState([]);
+
+  // Fetch registered accounts
+  useEffect(() => {
+    axios.get(`${API}/accounts`).then(res => setAccounts(res.data || [])).catch(() => {});
+  }, []);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -523,7 +529,7 @@ export default function NewTransaction() {
             </CardContent>
           </Card>
 
-          {/* Debtor (Sender Customer) */}
+          {/* Debtor (Sender) */}
           <Card className="border border-gray-200 shadow-sm">
             <CardHeader className="border-b border-gray-100 bg-gray-50/50 py-4">
               <CardTitle className="text-base font-medium text-gray-900 flex items-center gap-2">
@@ -534,17 +540,50 @@ export default function NewTransaction() {
             <CardContent className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="md:col-span-2">
-                  <Label htmlFor="debtorName" className="text-sm font-medium text-gray-700">
-                    Name *
+                  <Label className="text-sm font-medium text-gray-700">
+                    Select Registered Account *
                   </Label>
-                  <Input
-                    id="debtorName"
-                    value={formData.debtorName}
-                    onChange={(e) => handleChange("debtorName", e.target.value)}
-                    className="mt-1.5"
-                    placeholder="GOLD TRADING LIMITED"
-                    data-testid="debtor-name-input"
-                  />
+                  <Select
+                    value={formData.debtorName ? `${formData.debtorName}||${formData.debtorIban}` : ""}
+                    onValueChange={(val) => {
+                      if (val === "_manual_") {
+                        handleChange("debtorName", "");
+                        handleChange("debtorIban", "");
+                        handleChange("debtorCountry", "");
+                        return;
+                      }
+                      const acc = accounts.find(a => `${a.company_name}||${a.iban}` === val);
+                      if (acc) {
+                        handleChange("debtorName", acc.company_name);
+                        handleChange("debtorIban", acc.iban);
+                        const country = acc.iban ? acc.iban.substring(0, 2) : "DE";
+                        handleChange("debtorCountry", country);
+                        // Also set sender bank info from account
+                        handleChange("instructingAgentBic", acc.swift_code || "TUBDDEDDXXX");
+                        handleChange("instructingAgentName", acc.bank_name || "HSBC (CONTINENTAL EUROPE)");
+                        handleChange("instructingAgentCountry", country);
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="mt-1.5" data-testid="debtor-select">
+                      <SelectValue placeholder="Select sender account" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {accounts.map((acc) => (
+                        <SelectItem key={acc.id} value={`${acc.company_name}||${acc.iban}`}>
+                          <div className="flex items-center gap-3">
+                            <div>
+                              <div className="font-medium">{acc.company_name}</div>
+                              <div className="text-xs text-gray-500 font-mono">{acc.iban} &mdash; {acc.swift_code}</div>
+                            </div>
+                          </div>
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="_manual_">
+                        <div className="text-gray-500">Enter manually...</div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <Label htmlFor="debtorCountry" className="text-sm font-medium text-gray-700">
@@ -560,7 +599,20 @@ export default function NewTransaction() {
                     data-testid="debtor-country-input"
                   />
                 </div>
-                <div className="md:col-span-3">
+                <div className="md:col-span-2">
+                  <Label htmlFor="debtorName" className="text-sm font-medium text-gray-700">
+                    Name *
+                  </Label>
+                  <Input
+                    id="debtorName"
+                    value={formData.debtorName}
+                    onChange={(e) => handleChange("debtorName", e.target.value)}
+                    className="mt-1.5"
+                    placeholder="GOLD TRADING LIMITED"
+                    data-testid="debtor-name-input"
+                  />
+                </div>
+                <div>
                   <Label htmlFor="debtorIban" className="text-sm font-medium text-gray-700">
                     IBAN *
                   </Label>
