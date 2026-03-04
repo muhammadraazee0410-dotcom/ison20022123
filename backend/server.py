@@ -1309,8 +1309,37 @@ async def seed_sample_data():
             "iban": "DE79300308803654986546",
             "swift_code": "TUBDDEDDXXX",
             "bank_officer": {"name": "TBA"},
-            "balance_eur": 308523007278.00,
-            "balance_usd": 76751536144.00,
+            "balance_eur": 178523007278.00,
+            "balance_usd": 46751536144.00,
+            "status": "ACTIVE",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "account_type": "company",
+            "company_name": "SS SPACE CAPITAL GROUP UK LTD",
+            "company_address": "68 LOMBARD ST, LANGBOUM EC3V 9L, 64205 LONDON - UK",
+            "registration_nr": "13349766",
+            "representative": {
+                "name": "MRS. ANA ALICE VIEIRA LOPES FEIJO DA SILVA",
+                "passport_no": "13179881",
+                "passport_issue_place": "PORTUGAL",
+                "passport_issue_date": "13.07.2018",
+                "passport_expiry_date": "12.07.2028"
+            },
+            "bank_name": "HSBC TRINKAUS & BURKHARDT AG",
+            "bank_address": "KONIGSALLEE, 21-23, 40212 DUSSELDORF, GERMANY",
+            "account_name": "SS SPACE CAPITAL GROUP UK LTD",
+            "account_no": "0514464400",
+            "iban": "DE52500800000514464400",
+            "swift_code": "TUBDDEDDXXX",
+            "bank_officer": {
+                "name": "DIETER HACHBART",
+                "tel": "+49 40 35614152"
+            },
+            "balance_eur": 130000000000.00,
+            "balance_usd": 30000000000.00,
             "status": "ACTIVE",
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
