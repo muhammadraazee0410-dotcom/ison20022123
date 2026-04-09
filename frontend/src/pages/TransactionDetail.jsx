@@ -378,7 +378,7 @@ export default function TransactionDetail() {
         {/* Payment Settlement Confirmation Letter */}
         <TabsContent value="settlement" className="mt-4">
           <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
-            {/* Header Box */}
+            <div className="flex items-center gap-2 mb-4"><img src="/iso-logo.png" alt="ISO 20022" className="w-8 h-8 object-contain" /><span className="font-bold text-[#DB0011]">ISO 20022</span></div>
             <div className="border-2 border-gray-800 p-4 mb-6 text-center">
               <div className="border border-gray-400 inline-block px-8 py-2">
                 <div className="font-bold text-sm">PAYMENT SETTLEMENT CONFIRMATION LETTER</div>
@@ -492,7 +492,7 @@ export default function TransactionDetail() {
         {/* SWIFT Payment Confirmation Copy */}
         <TabsContent value="confirmation" className="mt-4">
           <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
-            {/* Header Box */}
+            <div className="flex items-center gap-2 mb-4"><img src="/iso-logo.png" alt="ISO 20022" className="w-8 h-8 object-contain" /><span className="font-bold text-[#DB0011]">ISO 20022</span></div>
             <div className="border-2 border-gray-800 p-4 mb-6 text-center">
               <div className="font-bold text-sm">SWIFT PAYMENT CONFIRMATION COPY</div>
               <div className="text-gray-600">(CORRESPONDENT / NOSTRO SETTLEMENT CONFIRMATION)</div>
