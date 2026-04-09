@@ -88,7 +88,7 @@ const DocumentHeader = ({ title, subtitle }) => (
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
-          <span className="text-2xl font-bold text-[#DB0011]">MX pacs.008</span>
+          <span className="text-2xl font-bold text-[#DB0011]">ISO 20022</span>
         </div>
         <div className="h-8 w-px bg-gray-300" />
         <span className="text-sm text-gray-600">Germany</span>
@@ -664,8 +664,8 @@ export default function TransactionDetail() {
               <div className="flex items-center gap-4">
                 <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
                 <div>
-                  <span className="text-2xl font-bold text-[#DB0011]">MX pacs.008</span>
-                  <span className="text-gray-500 ml-2">Platform</span>
+                  <span className="text-2xl font-bold text-[#DB0011]">ISO 20022</span>
+                  <span className="text-gray-500 ml-2">SWIFT Platform</span>
                 </div>
               </div>
               <div className="text-center flex-1">
@@ -779,8 +779,8 @@ ${transaction.instructed_agent.name}`}
               <div className="flex items-center gap-4">
                 <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
                 <div>
-                  <span className="text-2xl font-bold text-[#DB0011]">MX pacs.008</span>
-                  <span className="text-gray-500 ml-2">Platform</span>
+                  <span className="text-2xl font-bold text-[#DB0011]">ISO 20022</span>
+                  <span className="text-gray-500 ml-2">SWIFT Platform</span>
                 </div>
               </div>
               <div className="text-center flex-1">
@@ -891,8 +891,8 @@ ${transaction.instructing_agent.name}`}
               <div className="flex items-center gap-4">
                 <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
                 <div>
-                  <span className="text-2xl font-bold text-[#DB0011]">MX pacs.008</span>
-                  <span className="text-gray-500 ml-2">Platform</span>
+                  <span className="text-2xl font-bold text-[#DB0011]">ISO 20022</span>
+                  <span className="text-gray-500 ml-2">SWIFT Platform</span>
                 </div>
               </div>
               <div className="text-center flex-1">
@@ -1127,8 +1127,8 @@ UETR: ${transaction.uetr}`}
               <div className="flex items-center gap-4">
                 <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
                 <div>
-                  <span className="text-2xl font-bold text-[#DB0011]">MX pacs.008</span>
-                  <span className="text-gray-500 ml-2">Platform</span>
+                  <span className="text-2xl font-bold text-[#DB0011]">ISO 20022</span>
+                  <span className="text-gray-500 ml-2">SWIFT Platform</span>
                 </div>
               </div>
               <div className="text-center flex-1">
@@ -1297,7 +1297,7 @@ UETR: ${transaction.uetr}`}
                 Report ID: RPT-{transaction.id.slice(0, 8).toUpperCase()} | Generated: {formatDateTime(new Date().toISOString())}
               </div>
               <div className="text-gray-400 text-xs mt-2">
-                © MX pacs.008 - SWIFT Alliance Access System v7.5.4
+                © ISO 20022 - SWIFT Alliance Access System v7.5.4
               </div>
             </div>
           </div>
@@ -1311,7 +1311,7 @@ UETR: ${transaction.uetr}`}
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                 <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
-                  <span className="text-xl font-bold text-[#DB0011]">MX pacs.008</span>
+                  <span className="text-xl font-bold text-[#DB0011]">ISO 20022</span>
                 </div>
                 <span className="text-gray-500">|</span>
                 <span className="text-gray-400">Germany</span>

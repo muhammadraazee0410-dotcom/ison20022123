@@ -49,10 +49,10 @@ export default function Login() {
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-8">
           <div className="w-14 h-14 bg-[#DB0011] rounded-xl flex items-center justify-center">
-            <span className="text-white font-bold text-xl">MX</span>
+            <span className="text-white font-bold text-xs leading-tight text-center">ISO<br/>20022</span>
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">MX pacs.008</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">ISO 20022</h1>
             <p className="text-xs text-gray-500">MX Transaction Platform</p>
           </div>
         </div>
@@ -122,7 +122,7 @@ export default function Login() {
 
         {/* Footer */}
         <p className="mt-6 text-xs text-center text-gray-400">
-          MX pacs.008 Transaction Platform v1.0
+          ISO 20022 SWIFT Transfer Platform v1.0
         </p>
       </div>
     </div>

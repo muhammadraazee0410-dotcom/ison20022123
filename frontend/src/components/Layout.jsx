@@ -42,11 +42,11 @@ export default function Layout() {
         {/* Brand */}
         <div className="sidebar-brand">
           <div className="w-10 h-10 bg-[#DB0011] rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">MX</span>
+            <span className="text-white font-bold text-[9px] leading-tight text-center">ISO<br/>20022</span>
           </div>
           <div>
-            <span className="font-semibold text-lg text-gray-900">MX Platform</span>
-            <p className="text-xs text-gray-500">pacs.008 Transaction Platform</p>
+            <span className="font-semibold text-lg text-gray-900">ISO 20022</span>
+            <p className="text-xs text-gray-500">SWIFT Transfer Platform</p>
           </div>
         </div>
 

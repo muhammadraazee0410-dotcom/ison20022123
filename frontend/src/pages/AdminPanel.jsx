@@ -125,7 +125,7 @@ const ServerTerminal = ({ logs, loading }) => {
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium text-slate-300 flex items-center gap-2">
             <Terminal className="w-4 h-4 text-green-400" />
-            SWIFT Server Console — MX pacs.008 Gateway
+            SWIFT Server Console — ISO 20022 Gateway
           </CardTitle>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
@@ -618,7 +618,7 @@ export default function AdminPanel() {
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Admin Panel</h1>
           <p className="text-sm text-gray-500 mt-1">
-            MX pacs.008 Transaction Platform &mdash; SWIFT/BIC: TUBDDEDDXXX
+            ISO 20022 SWIFT Transfer Platform &mdash; SWIFT/BIC: TUBDDEDDXXX
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-gray-500">
