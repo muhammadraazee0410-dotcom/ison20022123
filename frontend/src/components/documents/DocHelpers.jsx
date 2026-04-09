@@ -89,10 +89,15 @@ export const CheckItem = ({ children, color = "black" }) => (
   </div>
 );
 
-// Document footer
+// Document footer with ISO 20022 banner
 export const DocFooter = ({ text }) => (
-  <div className="mt-8 pt-4 border-t-2 border-gray-800 text-center font-bold">
-    {text}
+  <div className="mt-8">
+    <div className="pt-4 border-t-2 border-gray-800 text-center font-bold mb-6">
+      {text}
+    </div>
+    <div className="mt-4">
+      <img src="/iso-20022-banner.png" alt="ISO 20022 - Universal financial industry message scheme" className="w-full max-w-lg mx-auto object-contain" />
+    </div>
   </div>
 );
 

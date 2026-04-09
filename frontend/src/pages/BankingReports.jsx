@@ -467,7 +467,7 @@ export default function BankingReports() {
           </CardContent>
         </Card>
 
-        {/* Report Footer with Barcode and QR */}
+        {/* Report Footer with Barcode, QR and ISO 20022 Banner */}
         <div className="bg-white border border-gray-200 p-4 text-center">
           <div className="flex items-center justify-between mb-3">
             <img src="/iso-logo.png" alt="ISO 20022" className="w-12 h-12 object-contain" />
@@ -480,6 +480,9 @@ export default function BankingReports() {
             </div>
           </div>
           <Barcode value={`END-RPT-${data.report_id}`} />
+          <div className="mt-4">
+            <img src="/iso-20022-banner.png" alt="ISO 20022 - Universal financial industry message scheme" className="w-full max-w-lg mx-auto object-contain" />
+          </div>
           <div className="text-xs text-gray-400 mt-2">SWIFT Alliance Access System v2.5.4 | ISO 20022 SWIFT Transfer Platform</div>
         </div>
       </div>
