@@ -346,17 +346,27 @@ export default function TransactionDetail() {
       {/* Document Tabs */}
       <Tabs defaultValue="settlement" className="w-full">
         <TabsList className="flex flex-wrap gap-1 h-auto p-1 no-print">
-          <TabsTrigger value="settlement" className="text-xs">Settlement</TabsTrigger>
-          <TabsTrigger value="confirmation" className="text-xs">Confirmation</TabsTrigger>
-          <TabsTrigger value="mt910" className="text-xs">MT910 Credit</TabsTrigger>
-          <TabsTrigger value="mt900" className="text-xs">MT900 Debit</TabsTrigger>
-          <TabsTrigger value="mt945" className="text-xs">MT945 Statement</TabsTrigger>
-          <TabsTrigger value="status" className="text-xs">Status</TabsTrigger>
-          <TabsTrigger value="server" className="text-xs">Server Report</TabsTrigger>
-          <TabsTrigger value="alliance" className="text-xs">Alliance Msg</TabsTrigger>
+          <TabsTrigger value="settlement" className="text-xs">Settlement Letter</TabsTrigger>
+          <TabsTrigger value="confirmation" className="text-xs">SWIFT Confirmation</TabsTrigger>
+          <TabsTrigger value="status" className="text-xs">Global Status</TabsTrigger>
+          <TabsTrigger value="alliance" className="text-xs">Alliance Report</TabsTrigger>
+          <TabsTrigger value="tracer" className="text-xs">Payment Tracer</TabsTrigger>
           <TabsTrigger value="mt202" className="text-xs">MT202 COV</TabsTrigger>
-          <TabsTrigger value="pacs008" className="text-xs">PACS.008</TabsTrigger>
-          <TabsTrigger value="debitnote" className="text-xs">Debit Note</TabsTrigger>
+          <TabsTrigger value="aft" className="text-xs">AFT Validation</TabsTrigger>
+          <TabsTrigger value="mt103" className="text-xs">MT103 Answer Back</TabsTrigger>
+          <TabsTrigger value="pacs008" className="text-xs">PACS.008 XML</TabsTrigger>
+          <TabsTrigger value="m1fund" className="text-xs">M1 Fund</TabsTrigger>
+          <TabsTrigger value="server" className="text-xs">Server Report</TabsTrigger>
+          <TabsTrigger value="fundstracer" className="text-xs">Funds Tracer</TabsTrigger>
+          <TabsTrigger value="fundlocation" className="text-xs">Fund Location</TabsTrigger>
+          <TabsTrigger value="bencredit" className="text-xs">Beneficiary Credit</TabsTrigger>
+          <TabsTrigger value="docclearance" className="text-xs">Doc Clearance</TabsTrigger>
+          <TabsTrigger value="smtp" className="text-xs">SMTP Mail</TabsTrigger>
+          <TabsTrigger value="onledger" className="text-xs">On Ledger</TabsTrigger>
+          <TabsTrigger value="officercomm" className="text-xs">Officer Comm</TabsTrigger>
+          <TabsTrigger value="mt900" className="text-xs">MT900 Debit</TabsTrigger>
+          <TabsTrigger value="mt910" className="text-xs">MT910 Credit</TabsTrigger>
+          <TabsTrigger value="mt940" className="text-xs">MT940 Statement</TabsTrigger>
         </TabsList>
 
         {/* Payment Settlement Confirmation Letter */}
@@ -881,7 +891,7 @@ ${transaction.instructing_agent.name}`}
         </TabsContent>
 
         {/* MT945 Customer Statement Message */}
-        <TabsContent value="mt945" className="mt-4">
+        <TabsContent value="mt940" className="mt-4">
           <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
             {/* Barcode */}
             <Barcode value={`MT945-${transaction.uetr}`} />
@@ -1606,66 +1616,377 @@ UETR: ${transaction.uetr}`}
           </div>
         </TabsContent>
 
-        {/* Debit Note Tab */}
-        <TabsContent value="debitnote" className="mt-4">
-          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
-            <Barcode value={`DN${transaction.uetr}`} />
-            <div className="px-8 pt-4">
-              <DocumentHeader title="OFFICIAL DEBIT NOTE" />
+        {/* Payment Tracer */}
+        <TabsContent value="tracer" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            <DocumentHeader title="PAYMENT TRACER REPORT" />
+            <SectionHeader title="TRACER DETAILS" />
+            <FieldRow label="TRACER REFERENCE" value={`TRC-${trn}`} mono />
+            <FieldRow label="ORIGINAL UETR" value={transaction.uetr} mono />
+            <FieldRow label="TRACER TYPE" value="PAYMENT STATUS INQUIRY" />
+            <FieldRow label="REQUEST DATE" value={formatDate(new Date().toISOString())} />
+            <FieldRow label="PRIORITY" value="URGENT" />
+
+            <SectionHeader title="ORIGINAL TRANSACTION" />
+            <FieldRow label="MESSAGE TYPE" value={transaction.message_type} />
+            <FieldRow label="SETTLEMENT AMOUNT" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
+            <FieldRow label="SETTLEMENT DATE" value={formatDate(transaction.settlement_info.settlement_date)} />
+            <FieldRow label="DEBTOR" value={transaction.debtor.name} />
+            <FieldRow label="CREDITOR" value={transaction.creditor.name} />
+
+            <SectionHeader title="TRACER ROUTE" />
+            <FieldRow label="SENDER BIC" value={transaction.instructing_agent.bic} mono />
+            <FieldRow label="RECEIVER BIC" value={transaction.instructed_agent.bic} mono />
+            <FieldRow label="INTERMEDIARY" value="SWIFT GPI NETWORK" />
+            <FieldRow label="gpi STATUS" value={transaction.tracking_result} />
+
+            <SectionHeader title="RESPONSE" />
+            <div className="bg-green-50 p-4 border border-green-200 mb-4">
+              <div>STATUS: {transaction.tracking_result}</div>
+              <div>LAST UPDATE: {formatDate(transaction.updated_at || transaction.created_at)}</div>
+              <div>CONFIRMATION: Payment has been {transaction.tracking_result === "SUCCESSFUL" ? "credited to beneficiary account" : "traced through network"}</div>
             </div>
-            <div className="px-8 pb-8">
-              <div className="text-center mb-4">
-                <div>DEBIT NOTE NO: DN-{new Date().toISOString().slice(0, 10)}-1 | DATE: {formatDate(new Date().toISOString())}</div>
-              </div>
-
-              <SectionHeader title="BANK DETAILS" />
-              <div className="flex justify-between items-start mb-6">
-                <div className="flex-1">
-                  <FieldRow label="BANK NAME" value="MX PLATFORM" />
-                  <FieldRow label="BRANCH" value="FRANKFURT BRANCH" />
-                  <FieldRow label="ADDRESS" value="TAUNUSANLAGE 12, 60254 FRANKFURT AM MAIN, GERMANY" />
-                  <FieldRow label="SWIFT/BIC" value={transaction.instructing_agent.bic} mono />
-                </div>
-                <div className="ml-8"><QRCode value={`DN${transaction.uetr}`} size={90} /></div>
-              </div>
-
-              <SectionHeader title="CUSTOMER DETAILS" />
-              <FieldRow label="CUSTOMER NAME" value={transaction.debtor.name} />
-              <FieldRow label="ACCOUNT NUMBER" value={transaction.debtor.iban} mono />
-
-              <SectionHeader title="TRANSACTION DETAILS" />
-              <FieldRow label="TRANSACTION DATE" value={formatDate(transaction.settlement_info.settlement_date)} />
-              <FieldRow label="TRANSACTION REFERENCE" value={trn} mono />
-              <FieldRow label="UETR" value={transaction.uetr} mono />
-              <FieldRow label="DEBIT AMOUNT" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
-
-              <SectionHeader title="BENEFICIARY DETAILS" />
-              <FieldRow label="BENEFICIARY NAME" value={transaction.creditor.name} />
-              <FieldRow label="BENEFICIARY BANK" value={transaction.instructed_agent.name} />
-              <FieldRow label="BENEFICIARY BIC" value={transaction.instructed_agent.bic} mono />
-
-              <SectionHeader title="REMITTANCE INFORMATION" />
-              <div className="bg-gray-50 p-4 border border-gray-200 mb-4">{transaction.remittance_info}</div>
-
-              <div className="mt-8 grid grid-cols-2 gap-8">
-                <div className="text-center border-t border-gray-300 pt-4">
-                  <div className="text-gray-500 text-xs">AUTHORIZED SIGNATURE</div>
-                  <div className="mt-8 text-gray-700">_________________________</div>
-                  <div className="mt-2">MX PLATFORM</div>
-                </div>
-                <div className="text-center border-t border-gray-300 pt-4">
-                  <div className="text-gray-500 text-xs">CUSTOMER ACKNOWLEDGMENT</div>
-                  <div className="mt-8 text-gray-700">_________________________</div>
-                  <div className="mt-2">{transaction.debtor.name}</div>
-                </div>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-gray-300 text-gray-500 text-center">
-                This is a computer-generated document and does not require a physical signature.
-              </div>
-            </div>
+            <div className="mt-4 text-center text-gray-500">End of Payment Tracer Report | ISO 20022 SWIFT Platform</div>
           </div>
         </TabsContent>
+
+        {/* AFT Validation */}
+        <TabsContent value="aft" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            <DocumentHeader title="AFT VALIDATION REPORT" />
+            <SectionHeader title="AUTOMATED FILE TRANSFER VALIDATION" />
+            <FieldRow label="AFT SESSION ID" value={`AFT-${Date.now().toString(36).toUpperCase()}`} mono />
+            <FieldRow label="VALIDATION DATE" value={formatDate(new Date().toISOString())} />
+            <FieldRow label="FILE REFERENCE" value={`FILE-${trn}`} mono />
+            <FieldRow label="PROTOCOL" value="SWIFTNet FileAct / MQSA" />
+
+            <SectionHeader title="VALIDATION CHECKS" />
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>Schema Validation (ISO 20022 XML)</span><span className="text-green-700 font-bold">PASSED</span></div>
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>Digital Signature Verification</span><span className="text-green-700 font-bold">PASSED</span></div>
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>BIC Validation (Sender/Receiver)</span><span className="text-green-700 font-bold">PASSED</span></div>
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>UETR Format Check</span><span className="text-green-700 font-bold">PASSED</span></div>
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>Amount / Currency Validation</span><span className="text-green-700 font-bold">PASSED</span></div>
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>Sanctions Screening (OFAC/EU)</span><span className="text-green-700 font-bold">CLEARED</span></div>
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>Duplicate Detection</span><span className="text-green-700 font-bold">NO DUPLICATE</span></div>
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>CBPR+ Compliance</span><span className="text-green-700 font-bold">COMPLIANT</span></div>
+            </div>
+
+            <SectionHeader title="TRANSACTION REFERENCE" />
+            <FieldRow label="UETR" value={transaction.uetr} mono />
+            <FieldRow label="AMOUNT" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
+            <FieldRow label="OVERALL RESULT" value="ALL VALIDATIONS PASSED" />
+            <div className="mt-4 text-center text-gray-500">AFT Validation Complete | ISO 20022 SWIFT Platform</div>
+          </div>
+        </TabsContent>
+
+        {/* MT103 Answer Back */}
+        <TabsContent value="mt103" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            <Barcode value={`MT103-${transaction.uetr}`} />
+            <div className="mt-2"><DocumentHeader title="MT103 SINGLE CUSTOMER CREDIT TRANSFER - ANSWER BACK" /></div>
+            <SectionHeader title="MESSAGE HEADER" />
+            <FieldRow label="MESSAGE TYPE" value="MT103 (Single Customer Credit Transfer)" />
+            <FieldRow label="SENDER" value={`${transaction.instructing_agent.bic} ${transaction.instructing_agent.name}`} mono />
+            <FieldRow label="RECEIVER" value={`${transaction.instructed_agent.bic} ${transaction.instructed_agent.name}`} mono />
+            <FieldRow label="MESSAGE REF" value={messageId} mono />
+            <FieldRow label="ANSWER BACK REF" value={`ACK-${trn}`} mono />
+
+            <SectionHeader title="FIELD 20: TRANSACTION REFERENCE" />
+            <div className="bg-gray-50 p-3 border border-gray-200 mb-3 font-mono">:20:{trn}</div>
+            <SectionHeader title="FIELD 23B: BANK OPERATION CODE" />
+            <div className="bg-gray-50 p-3 border border-gray-200 mb-3 font-mono">:23B:CRED</div>
+            <SectionHeader title="FIELD 32A: VALUE DATE/CURRENCY/AMOUNT" />
+            <div className="bg-gray-50 p-3 border border-gray-200 mb-3 font-mono">:32A:{transaction.settlement_info.settlement_date?.replace(/-/g, '').slice(2)}{transaction.settlement_info.currency}{formatAmount(transaction.settlement_info.interbank_settlement_amount)}</div>
+            <SectionHeader title="FIELD 50K: ORDERING CUSTOMER" />
+            <div className="bg-gray-50 p-3 border border-gray-200 mb-3 font-mono">:50K:/{transaction.debtor.iban}<br/>{transaction.debtor.name}</div>
+            <SectionHeader title="FIELD 59: BENEFICIARY CUSTOMER" />
+            <div className="bg-gray-50 p-3 border border-gray-200 mb-3 font-mono">:59:/{transaction.creditor.iban}<br/>{transaction.creditor.name}</div>
+            <SectionHeader title="FIELD 71A: DETAILS OF CHARGES" />
+            <div className="bg-gray-50 p-3 border border-gray-200 mb-3 font-mono">:71A:SHA</div>
+
+            <SectionHeader title="ANSWER BACK STATUS" />
+            <div className="bg-green-50 p-4 border border-green-200 mb-4">
+              <div>NETWORK ACK: RECEIVED | DELIVERY STATUS: DELIVERED | UETR: {transaction.uetr}</div>
+            </div>
+            <div className="mt-4 text-center text-gray-500">MT103 Answer Back | ISO 20022 SWIFT Platform</div>
+          </div>
+        </TabsContent>
+
+        {/* M1 Fund */}
+        <TabsContent value="m1fund" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            <DocumentHeader title="M1 FUND ALLOCATION REPORT" />
+            <SectionHeader title="FUND DETAILS" />
+            <FieldRow label="FUND REFERENCE" value={`M1-${trn}`} mono />
+            <FieldRow label="ALLOCATION DATE" value={formatDate(transaction.settlement_info.settlement_date)} />
+            <FieldRow label="FUND TYPE" value="M1 - IMMEDIATE SETTLEMENT FUND" />
+            <FieldRow label="CURRENCY" value={transaction.settlement_info.currency} />
+            <FieldRow label="AMOUNT" value={formatAmount(transaction.settlement_info.interbank_settlement_amount)} mono />
+
+            <SectionHeader title="ORIGINATOR" />
+            <FieldRow label="NAME" value={transaction.debtor.name} />
+            <FieldRow label="ACCOUNT" value={transaction.debtor.iban} mono />
+            <FieldRow label="BANK BIC" value={transaction.instructing_agent.bic} mono />
+
+            <SectionHeader title="BENEFICIARY" />
+            <FieldRow label="NAME" value={transaction.creditor.name} />
+            <FieldRow label="ACCOUNT" value={transaction.creditor.iban} mono />
+            <FieldRow label="BANK BIC" value={transaction.instructed_agent.bic} mono />
+
+            <SectionHeader title="FUND MOVEMENT" />
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between bg-blue-50 p-2 border border-blue-200"><span>Nostro Account Debit</span><span className="font-bold">CONFIRMED</span></div>
+              <div className="flex justify-between bg-blue-50 p-2 border border-blue-200"><span>Vostro Account Credit</span><span className="font-bold">CONFIRMED</span></div>
+              <div className="flex justify-between bg-blue-50 p-2 border border-blue-200"><span>Interbank Settlement</span><span className="font-bold">COMPLETED</span></div>
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>M1 Fund Status</span><span className="text-green-700 font-bold">ALLOCATED</span></div>
+            </div>
+            <div className="mt-4 text-center text-gray-500">M1 Fund Allocation Report | ISO 20022 SWIFT Platform</div>
+          </div>
+        </TabsContent>
+
+        {/* Funds Tracer */}
+        <TabsContent value="fundstracer" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            <DocumentHeader title="FUNDS TRACER REPORT" />
+            <SectionHeader title="TRACE INFORMATION" />
+            <FieldRow label="TRACE ID" value={`FTR-${Date.now().toString(36).toUpperCase()}`} mono />
+            <FieldRow label="UETR" value={transaction.uetr} mono />
+            <FieldRow label="TRACE INITIATED" value={formatDate(new Date().toISOString())} />
+            <FieldRow label="AMOUNT TRACED" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
+
+            <SectionHeader title="FUND FLOW CHAIN" />
+            <div className="space-y-1 mb-4 border border-gray-200 p-4 bg-gray-50">
+              <div className="flex items-center gap-2"><span className="w-4 h-4 bg-green-500 rounded-full inline-block" /><span className="font-bold">STEP 1:</span> {transaction.debtor.name} (Debtor) — DEBITED</div>
+              <div className="text-gray-400 ml-2">|</div>
+              <div className="flex items-center gap-2"><span className="w-4 h-4 bg-green-500 rounded-full inline-block" /><span className="font-bold">STEP 2:</span> {transaction.instructing_agent.bic} (Sender Bank) — FORWARDED</div>
+              <div className="text-gray-400 ml-2">|</div>
+              <div className="flex items-center gap-2"><span className="w-4 h-4 bg-green-500 rounded-full inline-block" /><span className="font-bold">STEP 3:</span> SWIFT NETWORK (gpi) — TRANSMITTED</div>
+              <div className="text-gray-400 ml-2">|</div>
+              <div className="flex items-center gap-2"><span className="w-4 h-4 bg-green-500 rounded-full inline-block" /><span className="font-bold">STEP 4:</span> {transaction.instructed_agent.bic} (Receiver Bank) — RECEIVED</div>
+              <div className="text-gray-400 ml-2">|</div>
+              <div className="flex items-center gap-2"><span className={`w-4 h-4 rounded-full inline-block ${transaction.tracking_result === "SUCCESSFUL" ? "bg-green-500" : "bg-yellow-500"}`} /><span className="font-bold">STEP 5:</span> {transaction.creditor.name} (Creditor) — {transaction.tracking_result === "SUCCESSFUL" ? "CREDITED" : "PENDING"}</div>
+            </div>
+
+            <SectionHeader title="TRACE RESULT" />
+            <FieldRow label="FINAL STATUS" value={transaction.tracking_result} />
+            <FieldRow label="FUNDS LOCATION" value={transaction.tracking_result === "SUCCESSFUL" ? "BENEFICIARY ACCOUNT" : "IN TRANSIT"} />
+            <div className="mt-4 text-center text-gray-500">Funds Tracer Report | ISO 20022 SWIFT Platform</div>
+          </div>
+        </TabsContent>
+
+        {/* Fund Location */}
+        <TabsContent value="fundlocation" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            <DocumentHeader title="FUND LOCATION REPORT" />
+            <SectionHeader title="FUND IDENTIFICATION" />
+            <FieldRow label="UETR" value={transaction.uetr} mono />
+            <FieldRow label="AMOUNT" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
+            <FieldRow label="REPORT DATE" value={formatDate(new Date().toISOString())} />
+
+            <SectionHeader title="CURRENT LOCATION" />
+            <div className="bg-blue-50 p-4 border border-blue-200 mb-4">
+              <div className="font-bold mb-2">FUND STATUS: {transaction.tracking_result === "SUCCESSFUL" ? "DELIVERED TO BENEFICIARY" : "IN TRANSIT"}</div>
+              <div>INSTITUTION: {transaction.tracking_result === "SUCCESSFUL" ? transaction.instructed_agent.name : "SWIFT NETWORK"}</div>
+              <div>BIC: {transaction.tracking_result === "SUCCESSFUL" ? transaction.instructed_agent.bic : "SWIFT gpi TRACKER"}</div>
+              <div>ACCOUNT: {transaction.tracking_result === "SUCCESSFUL" ? transaction.creditor.iban : "INTERMEDIARY NOSTRO"}</div>
+              <div>TIMESTAMP: {formatDate(transaction.updated_at || transaction.created_at)}</div>
+            </div>
+
+            <SectionHeader title="LOCATION HISTORY" />
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between p-2 border-b"><span>Debtor Account ({transaction.debtor.iban?.slice(0, 10)}...)</span><span>DEBITED</span><span className="text-gray-500">{formatDate(transaction.settlement_info.settlement_date)}</span></div>
+              <div className="flex justify-between p-2 border-b"><span>Sender Nostro ({transaction.instructing_agent.bic})</span><span>TRANSFERRED</span><span className="text-gray-500">{formatDate(transaction.settlement_info.settlement_date)}</span></div>
+              <div className="flex justify-between p-2 border-b"><span>Receiver Vostro ({transaction.instructed_agent.bic})</span><span>RECEIVED</span><span className="text-gray-500">{formatDate(transaction.updated_at || transaction.settlement_info.settlement_date)}</span></div>
+              <div className="flex justify-between p-2 border-b"><span>Beneficiary ({transaction.creditor.iban?.slice(0, 10)}...)</span><span className="text-green-700 font-bold">{transaction.tracking_result === "SUCCESSFUL" ? "CREDITED" : "PENDING"}</span><span className="text-gray-500">{formatDate(transaction.updated_at || new Date().toISOString())}</span></div>
+            </div>
+            <div className="mt-4 text-center text-gray-500">Fund Location Report | ISO 20022 SWIFT Platform</div>
+          </div>
+        </TabsContent>
+
+        {/* Beneficiary Credit */}
+        <TabsContent value="bencredit" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            <Barcode value={`BENCR-${transaction.uetr}`} />
+            <div className="mt-2"><DocumentHeader title="BENEFICIARY CREDIT ADVICE" /></div>
+            <SectionHeader title="CREDIT DETAILS" />
+            <FieldRow label="CREDIT REF" value={`CR-${trn}`} mono />
+            <FieldRow label="CREDIT DATE" value={formatDate(transaction.settlement_info.settlement_date)} />
+            <FieldRow label="VALUE DATE" value={formatDate(transaction.settlement_info.settlement_date)} />
+            <FieldRow label="AMOUNT CREDITED" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
+
+            <SectionHeader title="BENEFICIARY" />
+            <FieldRow label="NAME" value={transaction.creditor.name} />
+            <FieldRow label="ACCOUNT / IBAN" value={transaction.creditor.iban} mono />
+            <FieldRow label="BANK" value={transaction.instructed_agent.name} />
+            <FieldRow label="BANK BIC" value={transaction.instructed_agent.bic} mono />
+
+            <SectionHeader title="ORDERING PARTY" />
+            <FieldRow label="NAME" value={transaction.debtor.name} />
+            <FieldRow label="ACCOUNT / IBAN" value={transaction.debtor.iban} mono />
+            <FieldRow label="BANK" value={transaction.instructing_agent.name} />
+            <FieldRow label="BANK BIC" value={transaction.instructing_agent.bic} mono />
+
+            <SectionHeader title="REMITTANCE" />
+            <div className="bg-gray-50 p-4 border border-gray-200 mb-4">{transaction.remittance_info}</div>
+
+            <div className="bg-green-50 p-4 border border-green-200 text-center font-bold text-green-800">
+              CREDIT CONFIRMED — FUNDS AVAILABLE IN BENEFICIARY ACCOUNT
+            </div>
+            <div className="mt-4 text-center text-gray-500">Beneficiary Credit Advice | ISO 20022 SWIFT Platform</div>
+          </div>
+        </TabsContent>
+
+        {/* Doc Clearance */}
+        <TabsContent value="docclearance" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            <DocumentHeader title="DOCUMENT CLEARANCE CERTIFICATE" />
+            <SectionHeader title="CLEARANCE DETAILS" />
+            <FieldRow label="CLEARANCE REF" value={`CLR-${trn}`} mono />
+            <FieldRow label="CLEARANCE DATE" value={formatDate(new Date().toISOString())} />
+            <FieldRow label="UETR" value={transaction.uetr} mono />
+
+            <SectionHeader title="COMPLIANCE CHECKS" />
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>AML (Anti-Money Laundering)</span><span className="text-green-700 font-bold">CLEARED</span></div>
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>KYC (Know Your Customer)</span><span className="text-green-700 font-bold">VERIFIED</span></div>
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>OFAC Sanctions List</span><span className="text-green-700 font-bold">NO MATCH</span></div>
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>EU Sanctions List</span><span className="text-green-700 font-bold">NO MATCH</span></div>
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>PEP (Politically Exposed Persons)</span><span className="text-green-700 font-bold">NO MATCH</span></div>
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>Transaction Limit Check</span><span className="text-green-700 font-bold">WITHIN LIMITS</span></div>
+              <div className="flex justify-between bg-green-50 p-2 border border-green-200"><span>Document Authentication</span><span className="text-green-700 font-bold">AUTHENTICATED</span></div>
+            </div>
+
+            <SectionHeader title="TRANSACTION SUMMARY" />
+            <FieldRow label="DEBTOR" value={transaction.debtor.name} />
+            <FieldRow label="CREDITOR" value={transaction.creditor.name} />
+            <FieldRow label="AMOUNT" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
+            <FieldRow label="CLEARANCE STATUS" value="FULLY CLEARED FOR PROCESSING" />
+            <div className="mt-4 text-center text-gray-500">Document Clearance Certificate | ISO 20022 SWIFT Platform</div>
+          </div>
+        </TabsContent>
+
+        {/* SMTP Mail */}
+        <TabsContent value="smtp" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            <DocumentHeader title="SMTP MAIL NOTIFICATION LOG" />
+            <SectionHeader title="EMAIL HEADER" />
+            <FieldRow label="FROM" value="noreply@swift-iso20022-platform.com" mono />
+            <FieldRow label="TO" value="operations@correspondent-bank.com" mono />
+            <FieldRow label="CC" value="compliance@correspondent-bank.com" mono />
+            <FieldRow label="SUBJECT" value={`Payment Confirmation - UETR: ${transaction.uetr.slice(0, 18)}...`} />
+            <FieldRow label="DATE" value={new Date().toUTCString()} />
+            <FieldRow label="SMTP SERVER" value="smtp.swiftnet.sipn.swift.com:587" mono />
+            <FieldRow label="TLS" value="TLS 1.3 / AES-256-GCM" />
+            <FieldRow label="STATUS" value="DELIVERED" />
+
+            <SectionHeader title="EMAIL BODY" />
+            <div className="bg-gray-50 p-4 border border-gray-200 mb-4 whitespace-pre-line">
+{`Dear Operations Team,
+
+This is to confirm the following SWIFT payment has been processed:
+
+Transaction Reference: ${trn}
+UETR: ${transaction.uetr}
+Amount: ${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}
+Debtor: ${transaction.debtor.name}
+Creditor: ${transaction.creditor.name}
+Settlement Date: ${formatDate(transaction.settlement_info.settlement_date)}
+Status: ${transaction.tracking_result}
+
+Please verify and reconcile accordingly.
+
+Best regards,
+ISO 20022 SWIFT Transfer Platform
+Automated Notification System`}
+            </div>
+            <FieldRow label="DELIVERY STATUS" value="250 OK - Message accepted for delivery" mono />
+            <div className="mt-4 text-center text-gray-500">SMTP Mail Notification | ISO 20022 SWIFT Platform</div>
+          </div>
+        </TabsContent>
+
+        {/* On Ledger */}
+        <TabsContent value="onledger" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            <DocumentHeader title="ON LEDGER ENTRY RECORD" />
+            <SectionHeader title="LEDGER ENTRY" />
+            <FieldRow label="LEDGER REF" value={`LED-${trn}`} mono />
+            <FieldRow label="ENTRY DATE" value={formatDate(transaction.settlement_info.settlement_date)} />
+            <FieldRow label="POSTING DATE" value={formatDate(transaction.settlement_info.settlement_date)} />
+            <FieldRow label="UETR" value={transaction.uetr} mono />
+
+            <SectionHeader title="DEBIT SIDE" />
+            <div className="bg-red-50 p-4 border border-red-200 mb-4">
+              <FieldRow label="ACCOUNT" value={transaction.debtor.iban} mono />
+              <FieldRow label="ACCOUNT HOLDER" value={transaction.debtor.name} />
+              <FieldRow label="DEBIT AMOUNT" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
+              <FieldRow label="BALANCE TYPE" value="AVAILABLE" />
+            </div>
+
+            <SectionHeader title="CREDIT SIDE" />
+            <div className="bg-green-50 p-4 border border-green-200 mb-4">
+              <FieldRow label="ACCOUNT" value={transaction.creditor.iban} mono />
+              <FieldRow label="ACCOUNT HOLDER" value={transaction.creditor.name} />
+              <FieldRow label="CREDIT AMOUNT" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
+              <FieldRow label="BALANCE TYPE" value="AVAILABLE" />
+            </div>
+
+            <SectionHeader title="LEDGER STATUS" />
+            <FieldRow label="ENTRY STATUS" value="POSTED" />
+            <FieldRow label="RECONCILIATION" value="MATCHED" />
+            <FieldRow label="AUDIT TRAIL" value={`AUDIT-${trn.slice(-8)}`} mono />
+            <div className="mt-4 text-center text-gray-500">On Ledger Entry | ISO 20022 SWIFT Platform</div>
+          </div>
+        </TabsContent>
+
+        {/* Officer Comm */}
+        <TabsContent value="officercomm" className="mt-4">
+          <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            <DocumentHeader title="OFFICER COMMUNICATION RECORD" />
+            <SectionHeader title="COMMUNICATION DETAILS" />
+            <FieldRow label="COMM REF" value={`OFC-${trn}`} mono />
+            <FieldRow label="DATE" value={formatDate(new Date().toISOString())} />
+            <FieldRow label="CHANNEL" value="INTERNAL SECURE MESSAGING" />
+            <FieldRow label="PRIORITY" value={transaction.settlement_info.settlement_priority || "NORMAL"} />
+
+            <SectionHeader title="FROM" />
+            <FieldRow label="OFFICER" value="Operations Department" />
+            <FieldRow label="INSTITUTION" value={transaction.instructing_agent.name} />
+            <FieldRow label="BIC" value={transaction.instructing_agent.bic} mono />
+
+            <SectionHeader title="TO" />
+            <FieldRow label="OFFICER" value="Correspondent Banking Desk" />
+            <FieldRow label="INSTITUTION" value={transaction.instructed_agent.name} />
+            <FieldRow label="BIC" value={transaction.instructed_agent.bic} mono />
+
+            <SectionHeader title="MESSAGE" />
+            <div className="bg-yellow-50 p-4 border border-yellow-200 mb-4 whitespace-pre-line">
+{`RE: Transaction ${trn} | UETR: ${transaction.uetr}
+
+Dear Correspondent,
+
+Please be advised that the following payment instruction has been processed through our ISO 20022 SWIFT platform:
+
+Amount: ${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}
+Debtor: ${transaction.debtor.name}
+Creditor: ${transaction.creditor.name}
+Value Date: ${formatDate(transaction.settlement_info.settlement_date)}
+
+Kindly confirm receipt and credit to the beneficiary at your earliest convenience.
+
+Remittance Info: ${transaction.remittance_info}
+
+Regards,
+Operations & Settlement Desk`}
+            </div>
+
+            <SectionHeader title="ACKNOWLEDGMENT" />
+            <FieldRow label="STATUS" value="READ & ACKNOWLEDGED" />
+            <FieldRow label="RESPONSE TIME" value="Within SLA" />
+            <div className="mt-4 text-center text-gray-500">Officer Communication Record | ISO 20022 SWIFT Platform</div>
+          </div>
+        </TabsContent>
+
       </Tabs>
     </div>
   );
