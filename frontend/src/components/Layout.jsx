@@ -43,7 +43,7 @@ export default function Layout() {
       <aside className="sidebar" data-testid="sidebar">
         {/* Brand */}
         <div className="sidebar-brand">
-          <img src="/iso-logo.png" alt="ISO 20022" className="w-12 h-12 object-contain" />
+          <img src="/iso-logo.png" alt="ISO 20022" className="w-14 h-14 object-contain" />
           <div>
             <span className="font-semibold text-lg text-gray-900">ISO 20022</span>
             <p className="text-xs text-gray-500">SWIFT Transfer Platform</p>

@@ -8,12 +8,12 @@ export const DocWrap = ({ children }) => (
   </div>
 );
 
-// ISO Logo header line - BIGGER SIZE
+// ISO Logo header line - BIG SIZE
 export const IsoLogo = () => (
-  <div className="flex items-center gap-3 mb-6">
-    <img src="/iso-logo.png" alt="ISO 20022" className="w-16 h-16 object-contain" />
+  <div className="flex items-center gap-4 mb-6">
+    <img src="/iso-logo.png" alt="ISO 20022" className="w-24 h-24 object-contain" />
     <div>
-      <span className="font-bold text-lg text-[#DB0011]">ISO 20022</span>
+      <span className="font-bold text-xl text-[#1a4b8e]">ISO 20022</span>
       <div className="text-gray-500 text-xs">SWIFT Transfer Platform</div>
     </div>
   </div>
