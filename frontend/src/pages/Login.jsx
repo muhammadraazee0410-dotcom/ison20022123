@@ -48,9 +48,7 @@ export default function Login() {
       <div className="login-card animate-fade-in">
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="w-14 h-14 bg-[#DB0011] rounded-xl flex items-center justify-center">
-            <span className="text-white font-bold text-xs leading-tight text-center">ISO<br/>20022</span>
-          </div>
+          <img src="/iso-logo.png" alt="ISO 20022" className="w-14 h-14 object-contain" />
           <div>
             <h1 className="text-2xl font-semibold text-gray-900">ISO 20022</h1>
             <p className="text-xs text-gray-500">MX Transaction Platform</p>

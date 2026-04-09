@@ -87,7 +87,7 @@ const DocumentHeader = ({ title, subtitle }) => (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
+          <img src="/iso-logo.png" alt="ISO 20022" className="w-10 h-10 object-contain" />
           <span className="text-2xl font-bold text-[#DB0011]">ISO 20022</span>
         </div>
         <div className="h-8 w-px bg-gray-300" />
@@ -678,7 +678,7 @@ export default function TransactionDetail() {
             {/* Header */}
             <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
               <div className="flex items-center gap-4">
-                <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
+                <img src="/iso-logo.png" alt="ISO 20022" className="w-10 h-10 object-contain" />
                 <div>
                   <span className="text-2xl font-bold text-[#DB0011]">ISO 20022</span>
                   <span className="text-gray-500 ml-2">SWIFT Platform</span>
@@ -793,7 +793,7 @@ ${transaction.instructed_agent.name}`}
             {/* Header */}
             <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
               <div className="flex items-center gap-4">
-                <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
+                <img src="/iso-logo.png" alt="ISO 20022" className="w-10 h-10 object-contain" />
                 <div>
                   <span className="text-2xl font-bold text-[#DB0011]">ISO 20022</span>
                   <span className="text-gray-500 ml-2">SWIFT Platform</span>
@@ -905,7 +905,7 @@ ${transaction.instructing_agent.name}`}
             {/* Header */}
             <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
               <div className="flex items-center gap-4">
-                <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
+                <img src="/iso-logo.png" alt="ISO 20022" className="w-10 h-10 object-contain" />
                 <div>
                   <span className="text-2xl font-bold text-[#DB0011]">ISO 20022</span>
                   <span className="text-gray-500 ml-2">SWIFT Platform</span>
@@ -1141,7 +1141,7 @@ UETR: ${transaction.uetr}`}
             {/* Header */}
             <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
               <div className="flex items-center gap-4">
-                <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
+                <img src="/iso-logo.png" alt="ISO 20022" className="w-10 h-10 object-contain" />
                 <div>
                   <span className="text-2xl font-bold text-[#DB0011]">ISO 20022</span>
                   <span className="text-gray-500 ml-2">SWIFT Platform</span>
@@ -1326,7 +1326,7 @@ UETR: ${transaction.uetr}`}
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-700">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
+                <img src="/iso-logo.png" alt="ISO 20022" className="w-10 h-10 object-contain" />
                   <span className="text-xl font-bold text-[#DB0011]">ISO 20022</span>
                 </div>
                 <span className="text-gray-500">|</span>
