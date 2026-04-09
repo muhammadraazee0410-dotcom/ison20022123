@@ -1,119 +1,100 @@
 # ISO 20022 | SWIFT Transfer Platform - PRD
 
 ## Original Problem Statement
-ISO 20022 | SWIFT Transfer Platform - A banking platform for viewing and managing SWIFT MX pacs.009.001.08 Financial Institution Credit Transfer transactions. Features SWIFT document generation matching official PDF templates, Admin Panel for account management, and comprehensive transaction tracking.
+ISO 20022 | SWIFT Transfer Platform - A banking platform for viewing and managing SWIFT MX pacs.009.001.08 Financial Institution Credit Transfer transactions. Features SWIFT document generation matching official PDF templates, Admin Panel for account management, advanced banking analytics, and comprehensive transaction tracking.
 
 ## Architecture
-- **Frontend**: React 19 + Tailwind CSS + Shadcn UI
+- **Frontend**: React 19 + Tailwind CSS + Shadcn UI + Recharts + html2pdf.js + qrcode.react
 - **Backend**: FastAPI (Python)
 - **Database**: MongoDB
-- **Styling**: ISO 20022 Brand Identity (Red #DB0011, Courier New monospace font for documents)
-
-## User Personas
-1. **Bank Operations Staff** - View and monitor SWIFT transactions
-2. **Compliance Officers** - Verify CBPR+ compliance status
-3. **Transaction Managers** - Track settlement status and Nostro/Vostro movements
+- **Styling**: ISO 20022 Brand Identity (Red #DB0011, Courier New monospace for documents)
 
 ## Core Requirements
 - SWIFT MX pacs.009.001.08 message format support
-- 27 document tabs matching official SWIFT PDF templates
+- 27 document tabs matching official SWIFT PDF templates with barcode + QR on every tab
 - Real-time dashboard with transaction statistics
+- Advanced Banking Reports with charts, analytics, barcodes, QR codes
 - Admin Panel with 10 seeded bank accounts and balance management
 - Print-ready receipt documents (Emergent badge hidden on print)
+- PDF export functionality for all documents and reports
 - CBPR+ compliance indicators
 
 ## What's Been Implemented
 
-### Backend (server.py)
-- [x] Transaction CRUD endpoints
-- [x] Dashboard statistics API
-- [x] Chart data API
-- [x] Sample data seeding (8 transactions + 10 accounts)
-- [x] Authentication (demo mode)
-- [x] Account CRUD endpoints
-- [x] Accounts balance endpoint (EUR ~2.47T, USD ~567B)
-- [x] Server terminal logs endpoint
-
-### Frontend Pages
-- [x] Login page with ISO 20022 branding
-- [x] Dashboard with stats cards, charts, recent transactions
+### Completed Features
+- [x] Authentication (demo mode - any email + hsbc2025)
+- [x] Dashboard with stats, charts, recent transactions
 - [x] Transactions list with search/filter/sort
-- [x] Transaction Detail with 27 document tabs (REFACTORED - Apr 9, 2026)
+- [x] Transaction Detail with 27 document tabs (modular components)
+- [x] 4 main PDF-matching tabs (Settlement Letter, SWIFT Confirmation, Global Status, Alliance Report)
+- [x] 23 brief document tabs with complete transaction details
 - [x] New Transaction page with registered sender dropdown
-- [x] Admin Panel with accounts, balances, terminal
-
-### Document Tabs (27 total - REFACTORED Apr 9, 2026)
-**4 Main PDF-Matching Tabs** (exact match to uploaded swift mx pacs.009 PDF):
-- [x] Settlement Letter - Full confirmation letter with all sections
-- [x] SWIFT Confirmation - With IP verification table, multi-level confirmations
-- [x] Global Status - SWIFT server status with message identification details
-- [x] Alliance Report - Instance search detailed report with XML message text
-
-**23 Brief Document Tabs** (complete transaction details in concise format):
-- [x] Payment Tracer, MT202 COV, AFT Validation, MT103 Answer Back
-- [x] PACS.008 XML, M1 Fund, Server Report, Funds Tracer
-- [x] Fund Location, Beneficiary Credit, Doc Clearance, SMTP Mail
-- [x] On Ledger, Officer Comm, MT900 Debit, MT910 Credit
-- [x] MT940 Statement, Debit Note, Balance Sheet, Remittance Report
-- [x] Credit Notification, Intermediary Bank, Nostro Account Detail
-
-### Key Refactoring (Apr 9, 2026)
-- TransactionDetail.jsx refactored from ~2400 lines to ~175 lines
-- 27 document tabs extracted into modular components in /components/documents/
-- Shared DocHelpers.jsx provides reusable components (DocWrap, IsoLogo, FieldRow, etc.)
-- BriefDocuments.jsx provides 23 brief tab components with shared TxnSummary
-
-### Pre-seeded Accounts (10 total)
-1. NADELLA GLOBAL LLC (IBAN: DE93300308800293688071)
-2. PLINVEST TRUST (IBAN: DE28300308802486412944)
-3. ZHANG YINGFAN (IBAN: DE78300308800440334608)
-4. QIRAT EP GMBH (IBAN: DE60300308800600078006)
-5. BONA Verwaltungs GmbH (IBAN: DE64300308800601052008)
-6-10. Additional registered companies
+- [x] Admin Panel with 10 accounts, balances, terminal
+- [x] ISO 20022 branding with custom iso-logo.png (bigger size w-16)
+- [x] Barcode + QR code on ALL 27 document tabs (DocHeaderStrip)
+- [x] PDF export via html2pdf.js on TransactionDetail and BankingReports
+- [x] Advanced Banking Reports page (/reports) with:
+  - Transaction volume analytics (monthly area chart)
+  - Settlement status pie chart
+  - Daily settlement flow (30-day bar chart)
+  - Currency distribution pie chart
+  - Nostro/Vostro position summary table with QR codes
+  - Compliance & AML screening stats
+  - Top counterparties by volume
+  - Settlement method distribution
+  - Report header/footer with barcodes + QR codes
+- [x] Print functionality (Emergent badge hidden)
+- [x] pytest backend test suite (15 tests passing)
 
 ## Code Architecture
 ```
 /app/
 ├── backend/
-│   ├── server.py         # FastAPI app with ALL routes and seeding
+│   ├── server.py
 │   └── tests/
-│       └── test_admin_panel.py
+│       ├── test_admin_panel.py
+│       └── test_api.py
 ├── frontend/
 │   └── src/
 │       ├── components/
-│       │   ├── documents/          # NEW: Modular document components
-│       │   │   ├── index.js        # Barrel export
-│       │   │   ├── DocHelpers.jsx  # Shared helpers & formatters
+│       │   ├── documents/
+│       │   │   ├── index.js
+│       │   │   ├── DocHelpers.jsx (IsoLogo w-16, Barcode, QR, DocHeaderStrip)
 │       │   │   ├── SettlementLetter.jsx
 │       │   │   ├── SwiftConfirmation.jsx
 │       │   │   ├── GlobalStatus.jsx
 │       │   │   ├── AllianceReport.jsx
-│       │   │   └── BriefDocuments.jsx  # 23 brief tabs
+│       │   │   └── BriefDocuments.jsx (23 brief tabs)
 │       │   └── Layout.jsx
 │       └── pages/
-│           ├── TransactionDetail.jsx  # Clean orchestrator (~175 lines)
+│           ├── TransactionDetail.jsx (~260 lines, orchestrator)
+│           ├── BankingReports.jsx (new - analytics page)
 │           ├── AdminPanel.jsx
 │           ├── Dashboard.jsx
 │           ├── NewTransaction.jsx
 │           ├── Transactions.jsx
 │           └── Login.jsx
-└── memory/
-    └── PRD.md
 ```
 
-## P0/P1/P2 Features Remaining
+## API Endpoints
+- GET /api/analytics/reports - Advanced banking analytics
+- GET /api/dashboard/stats - Dashboard summary
+- GET /api/dashboard/total-funds - EUR/USD fund totals
+- GET /api/dashboard/chart-data - Chart data
+- GET /api/transactions - List transactions
+- GET /api/transactions/:id - Single transaction
+- POST /api/transactions - Create transaction
+- PATCH /api/transactions/:id/complete - Complete transaction
+- GET /api/accounts - List accounts
+- GET /api/accounts-balance - Aggregated balances
+- GET /api/server-terminal - Server logs
+- POST /api/transactions/:id/send-notification - MOCKED email
 
-### P0 (Critical)
-- None
-
-### P1 (Important)
-- Real email notifications (currently MOCKED - returns static success)
-- Transaction export (CSV/PDF)
-
-### P2 (Nice to Have)
-- Refactor server.py into separate route/model modules
-- Advanced analytics and reporting
-- Real-time WebSocket updates
+## P1/P2 Features Remaining
+- P1: Real email notifications (currently MOCKED)
+- P1: Transaction export (CSV)
+- P2: Refactor server.py into separate route/model modules
+- P2: Real-time WebSocket updates
 
 ## Credentials
 - Email: any email (demo mode)
