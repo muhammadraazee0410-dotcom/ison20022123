@@ -107,6 +107,37 @@ export default function Transactions() {
     return aVal < bVal ? 1 : -1;
   });
 
+  const handleExportCSV = () => {
+    if (!transactions.length) return;
+    const headers = ["UETR","Message Type","Status","Settlement Amount","Currency","Settlement Date","Settlement Method","Priority","Debtor","Debtor IBAN","Creditor","Creditor IBAN","Sender BIC","Receiver BIC","Remittance Info","Created At"];
+    const rows = transactions.map(t => [
+      t.uetr,
+      t.message_type,
+      t.tracking_result,
+      t.settlement_info.interbank_settlement_amount,
+      t.settlement_info.currency,
+      t.settlement_info.settlement_date,
+      t.settlement_info.method,
+      t.settlement_info.priority,
+      t.debtor.name,
+      t.debtor.iban,
+      t.creditor.name,
+      t.creditor.iban || '',
+      t.instructing_agent.bic,
+      t.instructed_agent.bic,
+      t.remittance_info,
+      t.created_at
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `SWIFT_Transactions_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="p-6 space-y-6" data-testid="transactions-page">
       {/* Header */}
@@ -118,6 +149,16 @@ export default function Transactions() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={handleExportCSV}
+            disabled={!transactions.length}
+            className="border-gray-300"
+            data-testid="export-csv-button"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Export CSV
+          </Button>
           <Button
             variant="outline"
             onClick={fetchTransactions}
