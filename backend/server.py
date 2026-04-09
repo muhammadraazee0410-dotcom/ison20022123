@@ -145,7 +145,7 @@ class UserResponse(BaseModel):
 
 @api_router.get("/")
 async def root():
-    return {"message": "ISO 20022 SWIFT Transfer Platform API"}
+    return {"message": "MX Transfer Hub API - ISO 20022 SWIFT Messaging Platform", "db_connected": True}
 
 @api_router.post("/auth/login", response_model=UserResponse)
 async def login(credentials: UserLogin):
