@@ -161,7 +161,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <p className="text-sm text-gray-400 font-medium uppercase tracking-wider">
-                  HSBC Germany MX Platform - Total Funds
+                  MX pacs.008 Platform - Total Funds
                 </p>
                 <p className="text-xs text-gray-500 mt-1">Real-time Balance</p>
               </div>

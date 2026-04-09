@@ -81,14 +81,14 @@ const QRCode = ({ value, size = 100 }) => {
   );
 };
 
-// Document Header with HSBC branding
+// Document Header with MX branding
 const DocumentHeader = ({ title, subtitle }) => (
   <div className="border-b-2 border-gray-300 pb-4 mb-6">
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <img src="/hsbc-logo.png" alt="HSBC" className="w-10 h-10 object-contain" />
-          <span className="text-2xl font-bold text-[#DB0011]">HSBC</span>
+          <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
+          <span className="text-2xl font-bold text-[#DB0011]">MX pacs.008</span>
         </div>
         <div className="h-8 w-px bg-gray-300" />
         <span className="text-sm text-gray-600">Germany</span>
@@ -260,8 +260,8 @@ export default function TransactionDetail() {
     );
   }
 
-  const trn = `HSBC${transaction.uetr.replace(/-/g, '').slice(0, 12).toUpperCase()}`;
-  const messageId = `HSBC${Date.now().toString().slice(-10)}`;
+  const trn = `MX${transaction.uetr.replace(/-/g, '').slice(0, 12).toUpperCase()}`;
+  const messageId = `MX${Date.now().toString().slice(-10)}`;
 
   return (
     <div className="p-6 space-y-4" data-testid="transaction-detail">
@@ -556,7 +556,7 @@ export default function TransactionDetail() {
                 <div className="flex items-center gap-2 py-0.5">
                   <Check className="w-4 h-4 text-gray-700" />
                   <span className="w-56">Sender Bank Confirmation</span>
-                  <span>: HSBC - CONFIRMED</span>
+                  <span>: MX PLATFORM - CONFIRMED</span>
                 </div>
                 <div className="flex items-center gap-2 py-0.5">
                   <Check className="w-4 h-4 text-gray-700" />
@@ -662,10 +662,10 @@ export default function TransactionDetail() {
             {/* Header */}
             <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
               <div className="flex items-center gap-4">
-                <img src="/hsbc-logo.png" alt="HSBC" className="w-10 h-10 object-contain" />
+                <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
                 <div>
-                  <span className="text-2xl font-bold text-[#DB0011]">HSBC</span>
-                  <span className="text-gray-500 ml-2">Germany</span>
+                  <span className="text-2xl font-bold text-[#DB0011]">MX pacs.008</span>
+                  <span className="text-gray-500 ml-2">Platform</span>
                 </div>
               </div>
               <div className="text-center flex-1">
@@ -777,10 +777,10 @@ ${transaction.instructed_agent.name}`}
             {/* Header */}
             <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
               <div className="flex items-center gap-4">
-                <img src="/hsbc-logo.png" alt="HSBC" className="w-10 h-10 object-contain" />
+                <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
                 <div>
-                  <span className="text-2xl font-bold text-[#DB0011]">HSBC</span>
-                  <span className="text-gray-500 ml-2">Germany</span>
+                  <span className="text-2xl font-bold text-[#DB0011]">MX pacs.008</span>
+                  <span className="text-gray-500 ml-2">Platform</span>
                 </div>
               </div>
               <div className="text-center flex-1">
@@ -889,10 +889,10 @@ ${transaction.instructing_agent.name}`}
             {/* Header */}
             <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
               <div className="flex items-center gap-4">
-                <img src="/hsbc-logo.png" alt="HSBC" className="w-10 h-10 object-contain" />
+                <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
                 <div>
-                  <span className="text-2xl font-bold text-[#DB0011]">HSBC</span>
-                  <span className="text-gray-500 ml-2">Germany</span>
+                  <span className="text-2xl font-bold text-[#DB0011]">MX pacs.008</span>
+                  <span className="text-gray-500 ml-2">Platform</span>
                 </div>
               </div>
               <div className="text-center flex-1">
@@ -1125,10 +1125,10 @@ UETR: ${transaction.uetr}`}
             {/* Header */}
             <div className="flex items-center justify-between border-b-2 border-gray-300 pb-4 mb-6">
               <div className="flex items-center gap-4">
-                <img src="/hsbc-logo.png" alt="HSBC" className="w-10 h-10 object-contain" />
+                <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
                 <div>
-                  <span className="text-2xl font-bold text-[#DB0011]">HSBC</span>
-                  <span className="text-gray-500 ml-2">Germany</span>
+                  <span className="text-2xl font-bold text-[#DB0011]">MX pacs.008</span>
+                  <span className="text-gray-500 ml-2">Platform</span>
                 </div>
               </div>
               <div className="text-center flex-1">
@@ -1297,7 +1297,7 @@ UETR: ${transaction.uetr}`}
                 Report ID: RPT-{transaction.id.slice(0, 8).toUpperCase()} | Generated: {formatDateTime(new Date().toISOString())}
               </div>
               <div className="text-gray-400 text-xs mt-2">
-                © HSBC Germany - SWIFT Alliance Access System v7.5.4
+                © MX pacs.008 - SWIFT Alliance Access System v7.5.4
               </div>
             </div>
           </div>
@@ -1310,8 +1310,8 @@ UETR: ${transaction.uetr}`}
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-700">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <img src="/hsbc-logo.png" alt="HSBC" className="w-10 h-10 object-contain" />
-                  <span className="text-xl font-bold text-[#DB0011]">HSBC</span>
+                <img src="/hsbc-logo.png" alt="MX" className="w-10 h-10 object-contain" />
+                  <span className="text-xl font-bold text-[#DB0011]">MX pacs.008</span>
                 </div>
                 <span className="text-gray-500">|</span>
                 <span className="text-gray-400">Germany</span>
@@ -1621,7 +1621,7 @@ UETR: ${transaction.uetr}`}
               <SectionHeader title="BANK DETAILS" />
               <div className="flex justify-between items-start mb-6">
                 <div className="flex-1">
-                  <FieldRow label="BANK NAME" value="HSBC GERMANY" />
+                  <FieldRow label="BANK NAME" value="MX PLATFORM" />
                   <FieldRow label="BRANCH" value="FRANKFURT BRANCH" />
                   <FieldRow label="ADDRESS" value="TAUNUSANLAGE 12, 60254 FRANKFURT AM MAIN, GERMANY" />
                   <FieldRow label="SWIFT/BIC" value={transaction.instructing_agent.bic} mono />
@@ -1651,7 +1651,7 @@ UETR: ${transaction.uetr}`}
                 <div className="text-center border-t border-gray-300 pt-4">
                   <div className="text-gray-500 text-xs">AUTHORIZED SIGNATURE</div>
                   <div className="mt-8 text-gray-700">_________________________</div>
-                  <div className="mt-2">HSBC GERMANY</div>
+                  <div className="mt-2">MX PLATFORM</div>
                 </div>
                 <div className="text-center border-t border-gray-300 pt-4">
                   <div className="text-gray-500 text-xs">CUSTOMER ACKNOWLEDGMENT</div>

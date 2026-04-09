@@ -81,7 +81,7 @@ export default function NewTransaction() {
     
     // Instructing Agent (Sender Bank)
     instructingAgentBic: "TUBDDEDDXXX",
-    instructingAgentName: "HSBC (CONTINENTAL EUROPE)",
+    instructingAgentName: "",
     instructingAgentCountry: "DE",
     
     // Instructed Agent (Receiver Bank)
@@ -330,7 +330,7 @@ export default function NewTransaction() {
                     value={formData.instructingAgentName}
                     onChange={(e) => handleChange("instructingAgentName", e.target.value)}
                     className="mt-1.5"
-                    placeholder="HSBC (CONTINENTAL EUROPE)"
+                    placeholder="Bank Name"
                     data-testid="sender-bank-name-input"
                   />
                 </div>
@@ -560,7 +560,7 @@ export default function NewTransaction() {
                         handleChange("debtorCountry", country);
                         // Also set sender bank info from account
                         handleChange("instructingAgentBic", acc.swift_code || "TUBDDEDDXXX");
-                        handleChange("instructingAgentName", acc.bank_name || "HSBC (CONTINENTAL EUROPE)");
+                        handleChange("instructingAgentName", acc.bank_name || "");
                         handleChange("instructingAgentCountry", country);
                       }
                     }}

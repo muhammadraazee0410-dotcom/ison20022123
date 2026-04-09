@@ -41,10 +41,12 @@ export default function Layout() {
       <aside className="sidebar" data-testid="sidebar">
         {/* Brand */}
         <div className="sidebar-brand">
-          <img src="/hsbc-logo.png" alt="HSBC" className="w-10 h-10 object-contain" />
+          <div className="w-10 h-10 bg-[#DB0011] rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-sm">MX</span>
+          </div>
           <div>
-            <span className="font-semibold text-lg text-gray-900">HSBC</span>
-            <p className="text-xs text-gray-500">MX Transaction Platform</p>
+            <span className="font-semibold text-lg text-gray-900">MX Platform</span>
+            <p className="text-xs text-gray-500">pacs.008 Transaction Platform</p>
           </div>
         </div>
 

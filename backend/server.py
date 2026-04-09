@@ -20,7 +20,7 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 # Create the main app without a prefix
-app = FastAPI(title="HSBC MX Transaction Platform")
+app = FastAPI(title="MX pacs.008 Transaction Platform")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
@@ -145,7 +145,7 @@ class UserResponse(BaseModel):
 
 @api_router.get("/")
 async def root():
-    return {"message": "HSBC MX Transaction Platform API"}
+    return {"message": "MX pacs.008 Transaction Platform API"}
 
 @api_router.post("/auth/login", response_model=UserResponse)
 async def login(credentials: UserLogin):
@@ -679,7 +679,7 @@ async def get_server_terminal_logs():
 
     logs = []
     logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": "SWIFT Alliance Gateway v7.5.4 | Server: SAAPROD_EU_FRANKFURT | Uptime: 99.97%"})
-    logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": "HSBC Continental Europe SA, Germany | BIC: TUBDDEDDXXX | Node: PRIMARY"})
+    logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": "MX pacs.008 Transaction Platform | BIC: TUBDDEDDXXX | Node: PRIMARY"})
     logs.append({"ts": now.isoformat(), "level": "INFO", "msg": f"Connected accounts: {len(accounts)} | Active sessions: {len(accounts) + 3}"})
     logs.append({"ts": now.isoformat(), "level": "INFO", "msg": f"Total transactions processed today: {len(transactions)}"})
     logs.append({"ts": now.isoformat(), "level": "SYSTEM", "msg": "CBPR+ Compliance Module: ACTIVE | Sanctions Screening: ENABLED"})
