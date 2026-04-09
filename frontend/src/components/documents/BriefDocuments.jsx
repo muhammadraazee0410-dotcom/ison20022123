@@ -1,30 +1,4 @@
-import { QRCodeSVG } from "qrcode.react";
-import { DocWrap, IsoLogo, DocBanner, FieldRow, SectionHeader, CheckItem, DocFooter, formatAmount, formatDate, formatDateLong, formatDateTime, getTrn, getMsgId } from "./DocHelpers";
-
-// Barcode Component
-const Barcode = ({ value }) => {
-  const bars = value.split('').map((c, i) => {
-    const code = c.charCodeAt(0);
-    return [(code % 4) + 1, ((code * 2) % 3) + 1, ((code * 3) % 4) + 1];
-  }).flat();
-
-  return (
-    <div className="flex justify-center items-center py-4 bg-white">
-      <div className="flex h-12">
-        {bars.slice(0, 80).map((w, i) => (
-          <div key={i} className={`h-12 ${i % 2 === 0 ? 'bg-black' : 'bg-white'}`} style={{ width: `${w}px` }} />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// QR Code
-const QR = ({ value, size = 80 }) => (
-  <div className="bg-white p-2 border border-gray-300" style={{ width: size + 16, height: size + 16 }}>
-    <QRCodeSVG value={`SWIFT-TXN:${value}`} size={size} level="H" bgColor="#FFFFFF" fgColor="#000000" />
-  </div>
-);
+import { DocWrap, IsoLogo, DocBanner, FieldRow, SectionHeader, CheckItem, DocFooter, DocHeaderStrip, Barcode, QR, formatAmount, formatDate, formatDateLong, formatDateTime, getTrn, getMsgId } from "./DocHelpers";
 
 // Complete Transaction Summary block - used in all brief docs
 const TxnSummary = ({ transaction, trn, messageId }) => (
@@ -86,6 +60,7 @@ export const PaymentTracer = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="TRACER" />
       <IsoLogo />
       <DocBanner title="SWIFT gpi PAYMENT TRACER" subtitle="(END-TO-END PAYMENT TRACKING REPORT)" />
       <div className="mb-4">
@@ -116,7 +91,7 @@ export const MT202COV = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
-      <Barcode value={`MT202COV-${transaction.uetr}`} />
+      <DocHeaderStrip uetr={transaction.uetr} docType="MT202COV" />
       <IsoLogo />
       <DocBanner title="MT202 COV - GENERAL FINANCIAL INSTITUTION TRANSFER" subtitle="(COVER PAYMENT FOR UNDERLYING CUSTOMER CREDIT TRANSFER)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -144,6 +119,7 @@ export const AFTValidation = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="AFT" />
       <IsoLogo />
       <DocBanner title="AFT VALIDATION REPORT" subtitle="(AUTOMATED FORMAT & TRANSLATION CHECK)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -199,6 +175,7 @@ export const PACS008XML = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="PACS008" />
       <IsoLogo />
       <DocBanner title="PACS.008 XML MESSAGE" subtitle="(FI TO FI CUSTOMER CREDIT TRANSFER)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -291,6 +268,7 @@ export const FundsTracer = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="FTRACER" />
       <IsoLogo />
       <DocBanner title="FUNDS TRACER REPORT" subtitle="(FUND FLOW CHAIN ANALYSIS)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -318,6 +296,7 @@ export const FundLocation = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="FUNDLOC" />
       <IsoLogo />
       <DocBanner title="FUND LOCATION REPORT" subtitle="(REAL-TIME FUND POSITION)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -345,7 +324,7 @@ export const BeneficiaryCredit = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
-      <Barcode value={`BENCR-${transaction.uetr}`} />
+      <DocHeaderStrip uetr={transaction.uetr} docType="BENCR" />
       <IsoLogo />
       <DocBanner title="BENEFICIARY CREDIT ADVICE" subtitle="(CREDIT NOTIFICATION TO BENEFICIARY)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -367,6 +346,7 @@ export const DocClearance = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="DOCCLR" />
       <IsoLogo />
       <DocBanner title="DOCUMENT CLEARANCE CERTIFICATE" subtitle="(COMPLIANCE & CLEARANCE VERIFICATION)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -398,6 +378,7 @@ export const SMTPMail = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="SMTP" />
       <IsoLogo />
       <DocBanner title="SMTP MAIL NOTIFICATION LOG" subtitle="(EMAIL DELIVERY CONFIRMATION)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -423,6 +404,7 @@ export const OnLedger = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="LEDGER" />
       <IsoLogo />
       <DocBanner title="ON-LEDGER POSTING CONFIRMATION" subtitle="(GENERAL LEDGER ENTRY RECORD)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -461,6 +443,7 @@ export const OfficerComm = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="OFFCOMM" />
       <IsoLogo />
       <DocBanner title="OFFICER COMMUNICATION RECORD" subtitle="(INTERNAL BANK COMMUNICATION LOG)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -492,7 +475,7 @@ export const MT900Debit = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
-      <Barcode value={`MT900-${transaction.uetr}`} />
+      <DocHeaderStrip uetr={transaction.uetr} docType="MT900" />
       <IsoLogo />
       <DocBanner title="MT900 - CONFIRMATION OF DEBIT" subtitle="(VOSTRO ACCOUNT DEBIT NOTIFICATION)" />
       <div className="bg-red-50 border-2 border-red-600 p-4 mb-6 text-center">
@@ -519,7 +502,7 @@ export const MT910Credit = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
-      <Barcode value={`MT910-${transaction.uetr}`} />
+      <DocHeaderStrip uetr={transaction.uetr} docType="MT910" />
       <IsoLogo />
       <DocBanner title="MT910 - CONFIRMATION OF CREDIT" subtitle="(NOSTRO ACCOUNT CREDIT NOTIFICATION)" />
       <div className="bg-green-50 border-2 border-green-600 p-4 mb-6 text-center">
@@ -546,7 +529,7 @@ export const MT940Statement = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
-      <Barcode value={`MT940-${transaction.uetr}`} />
+      <DocHeaderStrip uetr={transaction.uetr} docType="MT940" />
       <IsoLogo />
       <DocBanner title="MT940 - CUSTOMER STATEMENT MESSAGE" subtitle="(ACCOUNT STATEMENT WITH TRANSACTION ENTRIES)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -588,7 +571,7 @@ export const DebitNote = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
-      <Barcode value={`DN-${transaction.uetr}`} />
+      <DocHeaderStrip uetr={transaction.uetr} docType="DEBITNOTE" />
       <IsoLogo />
       <DocBanner title="OFFICIAL DEBIT NOTE" subtitle="(ACCOUNT DEBIT NOTIFICATION)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -612,6 +595,7 @@ export const BalanceSheet = ({ transaction }) => {
   const amt = transaction.settlement_info.interbank_settlement_amount;
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="BALSHEET" />
       <IsoLogo />
       <DocBanner title="TRANSACTION BALANCE SHEET" subtitle="(ASSET & LIABILITY IMPACT REPORT)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -633,6 +617,7 @@ export const RemittanceReport = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="REMIT" />
       <IsoLogo />
       <DocBanner title="REMITTANCE ADVICE REPORT" subtitle="(PAYMENT REMITTANCE INFORMATION)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -655,7 +640,7 @@ export const CreditNotification = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
-      <Barcode value={`CRNOTIF-${transaction.uetr}`} />
+      <DocHeaderStrip uetr={transaction.uetr} docType="CRNOTIF" />
       <IsoLogo />
       <DocBanner title="CREDIT NOTIFICATION" subtitle="(INCOMING PAYMENT CREDIT NOTICE)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -707,6 +692,7 @@ export const NostroAccountDetail = ({ transaction }) => {
   const messageId = getMsgId();
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="NOSTRO" />
       <IsoLogo />
       <DocBanner title="NOSTRO / VOSTRO COMMON ACCOUNT DETAIL" subtitle="(ACCOUNT RECONCILIATION REPORT)" />
       <TxnSummary transaction={transaction} trn={trn} messageId={messageId} />
@@ -766,3 +752,4 @@ export const NostroAccountDetail = ({ transaction }) => {
     </DocWrap>
   );
 };
+;

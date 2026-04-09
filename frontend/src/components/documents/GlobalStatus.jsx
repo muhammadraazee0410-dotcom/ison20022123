@@ -1,4 +1,4 @@
-import { DocWrap, IsoLogo, DocBanner, FieldRow, SectionHeader, CheckItem, DocFooter, formatAmount, formatDate, formatDateLong, formatDateTime, getTrn, getMsgId } from "./DocHelpers";
+import { DocWrap, IsoLogo, DocBanner, FieldRow, SectionHeader, CheckItem, DocFooter, DocHeaderStrip, formatAmount, formatDate, formatDateLong, formatDateTime, getTrn, getMsgId } from "./DocHelpers";
 
 export const GlobalStatus = ({ transaction }) => {
   const trn = getTrn(transaction.uetr);
@@ -6,6 +6,7 @@ export const GlobalStatus = ({ transaction }) => {
 
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="GPSS" />
       <IsoLogo />
       <DocBanner
         title="GLOBAL PAYMENT STATUS STATEMENT"

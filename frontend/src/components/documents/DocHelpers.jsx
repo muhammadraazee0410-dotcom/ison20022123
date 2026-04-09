@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 // Document Wrapper - standard monospace receipt style
 export const DocWrap = ({ children }) => (
@@ -7,11 +8,46 @@ export const DocWrap = ({ children }) => (
   </div>
 );
 
-// ISO Logo header line
+// ISO Logo header line - BIGGER SIZE
 export const IsoLogo = () => (
-  <div className="flex items-center gap-2 mb-4">
-    <img src="/iso-logo.png" alt="ISO 20022" className="w-8 h-8 object-contain" />
-    <span className="font-bold text-[#DB0011]">ISO 20022</span>
+  <div className="flex items-center gap-3 mb-6">
+    <img src="/iso-logo.png" alt="ISO 20022" className="w-16 h-16 object-contain" />
+    <div>
+      <span className="font-bold text-lg text-[#DB0011]">ISO 20022</span>
+      <div className="text-gray-500 text-xs">SWIFT Transfer Platform</div>
+    </div>
+  </div>
+);
+
+// Barcode Component - shared across all docs
+export const Barcode = ({ value }) => {
+  const bars = value.split('').map((c) => {
+    const code = c.charCodeAt(0);
+    return [(code % 4) + 1, ((code * 2) % 3) + 1, ((code * 3) % 4) + 1];
+  }).flat();
+  return (
+    <div className="flex justify-center items-center py-3 bg-white">
+      <div className="flex h-12">
+        {bars.slice(0, 80).map((w, i) => (
+          <div key={i} className={`h-12 ${i % 2 === 0 ? 'bg-black' : 'bg-white'}`} style={{ width: `${w}px` }} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// QR Code Component - shared across all docs
+export const QR = ({ value, size = 80 }) => (
+  <div className="bg-white p-2 border border-gray-300 inline-block" style={{ width: size + 16, height: size + 16 }}>
+    <QRCodeSVG value={`SWIFT-TXN:${value}`} size={size} level="H" bgColor="#FFFFFF" fgColor="#000000" />
+  </div>
+);
+
+// Document header strip with barcode + QR
+export const DocHeaderStrip = ({ uetr, docType }) => (
+  <div className="flex items-start justify-between mb-4">
+    <Barcode value={`${docType}-${uetr}`} />
+    <QR value={`${docType}:${uetr}`} size={70} />
   </div>
 );
 

@@ -1,10 +1,11 @@
-import { DocWrap, IsoLogo, FieldRow, SectionHeader, DocFooter, formatAmount, formatDateTime, getTrn } from "./DocHelpers";
+import { DocWrap, IsoLogo, FieldRow, SectionHeader, DocFooter, DocHeaderStrip, formatAmount, formatDateTime, getTrn } from "./DocHelpers";
 
 export const AllianceReport = ({ transaction }) => {
   const trn = getTrn(transaction.uetr);
 
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="ALLIANCE" />
       <IsoLogo />
 
       {/* Alliance Header */}

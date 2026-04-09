@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import { DocWrap, IsoLogo, DocBanner, FieldRow, BracketHeader, BorderedSection, CheckItem, ApprovalStamp, DocFooter, formatAmount, formatDate, formatDateLong, formatDateTime, getTrn, getMsgId } from "./DocHelpers";
+import { DocWrap, IsoLogo, DocBanner, FieldRow, BracketHeader, BorderedSection, CheckItem, ApprovalStamp, DocFooter, DocHeaderStrip, formatAmount, formatDate, formatDateLong, formatDateTime, getTrn, getMsgId } from "./DocHelpers";
 
 export const SwiftConfirmation = ({ transaction }) => {
   const trn = getTrn(transaction.uetr);
@@ -7,6 +7,7 @@ export const SwiftConfirmation = ({ transaction }) => {
 
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="SWIFTCONF" />
       <IsoLogo />
       <DocBanner
         title="SWIFT PAYMENT CONFIRMATION COPY"

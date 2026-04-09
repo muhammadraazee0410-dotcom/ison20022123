@@ -33,6 +33,9 @@ export default function TransactionDetail() {
   const [sendingEmail, setSendingEmail] = useState(false);
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [recipientEmail, setRecipientEmail] = useState("");
+  const [exporting, setExporting] = useState(false);
+  const [activeTab, setActiveTab] = useState("settlement");
+  const docRef = useRef(null);
 
   const fetchTransaction = async () => {
     try {
@@ -87,6 +90,31 @@ export default function TransactionDetail() {
       toast.error("Failed to send email notification");
     } finally {
       setSendingEmail(false);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    setExporting(true);
+    try {
+      const html2pdf = (await import('html2pdf.js')).default;
+      const element = docRef.current;
+      if (!element) { toast.error("No document to export"); setExporting(false); return; }
+      const tabNames = { settlement: "Settlement_Letter", confirmation: "SWIFT_Confirmation", status: "Global_Status", alliance: "Alliance_Report", tracer: "Payment_Tracer", mt202: "MT202_COV", aft: "AFT_Validation", mt103: "MT103_Answer_Back", pacs008: "PACS008_XML", m1fund: "M1_Fund", server: "Server_Report", fundstracer: "Funds_Tracer", fundlocation: "Fund_Location", bencredit: "Beneficiary_Credit", docclearance: "Doc_Clearance", smtp: "SMTP_Mail", onledger: "On_Ledger", officercomm: "Officer_Comm", mt900: "MT900_Debit", mt910: "MT910_Credit", mt940: "MT940_Statement", debitnote: "Debit_Note", balancesheet: "Balance_Sheet", remittance: "Remittance_Report", creditnotif: "Credit_Notification", intermediary: "Intermediary_Bank", nostro: "Nostro_Account" };
+      const filename = `${tabNames[activeTab] || activeTab}_${transaction.uetr.slice(0, 8)}.pdf`;
+      await html2pdf().set({
+        margin: [10, 10, 10, 10],
+        filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      }).from(element).save();
+      toast.success(`PDF exported: ${filename}`);
+    } catch (error) {
+      console.error("PDF export error:", error);
+      toast.error("Failed to export PDF");
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -162,14 +190,15 @@ export default function TransactionDetail() {
           <Button variant="outline" onClick={handlePrint} className="border-gray-300" data-testid="print-button">
             <Printer className="w-4 h-4 mr-2" />Print
           </Button>
-          <Button variant="outline" className="border-gray-300" data-testid="export-pdf-button">
-            <Download className="w-4 h-4 mr-2" />Export PDF
+          <Button variant="outline" onClick={handleExportPDF} disabled={exporting} className="border-gray-300" data-testid="export-pdf-button">
+            {exporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+            {exporting ? "Exporting..." : "Export PDF"}
           </Button>
         </div>
       </div>
 
       {/* Document Tabs */}
-      <Tabs defaultValue="settlement" className="w-full">
+      <Tabs defaultValue="settlement" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="flex flex-wrap gap-1 h-auto p-1 no-print" data-testid="document-tabs">
           <TabsTrigger value="settlement" className="text-xs" data-testid="tab-settlement">Settlement Letter</TabsTrigger>
           <TabsTrigger value="confirmation" className="text-xs" data-testid="tab-confirmation">SWIFT Confirmation</TabsTrigger>
@@ -201,6 +230,7 @@ export default function TransactionDetail() {
         </TabsList>
 
         {/* 4 Main PDF-matching Tabs */}
+        <div ref={docRef}>
         <TabsContent value="settlement" className="mt-4"><SettlementLetter transaction={transaction} /></TabsContent>
         <TabsContent value="confirmation" className="mt-4"><SwiftConfirmation transaction={transaction} /></TabsContent>
         <TabsContent value="status" className="mt-4"><GlobalStatus transaction={transaction} /></TabsContent>
@@ -230,6 +260,7 @@ export default function TransactionDetail() {
         <TabsContent value="creditnotif" className="mt-4"><CreditNotification transaction={transaction} /></TabsContent>
         <TabsContent value="intermediary" className="mt-4"><IntermediaryBank transaction={transaction} /></TabsContent>
         <TabsContent value="nostro" className="mt-4"><NostroAccountDetail transaction={transaction} /></TabsContent>
+        </div>
       </Tabs>
     </div>
   );

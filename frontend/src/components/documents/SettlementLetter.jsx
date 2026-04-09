@@ -1,4 +1,4 @@
-import { DocWrap, IsoLogo, DocBanner, FieldRow, CheckItem, DocFooter, formatAmount, formatDateLong, getTrn, getMsgId } from "./DocHelpers";
+import { DocWrap, IsoLogo, DocBanner, FieldRow, CheckItem, DocFooter, DocHeaderStrip, formatAmount, formatDateLong, getTrn, getMsgId } from "./DocHelpers";
 
 export const SettlementLetter = ({ transaction }) => {
   const trn = getTrn(transaction.uetr);
@@ -6,6 +6,7 @@ export const SettlementLetter = ({ transaction }) => {
 
   return (
     <DocWrap>
+      <DocHeaderStrip uetr={transaction.uetr} docType="SETTLE" />
       <IsoLogo />
       <DocBanner
         title="PAYMENT SETTLEMENT CONFIRMATION LETTER"

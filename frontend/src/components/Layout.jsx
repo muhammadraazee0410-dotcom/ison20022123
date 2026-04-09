@@ -8,7 +8,8 @@ import {
   LogOut,
   Shield,
   PlusCircle,
-  ShieldCheck
+  ShieldCheck,
+  BarChart3
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +24,7 @@ const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard", exact: true },
   { to: "/transactions", icon: ArrowLeftRight, label: "Transactions" },
   { to: "/transactions/new", icon: PlusCircle, label: "New Transaction" },
+  { to: "/reports", icon: BarChart3, label: "Banking Reports" },
   { to: "/admin", icon: ShieldCheck, label: "Admin Panel" },
 ];
 
@@ -41,7 +43,7 @@ export default function Layout() {
       <aside className="sidebar" data-testid="sidebar">
         {/* Brand */}
         <div className="sidebar-brand">
-          <img src="/iso-logo.png" alt="ISO 20022" className="w-10 h-10 object-contain" />
+          <img src="/iso-logo.png" alt="ISO 20022" className="w-12 h-12 object-contain" />
           <div>
             <span className="font-semibold text-lg text-gray-900">ISO 20022</span>
             <p className="text-xs text-gray-500">SWIFT Transfer Platform</p>
