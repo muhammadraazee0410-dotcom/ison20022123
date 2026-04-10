@@ -172,7 +172,7 @@ export const SwiftConfirmation = ({ transaction }) => {
       </div>
 
       <ApprovalStamp date={formatDate(new Date().toISOString())} />
-      <DocFooter text="END OF SWIFT CONFIRMATION COPY" />
+      <DocFooter text="END OF SWIFT CONFIRMATION COPY" uetr={transaction.uetr} />
     </DocWrap>
   );
 };

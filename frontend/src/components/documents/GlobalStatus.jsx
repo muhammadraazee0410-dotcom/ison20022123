@@ -106,7 +106,7 @@ export const GlobalStatus = ({ transaction }) => {
         <FieldRow label="CONFIDENTIAL" value="SWIFT Alliance Access System v2.5.4" />
       </div>
 
-      <DocFooter text="END OF STATEMENT" />
+      <DocFooter text="END OF STATEMENT" uetr={transaction.uetr} />
     </DocWrap>
   );
 };

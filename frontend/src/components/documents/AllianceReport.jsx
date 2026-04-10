@@ -121,7 +121,7 @@ export const AllianceReport = ({ transaction }) => {
         CONFIDENTIAL - ALLIANCE ACCESS SYSTEM v2.5.4 - SWIFT 2025
       </div>
 
-      <DocFooter text="END OF ALLIANCE REPORT" />
+      <DocFooter text="END OF ALLIANCE REPORT" uetr={transaction.uetr} />
     </DocWrap>
   );
 };

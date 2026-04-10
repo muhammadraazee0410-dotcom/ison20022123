@@ -140,7 +140,7 @@ export const PaymentTracer = ({ transaction }) => {
         <CheckItem color="green">No exceptions, holds, or compliance flags detected</CheckItem>
       </div>
 
-      <DocFooter text="END OF PAYMENT TRACER" />
+      <DocFooter text="END OF PAYMENT TRACER" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -181,7 +181,7 @@ export const MT202COV = ({ transaction }) => {
         <FieldRow label="Field 71A (Charges)" value="SHA (Shared between parties)" />
       </div>
 
-      <DocFooter text="END OF MT202 COV" />
+      <DocFooter text="END OF MT202 COV" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -231,7 +231,7 @@ export const AFTValidation = ({ transaction }) => {
         <div className="text-green-700 text-xs mt-1">Message approved for transmission to SWIFT network</div>
       </div>
 
-      <DocFooter text="END OF AFT VALIDATION REPORT" />
+      <DocFooter text="END OF AFT VALIDATION REPORT" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -270,7 +270,7 @@ export const MT103AnswerBack = ({ transaction }) => {
         <CheckItem color="green">End-to-end payment cycle completed</CheckItem>
       </div>
 
-      <DocFooter text="END OF MT103 ANSWER BACK" />
+      <DocFooter text="END OF MT103 ANSWER BACK" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -323,7 +323,7 @@ export const PACS008XML = ({ transaction }) => {
   </FIToFICstmrCdtTrf>
 </Document>`}
       </div>
-      <DocFooter text="END OF PACS.008 XML" />
+      <DocFooter text="END OF PACS.008 XML" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -355,7 +355,7 @@ export const M1Fund = ({ transaction }) => {
           </div>
         ))}
       </div>
-      <DocFooter text="END OF M1 FUND REPORT" />
+      <DocFooter text="END OF M1 FUND REPORT" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -428,7 +428,7 @@ export const FundsTracer = ({ transaction }) => {
           </div>
         ))}
       </div>
-      <DocFooter text="END OF FUNDS TRACER" />
+      <DocFooter text="END OF FUNDS TRACER" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -465,7 +465,7 @@ export const FundLocation = ({ transaction }) => {
           </div>
         ))}
       </div>
-      <DocFooter text="END OF FUND LOCATION REPORT" />
+      <DocFooter text="END OF FUND LOCATION REPORT" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -492,7 +492,7 @@ export const BeneficiaryCredit = ({ transaction }) => {
         <FieldRow label="Ordering Customer" value={transaction.debtor.name} />
         <FieldRow label="Availability" value="IMMEDIATE - Funds available for withdrawal/transfer" />
       </div>
-      <DocFooter text="END OF BENEFICIARY CREDIT ADVICE" />
+      <DocFooter text="END OF BENEFICIARY CREDIT ADVICE" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -532,7 +532,7 @@ export const DocClearance = ({ transaction }) => {
         <div className="text-green-900 font-bold text-sm">DOCUMENT FULLY CLEARED - NO HOLDS OR RESTRICTIONS</div>
         <div className="text-green-700 text-xs mt-1">All regulatory requirements satisfied</div>
       </div>
-      <DocFooter text="END OF CLEARANCE CERTIFICATE" />
+      <DocFooter text="END OF CLEARANCE CERTIFICATE" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -564,7 +564,7 @@ export const SMTPMail = ({ transaction }) => {
         <FieldRow label="DMARC" value="PASS (policy: reject)" />
         <FieldRow label="Content Type" value="multipart/mixed (HTML + PDF attachment)" />
       </div>
-      <DocFooter text="END OF SMTP LOG" />
+      <DocFooter text="END OF SMTP LOG" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -607,7 +607,7 @@ export const OnLedger = ({ transaction }) => {
         </div>
       </div>
       <div className="bg-green-100 border border-green-300 p-3 text-center rounded mb-4"><span className="font-bold text-green-900">LEDGER BALANCED - NO DISCREPANCIES</span></div>
-      <DocFooter text="END OF ON-LEDGER POSTING" />
+      <DocFooter text="END OF ON-LEDGER POSTING" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -637,7 +637,7 @@ export const OfficerComm = ({ transaction }) => {
           </div>
         ))}
       </div>
-      <DocFooter text="END OF OFFICER COMMUNICATION" />
+      <DocFooter text="END OF OFFICER COMMUNICATION" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -689,7 +689,7 @@ export const MT910Credit = ({ transaction }) => {
         <FieldRow label="Field 32A (Value/Ccy/Amt)" value={`${transaction.settlement_info.settlement_date.replace(/-/g, '')} ${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
         <FieldRow label="Field 52A (Ordering Inst)" value={transaction.instructed_agent.bic} mono />
       </div>
-      <DocFooter text="END OF MT910 CREDIT CONFIRMATION" />
+      <DocFooter text="END OF MT910 CREDIT CONFIRMATION" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -726,7 +726,7 @@ export const MT940Statement = ({ transaction }) => {
         <FieldRow label="Field 62F (Closing Balance)" value={`C${transaction.settlement_info.settlement_date.replace(/-/g, '')}${transaction.settlement_info.currency}0,00`} mono />
         <FieldRow label="Field 64 (Available Balance)" value={`C${transaction.settlement_info.settlement_date.replace(/-/g, '')}${transaction.settlement_info.currency}0,00`} mono />
       </div>
-      <DocFooter text="END OF MT940 STATEMENT" />
+      <DocFooter text="END OF MT940 STATEMENT" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -753,7 +753,7 @@ export const DebitNote = ({ transaction }) => {
         <FieldRow label="Authorization" value="SYSTEM AUTHORIZED (Under existing banking mandate)" />
         <FieldRow label="Reversibility" value={transaction.reversal_possibility} />
       </div>
-      <DocFooter text="END OF DEBIT NOTE" />
+      <DocFooter text="END OF DEBIT NOTE" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -779,7 +779,7 @@ export const BalanceSheet = ({ transaction }) => {
         <div className="p-3 grid grid-cols-4 text-center bg-blue-50 font-bold border-t-2 border-[#1a4b8e]"><span>NET POSITION</span><span className="text-red-700">{formatAmount(amt)}</span><span className="text-green-700">{formatAmount(amt)}</span><span className="text-[#1a4b8e]">0.00 (BALANCED)</span></div>
       </div>
       <div className="bg-green-100 border-2 border-green-400 p-3 text-center rounded mb-4"><span className="font-bold text-green-900">BALANCE SHEET FULLY BALANCED - NO DISCREPANCIES</span></div>
-      <DocFooter text="END OF BALANCE SHEET" />
+      <DocFooter text="END OF BALANCE SHEET" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -808,7 +808,7 @@ export const RemittanceReport = ({ transaction }) => {
         <FieldRow label="Instructed Amount" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
         <FieldRow label="Settled Amount" value={`${transaction.settlement_info.currency} ${formatAmount(transaction.settlement_info.interbank_settlement_amount)}`} mono />
       </div>
-      <DocFooter text="END OF REMITTANCE REPORT" />
+      <DocFooter text="END OF REMITTANCE REPORT" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -833,7 +833,7 @@ export const CreditNotification = ({ transaction }) => {
         <div className="text-green-600 mt-1">Credited on {formatDateLong(transaction.settlement_info.settlement_date)}</div>
         <div className="text-green-600 text-xs mt-1">Funds immediately available for withdrawal or transfer</div>
       </div>
-      <DocFooter text="END OF CREDIT NOTIFICATION" />
+      <DocFooter text="END OF CREDIT NOTIFICATION" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -873,7 +873,7 @@ export const IntermediaryBank = ({ transaction }) => {
         <FieldRow label="Charges Allocation" value="SHA (Shared between ordering and beneficiary)" />
         <FieldRow label="Processing Time" value="< 1 second (STP - Straight Through Processing)" />
       </div>
-      <DocFooter text="END OF INTERMEDIARY BANK REPORT" />
+      <DocFooter text="END OF INTERMEDIARY BANK REPORT" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
@@ -947,7 +947,7 @@ export const NostroAccountDetail = ({ transaction }) => {
         <div className="font-bold text-green-900">NOSTRO / VOSTRO ACCOUNTS FULLY RECONCILED</div>
         <div className="text-green-700 text-xs mt-1">No outstanding items or discrepancies</div>
       </div>
-      <DocFooter text="END OF NOSTRO / VOSTRO ACCOUNT DETAIL" />
+      <DocFooter text="END OF NOSTRO / VOSTRO ACCOUNT DETAIL" uetr={transaction.uetr} />
     </DocWrap>
   );
 };

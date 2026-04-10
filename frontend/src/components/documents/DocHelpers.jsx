@@ -5,10 +5,6 @@ import { QRCodeSVG } from "qrcode.react";
 export const DocWrap = ({ children }) => (
   <div className="bg-white border border-gray-300 shadow-lg font-mono text-xs p-8 relative" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
     {children}
-    {/* ISO logo bottom-right corner */}
-    <div className="flex justify-end mt-6">
-      <img src="/iso-logo.png" alt="ISO 20022" className="w-14 h-14 object-contain opacity-80" />
-    </div>
   </div>
 );
 
@@ -20,6 +16,16 @@ export const IsoLogo = () => (
       <span className="font-bold text-xl text-[#1a4b8e]">ISO 20022</span>
       <div className="text-gray-500 text-xs">SWIFT Transfer Platform</div>
     </div>
+  </div>
+);
+
+// SWIFT Logo (text-based, professional)
+export const SwiftLogo = () => (
+  <div className="flex flex-col items-center">
+    <div className="bg-[#1a3a6e] text-white px-4 py-2 rounded">
+      <div className="font-bold text-base tracking-widest" style={{ fontFamily: "Arial, sans-serif" }}>SWIFT</div>
+    </div>
+    <div className="text-[8px] text-gray-500 mt-0.5 tracking-wider" style={{ fontFamily: "Arial, sans-serif" }}>GLOBAL NETWORK</div>
   </div>
 );
 
@@ -47,11 +53,14 @@ export const QR = ({ value, size = 80 }) => (
   </div>
 );
 
-// Document header strip with barcode + QR
+// Document header strip: barcode on left, ISO logo + SWIFT logo on right
 export const DocHeaderStrip = ({ uetr, docType }) => (
   <div className="flex items-start justify-between mb-4">
     <Barcode value={`${docType}-${uetr}`} />
-    <QR value={`${docType}:${uetr}`} size={70} />
+    <div className="flex items-center gap-3">
+      <img src="/iso-logo.png" alt="ISO 20022" className="w-10 h-10 object-contain" />
+      <SwiftLogo />
+    </div>
   </div>
 );
 
@@ -85,7 +94,7 @@ export const BracketHeader = ({ title }) => (
   <div className="text-[#1a4b8e] font-bold mb-2">[ {title} ]</div>
 );
 
-// Checkmark Item - green for bank-grade confirmations
+// Checkmark Item
 export const CheckItem = ({ children, color = "black" }) => (
   <div className="flex items-start gap-2 py-0.5">
     <Check className={`w-4 h-4 flex-shrink-0 mt-0.5 ${color === "green" ? "text-green-600" : "text-[#1a4b8e]"}`} strokeWidth={2.5} />
@@ -93,14 +102,18 @@ export const CheckItem = ({ children, color = "black" }) => (
   </div>
 );
 
-// Document footer with ISO 20022 banner
-export const DocFooter = ({ text }) => (
+// Document footer: ISO banner bottom-LEFT, QR bottom-RIGHT
+export const DocFooter = ({ text, uetr = "" }) => (
   <div className="mt-8">
     <div className="pt-4 border-t-2 border-[#1a4b8e] text-center font-bold mb-4" style={{ color: '#1a4b8e' }}>
       {text}
     </div>
-    <div className="mt-3">
-      <img src="/iso-20022-banner.png" alt="ISO 20022 - Universal financial industry message scheme" className="w-full max-w-lg mx-auto object-contain" />
+    <div className="flex items-end justify-between mt-4">
+      <img src="/iso-20022-banner.png" alt="ISO 20022" className="w-64 object-contain" />
+      <div className="flex flex-col items-center">
+        <QR value={uetr || text} size={65} />
+        <div className="text-[8px] text-gray-400 mt-1">Scan to verify</div>
+      </div>
     </div>
   </div>
 );
@@ -171,6 +184,5 @@ export const formatDateLong = (dateStr) => {
 export const formatDateTime = (dateStr) =>
   dateStr ? `${new Date(dateStr).toISOString().replace('T', ' ').slice(0, -5)}Z` : '-';
 
-// Generate TRN from UETR
 export const getTrn = (uetr) => `MX${uetr.replace(/-/g, '').slice(0, 12).toUpperCase()}`;
 export const getMsgId = () => `MX${Date.now().toString().slice(-10)}`;

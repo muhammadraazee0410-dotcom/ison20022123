@@ -109,7 +109,7 @@ export const SettlementLetter = ({ transaction }) => {
         <div className="text-gray-600">(Computer Generated - No Manual Signature Required)</div>
       </div>
 
-      <DocFooter text="END OF CONFIRMATION LETTER" />
+      <DocFooter text="END OF CONFIRMATION LETTER" uetr={transaction.uetr} />
     </DocWrap>
   );
 };
