@@ -53,14 +53,11 @@ export const QR = ({ value, size = 80 }) => (
   </div>
 );
 
-// Document header strip: barcode on left, ISO logo + SWIFT logo on right
+// Document header strip: barcode on left, SWIFT logo on right
 export const DocHeaderStrip = ({ uetr, docType }) => (
   <div className="flex items-start justify-between mb-4">
     <Barcode value={`${docType}-${uetr}`} />
-    <div className="flex items-center gap-3">
-      <img src="/iso-logo.png" alt="ISO 20022" className="w-10 h-10 object-contain" />
-      <SwiftLogo />
-    </div>
+    <img src="/swift-logo.png" alt="SWIFT" className="w-14 h-14 object-contain" />
   </div>
 );
 
