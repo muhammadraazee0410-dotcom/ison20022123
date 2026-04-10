@@ -1,10 +1,14 @@
 import { Check } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 
-// Document Wrapper - standard monospace receipt style
+// Document Wrapper - bank-grade monospace receipt style
 export const DocWrap = ({ children }) => (
-  <div className="bg-white border border-gray-200 shadow-lg font-mono text-xs p-8" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+  <div className="bg-white border border-gray-300 shadow-lg font-mono text-xs p-8 relative" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
     {children}
+    {/* ISO logo bottom-right corner */}
+    <div className="flex justify-end mt-6">
+      <img src="/iso-logo.png" alt="ISO 20022" className="w-14 h-14 object-contain opacity-80" />
+    </div>
   </div>
 );
 
@@ -19,7 +23,7 @@ export const IsoLogo = () => (
   </div>
 );
 
-// Barcode Component - shared across all docs
+// Barcode Component
 export const Barcode = ({ value }) => {
   const bars = value.split('').map((c) => {
     const code = c.charCodeAt(0);
@@ -36,7 +40,7 @@ export const Barcode = ({ value }) => {
   );
 };
 
-// QR Code Component - shared across all docs
+// QR Code Component
 export const QR = ({ value, size = 80 }) => (
   <div className="bg-white p-2 border border-gray-300 inline-block" style={{ width: size + 16, height: size + 16 }}>
     <QRCodeSVG value={`SWIFT-TXN:${value}`} size={size} level="H" bgColor="#FFFFFF" fgColor="#000000" />
@@ -51,51 +55,51 @@ export const DocHeaderStrip = ({ uetr, docType }) => (
   </div>
 );
 
-// Title banner with double border
-export const DocBanner = ({ title, subtitle }) => (
-  <div className="border-2 border-gray-800 p-4 mb-6 text-center">
-    <div className="border border-gray-400 inline-block px-8 py-2">
-      <div className="font-bold text-sm">{title}</div>
-      {subtitle && <div className="text-gray-600">{subtitle}</div>}
+// Title banner - bank-grade with color accent
+export const DocBanner = ({ title, subtitle, color = "#1a4b8e" }) => (
+  <div className="p-4 mb-6 text-center border-2" style={{ borderColor: color }}>
+    <div className="inline-block px-8 py-2 border" style={{ borderColor: color }}>
+      <div className="font-bold text-sm" style={{ color }}>{title}</div>
+      {subtitle && <div className="text-gray-600 mt-1">{subtitle}</div>}
     </div>
   </div>
 );
 
-// Field Row Component
-export const FieldRow = ({ label, value, mono = false, labelWidth = "w-56" }) => (
-  <div className="flex py-0.5">
+// Field Row Component - enhanced with color
+export const FieldRow = ({ label, value, mono = false, labelWidth = "w-56", highlight = false }) => (
+  <div className={`flex py-0.5 ${highlight ? 'bg-blue-50 px-2 -mx-2 rounded' : ''}`}>
     <span className={`text-gray-600 ${labelWidth} flex-shrink-0`}>{label}:</span>
-    <span className={`text-gray-900 ${mono ? 'font-mono' : ''}`}>{value || '-'}</span>
+    <span className={`${highlight ? 'text-[#1a4b8e] font-bold' : 'text-gray-900'} ${mono ? 'font-mono' : ''}`}>{value || '-'}</span>
   </div>
 );
 
-// Section Header
-export const SectionHeader = ({ title }) => (
-  <div className="border-t border-b py-1 px-2 my-4 text-center border-gray-300 bg-gray-100">
-    <span className="text-xs font-semibold tracking-wider text-gray-700">{title}</span>
+// Section Header - bank-grade with color accent
+export const SectionHeader = ({ title, color = "#1a4b8e" }) => (
+  <div className="py-1.5 px-3 my-4 text-center" style={{ borderTop: `2px solid ${color}`, borderBottom: `2px solid ${color}`, backgroundColor: `${color}10` }}>
+    <span className="text-xs font-bold tracking-wider" style={{ color }}>{title}</span>
   </div>
 );
 
-// Bracketed section header (used in confirmation/status docs)
+// Bracketed section header
 export const BracketHeader = ({ title }) => (
-  <div className="text-gray-500 mb-2">[ {title} ]</div>
+  <div className="text-[#1a4b8e] font-bold mb-2">[ {title} ]</div>
 );
 
-// Checkmark Item
+// Checkmark Item - green for bank-grade confirmations
 export const CheckItem = ({ children, color = "black" }) => (
   <div className="flex items-start gap-2 py-0.5">
-    <Check className={`w-4 h-4 flex-shrink-0 mt-0.5 ${color === "green" ? "text-green-600" : "text-gray-700"}`} strokeWidth={2} />
-    <span className={color === "green" ? "text-green-600" : "text-gray-900"}>{children}</span>
+    <Check className={`w-4 h-4 flex-shrink-0 mt-0.5 ${color === "green" ? "text-green-600" : "text-[#1a4b8e]"}`} strokeWidth={2.5} />
+    <span className={color === "green" ? "text-green-700 font-semibold" : "text-gray-900"}>{children}</span>
   </div>
 );
 
 // Document footer with ISO 20022 banner
 export const DocFooter = ({ text }) => (
   <div className="mt-8">
-    <div className="pt-4 border-t-2 border-gray-800 text-center font-bold mb-6">
+    <div className="pt-4 border-t-2 border-[#1a4b8e] text-center font-bold mb-4" style={{ color: '#1a4b8e' }}>
       {text}
     </div>
-    <div className="mt-4">
+    <div className="mt-3">
       <img src="/iso-20022-banner.png" alt="ISO 20022 - Universal financial industry message scheme" className="w-full max-w-lg mx-auto object-contain" />
     </div>
   </div>
@@ -117,6 +121,38 @@ export const ApprovalStamp = ({ date }) => (
     </div>
   </div>
 );
+
+// Color-coded status badge
+export const StatusBadge = ({ status }) => {
+  const styles = {
+    SUCCESSFUL: "bg-green-100 text-green-800 border-green-300",
+    CONFIRMED: "bg-green-100 text-green-800 border-green-300",
+    PENDING: "bg-yellow-100 text-yellow-800 border-yellow-300",
+    FAILED: "bg-red-100 text-red-800 border-red-300",
+    FINALIZED: "bg-blue-100 text-blue-800 border-blue-300",
+  };
+  return (
+    <span className={`inline-block px-3 py-1 border rounded font-bold text-xs ${styles[status] || "bg-gray-100 text-gray-800 border-gray-300"}`}>
+      {status}
+    </span>
+  );
+};
+
+// Amount highlight box
+export const AmountBox = ({ currency, amount, label = "Settlement Amount", type = "neutral" }) => {
+  const colors = {
+    credit: { bg: "bg-green-50", border: "border-green-500", text: "text-green-800" },
+    debit: { bg: "bg-red-50", border: "border-red-500", text: "text-red-800" },
+    neutral: { bg: "bg-blue-50", border: "border-[#1a4b8e]", text: "text-[#1a4b8e]" },
+  };
+  const c = colors[type] || colors.neutral;
+  return (
+    <div className={`${c.bg} border-2 ${c.border} p-4 text-center my-4 rounded`}>
+      <div className="text-xs text-gray-600 mb-1">{label}</div>
+      <div className={`text-2xl font-bold ${c.text}`}>{currency} {formatAmount(amount)}</div>
+    </div>
+  );
+};
 
 // Format helpers
 export const formatAmount = (amount) =>
