@@ -6,8 +6,8 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy from backend folder to app root
-COPY backend/requirements.txt .
+# Try root path first, then backend path
+COPY backend/requirements.txt . 
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend/ .
