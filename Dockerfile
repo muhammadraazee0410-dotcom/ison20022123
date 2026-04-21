@@ -9,9 +9,11 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY backend/requirements.txt .
+# Ensure requirements are found regardless of folder
+COPY backend/requirements.txt . 
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy all backend files to the container root
 COPY backend/ .
 
 EXPOSE 8000
