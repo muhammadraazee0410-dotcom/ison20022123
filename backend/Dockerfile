@@ -2,11 +2,14 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Install ALL required system dependencies including libjq
 RUN apt-get update && apt-get install -y \
     build-essential \
+    libjq-dev \
+    libffi-dev \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Assuming build context is the backend folder
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
