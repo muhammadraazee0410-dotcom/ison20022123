@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: swift_mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: swift_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+      - DB_NAME=iso_transfer_db
+      - CORS_ORIGINS=http://localhost:3000
+    depends_on:
+      - mongodb
+
+  frontend:
+    build: 
+      context: ./frontend
+      args:
+        - REACT_APP_BACKEND_URL=http://localhost:8000
+    container_name: swift_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
