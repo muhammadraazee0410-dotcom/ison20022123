@@ -1,51 +1,38 @@
-# TRIGGER COMMIT TO CONNECT DATABASE
 from fastapi import FastAPI, APIRouter, HTTPException, Query
-from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
-from pathlib import Path
-from pydantic import BaseModel, Field, ConfigDict
-from typing import List, Optional
-import uuid
 from datetime import datetime, timezone
-import random
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# MongoDB connection with crash prevention
-mongo_url = os.environ.get('MONGO_URL', os.environ.get('MONGODB_URL', ''))
+# Try every possible Railway variable name automatically
+mongo_url = os.environ.get('MONGO_URL') or os.environ.get('MONGODB_URL') or os.environ.get('DATABASE_URL') or ''
 db_name = os.environ.get('DB_NAME', 'iso_transfer_db')
 
 client = None
 db = None
 
-if mongo_url and mongo_url.startswith('mongodb'):
+if mongo_url:
     try:
         client = AsyncIOMotorClient(mongo_url)
         db = client[db_name]
-        logger.info(f"Successfully initialized MongoDB connection")
+        logger.info("Connected to Database successfully")
     except Exception as e:
-        logger.error(f"MongoDB connection failed: {e}")
+        logger.error(f"DB Error: {e}")
 
-app = FastAPI(title="ISO 20022 SWIFT Transfer Platform")
+app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
 @api_router.get("/")
 async def root():
-    return {"status": "ONLINE", "database": "CONNECTED" if db is not None else "DISCONNECTED", "message": "Platform Live!"}
+    return {"status": "ONLINE", "database": "CONNECTED" if db is not None else "DISCONNECTED"}
+
+@api_router.get("/transactions")
+async def get_tx():
+    return []
 
 app.include_router(api_router)
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
