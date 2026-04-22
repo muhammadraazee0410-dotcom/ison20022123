@@ -1,7 +1,8 @@
 FROM node:18-alpine as build
 WORKDIR /app
+# Hard-coding backend link to bypass variable errors
 ENV REACT_APP_BACKEND_URL=https://ison20022123-production.up.railway.app
-# No subfolders needed anymore, everything is at root
+# Assuming branch context is already flat
 COPY package.json ./ 
 RUN npm install --force
 COPY . .
