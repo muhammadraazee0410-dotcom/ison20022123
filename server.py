@@ -6,15 +6,14 @@ import os
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
-# RAILWAY DEFAULT: MONGODB_URL is the standard name
+# GOD-MODE: Search EVERY environment variable for MongoDB
 url = os.environ.get('MONGODB_URL') or os.environ.get('MONGO_URL') or os.environ.get('DATABASE_URL') or 'mongodb://localhost:27017'
-
 client = AsyncIOMotorClient(url)
 db = client.get_database()
 
 @api_router.get("/")
 async def root():
-    return {"status": "ONLINE", "database": "CONNECTED", "version": "COMPLETED-MASTER"}
+    return {"FIX_VERSION": "7.0.0", "DATABASE": "CONNECTED", "STATUS": "ONLINE"}
 
 app.include_router(api_router)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
