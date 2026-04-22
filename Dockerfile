@@ -1,11 +1,8 @@
-FROM node:18-alpine as build
+FROM python:3.11-slim
 WORKDIR /app
-COPY frontend/package.json ./ 
-RUN npm install
-COPY frontend/ .
-RUN npm run build
-
-# Using serve to host the static files on port 3000
-RUN npm install -g serve
-EXPOSE 3000
-CMD ["serve", "-s", "build", "-l", "3000"]
+RUN apt-get update && apt-get install -y build-essential libjq-dev libffi-dev python3-dev && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+EXPOSE 8000
+CMD uvicorn server:app --host 0.0.0.0 --port ${PORT:-8000}
