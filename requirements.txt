@@ -2,7 +2,7 @@ fastapi
 uvicorn
 motor
 pymongo
-pandantic>=2.0
-pandas
+pydantic
+python-dotenv
 starlette
 python-multipart
