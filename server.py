@@ -1,50 +1,35 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Query
-from dotenv import load_dotenv
-from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
-from pathlib import Path
-from pydantic import BaseModel, Field, ConfigDict
-from typing import List, Optional
-import uuid
-from datetime import datetime, timezone
-import random
+from fastapi import FastAPI, APIRouter
+from starlette.middleware.cors import CORSMiddleware
+from motor.motor_asyncio import AsyncIOMotorClient
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+# Force setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger('swift-api')
 
-# MongoDB connection with crash prevention
-mongo_url = os.environ.get('MONGO_URL', os.environ.get('MONGODB_URL', ''))
-db_name = os.environ.get('DB_NAME', 'iso_transfer_db')
+app = FastAPI()
 
-client = None
-db = None
+# Middleware first
+app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*'])
 
-if mongo_url and mongo_url.startswith('mongodb'):
-    try:
-        client = AsyncIOMotorClient(mongo_url)
-        db = client[db_name]
-        logger.info(f"Successfully initialized MongoDB connection")
-    except Exception as e:
-        logger.error(f"MongoDB connection failed: {e}")
+# Connection logic
+MONGO_URL = os.environ.get('MONGODB_URL') or os.environ.get('MONGO_URL') or os.environ.get('DATABASE_URL')
 
-app = FastAPI(title="ISO 20022 SWIFT Transfer Platform")
-api_router = APIRouter(prefix="/api")
-
-@api_router.get("/")
+@app.get('/')
 async def root():
-    return {"status": "ONLINE", "database": "CONNECTED" if db is not None else "DISCONNECTED", "message": "Platform Live!"}
+    return {"status": "ONLINE", "version": "10.0.0", "db_configured": bool(MONGO_URL)}
 
-app.include_router(api_router)
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+@app.get('/api/')
+async def api_root():
+    return {"status": "OK"}
+
+# Ensure root routes work for Railway healthchecks
+@app.get('/health')
+async def health():
+    return "OK"
+
+if __name__ == '__main__':
+    import uvicorn
+    port = int(os.environ.get('PORT', 8000))
+    uvicorn.run(app, host='0.0.0.0', port=port)
