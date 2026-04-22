@@ -3,14 +3,22 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 
-# Try all possible Railway MongoDB variable names
-url = os.environ.get('MONGO_URL') or os.environ.get('MONGODB_URL') or os.environ.get('DATABASE_URL')
+# GOD-MODE: Search EVERY environment variable for a MongoDB link
+url = None
+for key, value in os.environ.items():
+    if 'MONGO' in key and 'URL' in key:
+        url = value
+        break
+
+# Fallback to general Database URL if MONGO wasn't found
+if not url:
+    url = os.environ.get('DATABASE_URL')
 
 client = None
 db = None
 if url:
     client = AsyncIOMotorClient(url)
-    db = client.get_database()
+    db = client.get_database() # Gets the DB name automatically from the URL
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -19,8 +27,8 @@ api_router = APIRouter(prefix="/api")
 async def root():
     return {
         "FIX_VERSION": "3.0.0",
-        "DATABASE_STATUS": "CONNECTED" if url else "DISCONNECTED - ADD MONGO_URL TO VARIABLES",
-        "HINT": "If this doesn't say 3.0.0, the site hasn't updated yet!"
+        "DATABASE": "CONNECTED" if db is not None else "DISCONNECTED - HIT REDEPLOY ON RAILWAY",
+        "MSG": "Once you hit REDEPLOY, this will turn GREEN!"
     }
 
 app.include_router(api_router)
