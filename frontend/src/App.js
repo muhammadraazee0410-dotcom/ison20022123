@@ -2,7 +2,6 @@ import "@/App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect, createContext, useContext } from "react";
 import { Toaster } from "@/components/ui/sonner";
-import { SpeedInsights } from "@vercel/speed-insights/react";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Transactions from "@/pages/Transactions";
@@ -95,7 +94,6 @@ function App() {
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" richColors />
-      <SpeedInsights />
     </AuthContext.Provider>
   );
 }
