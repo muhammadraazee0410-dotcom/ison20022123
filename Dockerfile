@@ -1,19 +1,14 @@
-FROM python:3.11-slim
-
+FROM node:18-alpine as build
 WORKDIR /app
-
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libjq-dev \
-    libffi-dev \
-    python3-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY requirements.txt . 
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-EXPOSE 8000
-
-CMD uvicorn server:app --host 0.0.0.0 --port ${PORT:-8000}
+ARG REACT_APP_BACKEND_URL
+ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
+# Copy package.json from either root or frontend folder
+COPY package.json ./ || COPY frontend/package.json ./
+RUN npm install
+# Copy all files from either root or frontend folder
+COPY . . || COPY frontend/ .
+RUN npm run build
+FROM nginx:stable-alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
