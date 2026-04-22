@@ -1,9 +1,12 @@
 FROM node:18-alpine as build
 WORKDIR /app
-# Use correct backend URL for this project
+# Explicitly set correct backend URL
 ENV REACT_APP_BACKEND_URL=https://ison20022123-production.up.railway.app
+# Copy frontend package info specifically
 COPY frontend/package.json ./ 
-RUN npm install --legacy-peer-deps
+# Use force to ignore any remaining conflicts
+RUN npm install --force
+# Copy frontend source files specifically
 COPY frontend/ .
 RUN npm run build
 
