@@ -1,5 +1,8 @@
 FROM node:18-alpine as build
 WORKDIR /app
+# Hard-coding backend link to bypass variable errors
+ENV REACT_APP_BACKEND_URL=https://ison20022123-production.up.railway.app
+# Assuming branch context is already flat
 ENV REACT_APP_BACKEND_URL=https://ison20022123-production.up.railway.app
 COPY package.json ./ 
 RUN npm install --force
