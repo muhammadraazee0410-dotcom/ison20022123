@@ -1,3 +1,4 @@
+# TRIGGER COMMIT TO CONNECT DATABASE
 from fastapi import FastAPI, APIRouter, HTTPException, Query
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
