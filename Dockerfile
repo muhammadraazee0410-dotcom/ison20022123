@@ -1,13 +1,10 @@
 FROM node:18-alpine as build
 WORKDIR /app
-# Explicitly set correct backend URL
 ENV REACT_APP_BACKEND_URL=https://ison20022123-production.up.railway.app
-# Copy frontend package info specifically
-COPY frontend/package.json ./ 
-# Use force to ignore any remaining conflicts
+# No subfolders needed anymore, everything is at root
+COPY package.json ./ 
 RUN npm install --force
-# Copy frontend source files specifically
-COPY frontend/ .
+COPY . .
 RUN npm run build
 
 FROM nginx:stable-alpine
