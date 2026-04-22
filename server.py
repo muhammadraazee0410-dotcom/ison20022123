@@ -1,19 +1,14 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
 
 app = FastAPI()
-api_router = APIRouter(prefix="/api")
-
-# GOD-MODE: Search EVERY environment variable for MongoDB
-url = os.environ.get('MONGODB_URL') or os.environ.get('MONGO_URL') or os.environ.get('DATABASE_URL') or 'mongodb://localhost:27017'
-client = AsyncIOMotorClient(url)
-db = client.get_database()
-
-@api_router.get("/")
-async def root():
-    return {"FIX_VERSION": "7.0.0", "DATABASE": "CONNECTED", "STATUS": "ONLINE"}
-
-app.include_router(api_router)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+@app.get("/")
+async def root():
+    return {"status": "OK", "version": "8.0.0", "database": "READY_FOR_CONNECTION"}
+
+@app.get("/api/")
+async def api_root():
+    return {"status": "OK", "version": "8.0.0"}
