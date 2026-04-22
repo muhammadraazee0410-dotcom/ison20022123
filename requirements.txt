@@ -3,6 +3,5 @@ uvicorn
 motor
 pymongo
 pydantic
-python-dotenv
 starlette
 python-multipart
