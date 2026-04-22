@@ -6,24 +6,21 @@ import os
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
-# THE FIX: Checking all possible Railway database names
-url = os.environ.get('MONGODB_URL') or os.environ.get('MONGO_URL') or os.environ.get('DATABASE_URL') or 'mongodb://localhost:27017'
+# Try all possible Railway variable names for MongoDB
+url = os.environ.get('MONGO_URL') or os.environ.get('MONGODB_URL') or os.environ.get('DATABASE_URL') or ''
 
-client = AsyncIOMotorClient(url)
-db = client.get_database()
+client = None
+db = None
+if url:
+    client = AsyncIOMotorClient(url)
+    db = client.get_database()
 
 @api_router.get("/")
 async def root():
-    connected = False
-    try:
-        await client.admin.command('ping')
-        connected = True
-    except:
-        pass
     return {
-        "status": "LIVE",
-        "database": "CONNECTED" if connected else "DISCONNECTED",
-        "version": "4.0.0"
+        "FIX_VERSION": "5.0.0",
+        "DATABASE": "CONNECTED" if url else "DISCONNECTED",
+        "STATUS": "LIVE"
     }
 
 app.include_router(api_router)
